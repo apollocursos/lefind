@@ -1,12 +1,199 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-  <meta name="lomadee" content="2324685" />
-  <meta charset="UTF-8">
-  <title>Le.Find - Comparador de Ofertas</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Le.Find - Buscador Global de Ofertas & Comparador de Preços</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: #0b0f19; color: #f3f4f6; line-height: 1.6; }
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+        
+        header { border-bottom: 1px solid #1f2937; padding: 20px 0; background: rgba(11, 15, 25, 0.95); }
+        .nav-content { display: flex; justify-content: space-between; align-items: center; }
+        .logo-area { font-size: 26px; font-weight: 800; color: #ffffff; }
+        .logo-area span { color: #3b82f6; }
+        .nav-right { display: flex; align-items: center; gap: 20px; }
+        .nav-links a { color: #9ca3af; text-decoration: none; font-size: 14px; font-weight: 500; }
+        .nav-links a:hover { color: #ffffff; }
+        
+        select.lang-select { background: #1f2937; color: #fff; border: 1px solid #374151; padding: 6px 12px; border-radius: 8px; font-size: 13px; cursor: pointer; }
+
+        .hero { padding: 80px 0 60px 0; text-align: center; }
+        .badge { display: inline-block; padding: 6px 16px; background-color: rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.3); color: #60a5fa; border-radius: 20px; font-size: 13px; font-weight: 600; margin-bottom: 24px; text-transform: uppercase; }
+        h1 { font-size: 48px; font-weight: 800; line-height: 1.15; margin-bottom: 20px; color: #ffffff; }
+        h1 span { background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .subtitle { font-size: 18px; color: #9ca3af; max-width: 680px; margin: 0 auto 40px auto; }
+
+        .search-box { background: #111827; border: 1px solid #374151; padding: 12px 20px; border-radius: 14px; max-width: 620px; margin: 0 auto 50px auto; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5); }
+        .search-input-placeholder { color: #6b7280; font-size: 15px; }
+        .search-btn { background: #2563eb; color: white; padding: 10px 20px; border-radius: 8px; font-weight: 600; font-size: 14px; }
+
+        .stores-section { background: #111827; border-top: 1px solid #1f2937; border-bottom: 1px solid #1f2937; padding: 40px 0; text-align: center; margin-bottom: 80px; }
+        .stores-title { font-size: 13px; text-transform: uppercase; color: #6b7280; margin-bottom: 20px; font-weight: 600; letter-spacing: 1px; }
+        .store-tag { display: inline-block; background: #1f2937; color: #d1d5db; padding: 8px 18px; border-radius: 20px; font-weight: 500; font-size: 14px; margin: 6px; border: 1px solid #374151; }
+
+        .section-title { text-align: center; font-size: 32px; font-weight: 700; margin-bottom: 50px; color: #ffffff; }
+        .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; margin-bottom: 80px; }
+        .feature-card { background: #111827; border: 1px solid #1f2937; padding: 32px; border-radius: 16px; }
+        .feature-icon { font-size: 32px; margin-bottom: 16px; display: inline-block; }
+        .feature-card h3 { font-size: 20px; color: #f3f4f6; margin-bottom: 12px; }
+        .feature-card p { font-size: 14px; color: #9ca3af; }
+
+        footer { border-top: 1px solid #1f2937; padding: 40px 0; text-align: center; color: #6b7280; font-size: 13px; }
+        .footer-links { margin-bottom: 16px; }
+        .footer-links a { color: #9ca3af; text-decoration: none; margin: 0 12px; }
+        .footer-links a:hover { color: #ffffff; }
+        .disclaimer-box { max-width: 800px; margin: 20px auto 0 auto; font-size: 11px; color: #4b5563; line-height: 1.4; text-align: justify; }
+    </style>
 </head>
 <body>
-  <h1>Le.Find - Buscador e Comparador de Ofertas</h1>
-  <p>Portal de comparação de preços e melhores descontos do e-commerce.</p>
+
+    <header>
+        <div class="container nav-content">
+            <div class="logo-area">Le.<span>Find</span></div>
+            <div class="nav-right">
+                <div class="nav-links">
+                    <a href="politica-de-privacidade.html" id="link-privacy">Privacidade</a>
+                    <a href="termos-de-uso.html" id="link-terms">Termos</a>
+                </div>
+                <select class="lang-select" onchange="changeLanguage(this.value)">
+                    <option value="pt" selected>🇧🇷 Português</option>
+                    <option value="en">🇺🇸 English</option>
+                    <option value="es">🇪🇸 Español</option>
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <span class="badge" id="hero-badge">Buscador Global Inteligente</span>
+                <h1 id="hero-title">O buscador definitivo para achar o <span>menor preço do mundo</span>.</h1>
+                <p class="subtitle" id="hero-sub">Comparamos milhões de produtos em tempo real: de grandes e-commerces e redes sociais até ofertas de desapegos e seminovos.</p>
+
+                <div class="search-box">
+                    <div class="search-input-placeholder" id="search-ph">🔍 Busque qualquer produto (ex: iPhone 15, Ferramentas)...</div>
+                    <div class="search-btn" id="search-btn">Buscar</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="stores-section">
+            <div class="container">
+                <div class="stores-title" id="stores-title">Integrado às Maiores Plataformas Globais</div>
+                <div>
+                    <span class="store-tag">Amazon</span>
+                    <span class="store-tag">Shopee</span>
+                    <span class="store-tag">Mercado Livre</span>
+                    <span class="store-tag">AliExpress</span>
+                    <span class="store-tag">TikTok Shop</span>
+                    <span class="store-tag">OLX Pay</span>
+                    <span class="store-tag">Enjoei</span>
+                    <span class="store-tag">eBay</span>
+                </div>
+            </div>
+        </section>
+
+        <section class="container">
+            <h2 class="section-title" id="feat-title">Por que o Le.Find é único?</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <span class="feature-icon">🔍</span>
+                    <h3 id="f1-t">E-Commerce & Redes Sociais</h3>
+                    <p id="f1-d">Encontre achadinhos virais do TikTok e ofertas exclusivas dos maiores varejistas da internet em uma única barra de pesquisa.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">♻️</span>
+                    <h3 id="f2-t">Novos & Usados Garantidos</h3>
+                    <p id="f2-d">Filtre entre produtos novos lacrados na caixa ou economize ainda mais com seminovos verificados da OLX e Enjoei.</p>
+                </div>
+                <div class="feature-card">
+                    <span class="feature-icon">⚡</span>
+                    <h3 id="f3-t">Comparação em Tempo Real</h3>
+                    <p id="f3-d">Nosso algoritmo varre APIs oficiais em tempo real para garantir que você veja a melhor oportunidade e o menor valor absoluto.</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="footer-links">
+                <a href="politica-de-privacidade.html" id="ft-privacy">Política de Privacidade</a> · 
+                <a href="termos-de-uso.html" id="ft-terms">Termos de Uso</a> · 
+                <a href="mailto:contato@lefind.com.br">Contato / Support</a>
+            </div>
+            <p>&copy; 2026 Le.Find Global Technology. All rights reserved.</p>
+            
+            <div class="disclaimer-box" id="ft-disclaimer">
+                <strong>Aviso de Afiliados e Marcas:</strong> O Le.Find é um agregador e comparador independente de ofertas. Não vendemos produtos diretamente. Quando você clica em links de ofertas e realiza uma compra, podemos receber uma comissão de afiliado sem nenhum custo adicional para você. Todas as marcas, logotipos e nomes de produtos (como Amazon, Shopee, Mercado Livre, TikTok, OLX) pertencem aos seus respectivos proprietários.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const texts = {
+            pt: {
+                linkPrivacy: "Privacidade", linkTerms: "Termos",
+                heroBadge: "Buscador Global Inteligente",
+                heroTitle: "O buscador definitivo para achar o <span>menor preço do mundo</span>.",
+                heroSub: "Comparamos milhões de produtos em tempo real: de grandes e-commerces e redes sociais até ofertas de desapegos e seminovos.",
+                searchPh: "🔍 Busque qualquer produto (ex: iPhone 15, Ferramentas)...", searchBtn: "Buscar",
+                storesTitle: "Integrado às Maiores Plataformas Globais",
+                featTitle: "Por que o Le.Find é único?",
+                f1t: "E-Commerce & Redes Sociais", f1d: "Encontre achadinhos virais do TikTok e ofertas exclusivas dos maiores varejistas da internet em uma única barra de pesquisa.",
+                f2t: "Novos & Usados Garantidos", f2d: "Filtre entre produtos novos lacrados na caixa ou economize ainda mais com seminovos verificados da OLX e Enjoei.",
+                f3t: "Comparação em Tempo Real", f3d: "Nosso algoritmo varre APIs oficiais em tempo real para garantir que você veja a melhor oportunidade e o menor valor absoluto.",
+                ftDisclaimer: "<strong>Aviso de Afiliados e Marcas:</strong> O Le.Find é um agregador e comparador independente de ofertas. Não vendemos produtos diretamente. Quando você clica em links de ofertas e realiza uma compra, podemos receber uma comissão de afiliado sem nenhum custo adicional para você. Todas as marcas pertencem aos seus respectivos proprietários."
+            },
+            en: {
+                linkPrivacy: "Privacy Policy", linkTerms: "Terms of Use",
+                heroBadge: "Smart Global Search Engine",
+                heroTitle: "The ultimate search engine to find the <span>lowest price worldwide</span>.",
+                heroSub: "We compare millions of products in real time: from top e-commerce and social commerce to verified second-hand deals.",
+                searchPh: "🔍 Search any product (e.g. iPhone 15, Power Tools)...", searchBtn: "Search",
+                storesTitle: "Integrated with Leading Global Platforms",
+                featTitle: "Why Le.Find?",
+                f1t: "E-Commerce & Social Commerce", f1d: "Find viral TikTok deals and exclusive marketplace offers in a single unified search bar.",
+                f2t: "New & Certified Pre-Owned", f2d: "Filter between brand-new sealed items or save even more with verified second-hand platforms.",
+                f3t: "Real-Time Price Comparison", f3d: "Our engine queries official APIs in real-time to make sure you get the best deal available.",
+                ftDisclaimer: "<strong>Affiliate & Trademark Disclaimer:</strong> Le.Find is an independent deal aggregator and price comparison platform. We do not sell products directly. When you click on links and buy items, we may earn an affiliate commission at no extra cost to you. All trademarks belong to their respective owners."
+            },
+            es: {
+                linkPrivacy: "Privacidad", linkTerms: "Términos",
+                heroBadge: "Buscador Global Inteligente",
+                heroTitle: "El buscador definitivo para encontrar el <span>precio más bajo del mundo</span>.",
+                heroSub: "Comparamos millones de productos en tiempo real: desde grand e-commerce y redes sociales hasta ofertas de segunda mano.",
+                searchPh: "🔍 Busca cualquier producto (ej: iPhone 15, Herramientas)...", searchBtn: "Buscar",
+                storesTitle: "Integrado con las Mayores Plataformas Globales",
+                featTitle: "¿Por qué Le.Find?",
+                f1t: "E-Commerce y Redes Sociales", f1d: "Encuentra productos virales de TikTok y ofertas exclusivas en una sola barra de búsqueda.",
+                f2t: "Nuevos y Usados Garantizados", f2d: "Filtra entre productos nuevos o ahorra aún más con artículos de segunda mano verificados.",
+                f3t: "Comparación en Tiempo Real", f3d: "Nuestro algoritmo consulta APIs oficiales en tiempo real para garantizar el menor precio.",
+                ftDisclaimer: "<strong>Aviso de Afiliados y Marcas:</strong> Le.Find es un agregador independiente de ofertas. No vendemos productos directamente. Al hacer clic en los enlaces y comprar, podemos recibir una comisión de afiliado sin costo adicional para usted."
+            }
+        };
+
+        function changeLanguage(lang) {
+            const t = texts[lang];
+            document.getElementById('link-privacy').innerText = t.linkPrivacy;
+            document.getElementById('link-terms').innerText = t.linkTerms;
+            document.getElementById('ft-privacy').innerText = t.linkPrivacy;
+            document.getElementById('ft-terms').innerText = t.linkTerms;
+            document.getElementById('hero-badge').innerText = t.heroBadge;
+            document.getElementById('hero-title').innerHTML = t.heroTitle;
+            document.getElementById('hero-sub').innerText = t.heroSub;
+            document.getElementById('search-ph').innerText = t.searchPh;
+            document.getElementById('search-btn').innerText = t.searchBtn;
+            document.getElementById('stores-title').innerText = t.storesTitle;
+            document.getElementById('feat-title').innerText = t.featTitle;
+            document.getElementById('f1-t').innerText = t.f1t; document.getElementById('f1-d').innerText = t.f1d;
+            document.getElementById('f2-t').innerText = t.f2t; document.getElementById('f2-d').innerText = t.f2d;
+            document.getElementById('f3-t').innerText = t.f3t; document.getElementById('f3-d').innerText = t.f3d;
+            document.getElementById('ft-disclaimer').innerHTML = t.ftDisclaimer;
+        }
+    </script>
 </body>
 </html>
