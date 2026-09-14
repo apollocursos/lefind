@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Le.Find - Buscador Global de Ofertas e Comparador de Preços</title>
+    <title>Le.Find - Global Deals & Price Comparison Engine</title>
 
     <!-- CONFIGURAÇÕES PWA -->
     <link rel="manifest" href="/manifest.json" />
@@ -44,11 +44,16 @@
         h1 span { background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         p.subtitle { font-size: 18px; color: #9ca3af; max-width: 650px; margin: 0 auto 40px auto; }
         
-        .search-box { max-width: 600px; margin: 0 auto 60px auto; display: flex; background: #111827; border: 1px solid #374151; padding: 8px; border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3); }
+        .search-container { max-width: 750px; margin: 0 auto 60px auto; }
+        .search-box { display: flex; background: #111827; border: 1px solid #374151; padding: 8px; border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3); }
         .search-box input { flex: 1; background: transparent; border: none; padding: 12px 16px; color: #fff; font-size: 16px; outline: none; }
         .search-box button { background: #2563eb; color: #fff; border: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
         .search-box button:hover { background: #1d4ed8; }
         
+        .platform-selector { display: flex; justify-content: center; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+        .platform-btn { background: #111827; border: 1px solid #374151; color: #9ca3af; padding: 8px 14px; border-radius: 20px; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+        .platform-btn.active { background: #2563eb; color: #fff; border-color: #2563eb; }
+
         .platforms { text-align: center; margin-bottom: 80px; }
         .platforms p { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: #6b7280; margin-bottom: 20px; }
         .platform-grid { display: flex; flex-wrap: wrap; justify-content: center; gap: 16px; }
@@ -74,12 +79,12 @@
             <div class="logo">Le<span>.Find</span></div>
             <div class="nav-right">
                 <div class="nav-links">
-                    <a href="politica-de-privacidade.html">Privacidade</a>
-                    <a href="termos-de-uso.html">Termos</a>
+                    <a href="politica-de-privacidade.html" id="navPrivacy">Privacidade</a>
+                    <a href="termos-de-uso.html" id="navTerms">Termos</a>
                 </div>
-                <select class="lang-select" onchange="changeLanguage(this.value)">
+                <select class="lang-select" id="langSelect" onchange="changeLanguage(this.value)">
                     <option value="pt">🇧🇷 Português</option>
-                    <option value="en">🇺🇸 English</option>
+                    <option value="en">🇺🇸 English (Global)</option>
                     <option value="es">🇪🇸 Español</option>
                 </select>
             </div>
@@ -88,46 +93,56 @@
 
     <main class="container">
         <section class="hero">
-            <div class="badge">Buscador Global Inteligente</div>
-            <h1>O buscador definitivo para achar o <span>menor preço do mundo</span>.</h1>
-            <p class="subtitle">Comparamos milhões de produtos em tempo real: de grandes e-commerces e redes sociais até ofertas de desapegos e seminovos.</p>
+            <div class="badge" id="badgeText">Buscador Global Inteligente</div>
+            <h1 id="heroTitle">O buscador definitivo para achar o <span>menor preço do mundo</span>.</h1>
+            <p class="subtitle" id="heroSubtitle">Comparamos milhões de produtos em tempo real: de grandes e-commerces até ofertas de desapegos e seminovos em todo o mundo.</p>
             
-            <form class="search-box" onsubmit="executeSearch(event)">
-                <input type="text" id="searchInput" placeholder="Busque qualquer produto (ex: iPhone 15, Ferramentas)..." required>
-                <button type="submit">Buscar</button>
-            </form>
+            <div class="search-container">
+                <form class="search-box" onsubmit="executeSearch(event)">
+                    <input type="text" id="searchInput" placeholder="Busque qualquer produto (ex: iPhone 15, PlayStation, Camera)..." required>
+                    <button type="submit" id="searchBtn">Buscar Ofertas</button>
+                </form>
+                <div class="platform-selector">
+                    <button type="button" class="platform-btn active" onclick="selectPlatform('all', this)" id="btnAll">🌐 Global / Todas</button>
+                    <button type="button" class="platform-btn" onclick="selectPlatform('amazon', this)">Amazon</button>
+                    <button type="button" class="platform-btn" onclick="selectPlatform('ebay', this)">eBay</button>
+                    <button type="button" class="platform-btn" onclick="selectPlatform('aliexpress', this)">AliExpress</button>
+                    <button type="button" class="platform-btn" onclick="selectPlatform('local', this)" id="btnLocal">Mercado Livre / Local</button>
+                    <button type="button" class="platform-btn" onclick="selectPlatform('used', this)" id="btnUsed">♻️ Usados (OLX/Craigslist)</button>
+                </div>
+            </div>
         </section>
 
         <section class="platforms">
-            <p>Integrado às Maiores Plataformas Globais</p>
+            <p id="platformTitle">Integrado às Maiores Plataformas Globais</p>
             <div class="platform-grid">
-                <div class="platform-chip">Amazon</div>
-                <div class="platform-chip">Shopee</div>
-                <div class="platform-chip">Mercado Livre</div>
-                <div class="platform-chip">AliExpress</div>
-                <div class="platform-chip">TikTok Shop</div>
-                <div class="platform-chip">OLX Pay</div>
-                <div class="platform-chip">Enjoei</div>
+                <div class="platform-chip">Amazon Global</div>
                 <div class="platform-chip">eBay</div>
+                <div class="platform-chip">AliExpress</div>
+                <div class="platform-chip">Shopee</div>
+                <div class="platform-chip">Mercado Libre</div>
+                <div class="platform-chip">Walmart</div>
+                <div class="platform-chip">Craigslist / OLX</div>
+                <div class="platform-chip">TikTok Shop</div>
             </div>
         </section>
 
-        <h2 style="text-align: center; margin-bottom: 40px; font-size: 28px;">Por que o Le.Find é único?</h2>
+        <h2 style="text-align: center; margin-bottom: 40px; font-size: 28px;" id="whyTitle">Por que o Le.Find é único?</h2>
         <section class="features">
             <div class="feature-card">
-                <div class="feature-icon">🔍</div>
-                <h3>E-Commerce & Redes Sociais</h3>
-                <p>Encontre achadinhos virais do TikTok e ofertas exclusivas dos maiores varejistas da internet em uma única barra de pesquisa.</p>
+                <div class="feature-icon">🌐</div>
+                <h3 id="f1Title">E-Commerce & Redes Sociais</h3>
+                <p id="f1Desc">Encontre ofertas virais e descontos em tempo real das maiores plataformas do mundo em uma só busca.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">♻️</div>
-                <h3>Novos & Usados Garantidos</h3>
-                <p>Filtre entre produtos novos lacrados na caixa ou economize ainda mais com seminovos verificados da OLX e Enjoei.</p>
+                <h3 id="f2Title">Novos & Seminovos Globais</h3>
+                <p id="f2Desc">Filtre produtos novos de grandes varejistas ou economize com seminovos verificados em marketplaces globais e locais.</p>
             </div>
             <div class="feature-card">
                 <div class="feature-icon">⚡</div>
-                <h3>Comparação em Tempo Real</h3>
-                <p>Nosso algoritmo varre APIs oficiais em tempo real para garantir que você veja a melhor oportunidade e o menor valor absoluto.</p>
+                <h3 id="f3Title">Comparação Inteligente</h3>
+                <p id="f3Desc">Nosso motor de busca varre diferentes mercados para garantir que você veja sempre a melhor oportunidade de compra.</p>
             </div>
         </section>
     </main>
@@ -140,25 +155,168 @@
                 <a href="mailto:contato@lefind.com.br">Contato / Support</a>
             </div>
             <p>&copy; 2026 Le.Find Global Technology. All rights reserved.</p>
-            <p class="disclaimer"><strong>Aviso de Afiliados e Marcas:</strong> O Le.Find é um agregador e comparador independente de ofertas. Não vendemos produtos diretamente. Quando você clica em links de ofertas e realiza uma compra, podemos receber uma comissão de afiliado sem nenhum custo adicional para você. Todas as marcas, logotipos e nomes de produtos (como Amazon, Shopee, Mercado Livre, TikTok, OLX) pertencem aos seus respectivos proprietários.</p>
+            <p class="disclaimer"><strong>Aviso Global de Afiliados e Marcas:</strong> O Le.Find é um agregador e comparador independente de ofertas. Não vendemos produtos diretamente. Quando você clica em links de ofertas e realiza uma compra, podemos receber uma comissão de afiliado sem nenhum custo adicional para você. Todas as marcas, logotipos e nomes de produtos pertencem aos seus respectivos proprietários.</p>
         </div>
     </footer>
 
     <script>
-        function executeSearch(event) {
-            event.preventDefault();
-            const query = document.getElementById('searchInput').value.trim();
-            if (query) {
-                const searchUrl = 'https://lista.mercadolivre.com.br/' + encodeURIComponent(query);
-                window.open(searchUrl, '_blank');
+        // CONFIGURAÇÃO GLOBAL DE TAGS DE AFILIADO
+        const AFFILIATE_TAGS = {
+            amazon_br: '',   // Tag Amazon Brasil
+            amazon_us: '',   // Tag Amazon EUA (.com)
+            ebay: '',        // ID Afiliado eBay (EPN)
+            aliexpress: '',  // Tracking ID AliExpress
+            mercadolivre: '' // Tag Mercado Livre / Mercado Libre
+        };
+
+        let currentLang = 'pt';
+        let selectedPlatform = 'all';
+
+        // Traduções da Interface para Influenciadores e Usuários Globais
+        const translations = {
+            pt: {
+                badge: "Buscador Global Inteligente",
+                title: "O buscador definitivo para achar o <span>menor preço do mundo</span>.",
+                subtitle: "Comparamos milhões de produtos em tempo real: de grandes e-commerces até ofertas de desapegos e seminovos em todo o mundo.",
+                searchPlaceholder: "Busque qualquer produto (ex: iPhone 15, PlayStation, Camera)...",
+                searchBtn: "Buscar Ofertas",
+                btnAll: "🌐 Global / Todas",
+                btnLocal: "Mercado Livre / Local",
+                btnUsed: "♻️ Usados (OLX)",
+                platformTitle: "Integrado às Maiores Plataformas Globais",
+                whyTitle: "Por que o Le.Find é único?",
+                f1Title: "E-Commerce & Redes Sociais",
+                f1Desc: "Encontre ofertas virais e descontos em tempo real das maiores plataformas do mundo em uma só busca.",
+                f2Title: "Novos & Seminovos Globais",
+                f2Desc: "Filtre produtos novos de grandes varejistas ou economize com seminovos verificados em marketplaces globais e locais.",
+                f3Title: "Comparação Inteligente",
+                f3Desc: "Nosso motor de busca varre diferentes mercados para garantir que você veja sempre a melhor oportunidade de compra."
+            },
+            en: {
+                badge: "Smart Global Deals Engine",
+                title: "The ultimate search engine to find the <span>lowest price worldwide</span>.",
+                subtitle: "We compare millions of products in real-time: from top global e-commerces to pre-owned & local deals across the world.",
+                searchPlaceholder: "Search any product (e.g. iPhone 15, PlayStation, Camera)...",
+                searchBtn: "Find Deals",
+                btnAll: "🌐 Global / All Stores",
+                btnLocal: "Local Retailers",
+                btnUsed: "♻️ Used / Pre-Owned",
+                platformTitle: "Integrated with World's Top Marketplaces",
+                whyTitle: "Why Le.Find is Unique?",
+                f1Title: "E-Commerce & Social Shopping",
+                f1Desc: "Discover viral deals and real-time discounts from the largest global platforms in one click.",
+                f2Title: "New & Pre-Owned Deals",
+                f2Desc: "Filter between brand-new items from major stores or save more with verified pre-owned products worldwide.",
+                f3Title: "Smart Price Comparison",
+                f3Desc: "Our engine scans multiple markets to ensure you always find the best buying opportunity."
+            },
+            es: {
+                badge: "Buscador Global Inteligente",
+                title: "El buscador definitivo para encontrar el <span>menor precio del mundo</span>.",
+                subtitle: "Comparamos millones de productos en tiempo real: desde las mayores tiendas online hasta ofertas de segunda mano en todo el mundo.",
+                searchPlaceholder: "Busca cualquier producto (ej: iPhone 15, PlayStation, Cámara)...",
+                searchBtn: "Buscar Ofertas",
+                btnAll: "🌐 Global / Todas",
+                btnLocal: "Mercado Libre / Local",
+                btnUsed: "♻️ Segunda Mano",
+                platformTitle: "Integrado con las Mejores Tiendas del Mundo",
+                whyTitle: "¿Por qué Le.Find es único?",
+                f1Title: "E-Commerce y Redes Sociales",
+                f1Desc: "Encuentra ofertas virales y descuentos en tiempo real de las principales plataformas globales.",
+                f2Title: "Nuevos y Segunda Mano",
+                f2Desc: "Filtra productos nuevos de grandes tiendas o ahorra más con productos reacondicionados y usados.",
+                f3Title: "Comparación Inteligente",
+                f3Desc: "Nuestro motor analiza múltiples mercados para asegurarte siempre la mejor opción de compra."
             }
+        };
+
+        function selectPlatform(platform, element) {
+            selectedPlatform = platform;
+            document.querySelectorAll('.platform-btn').forEach(btn => btn.classList.remove('active'));
+            element.classList.add('active');
         }
 
         function changeLanguage(lang) {
-            if (lang === 'en') {
-                alert('English version loading...');
-            } else if (lang === 'es') {
-                alert('Cargando versión en Español...');
+            currentLang = lang;
+            const t = translations[lang];
+
+            document.getElementById('badgeText').innerText = t.badge;
+            document.getElementById('heroTitle').innerHTML = t.title;
+            document.getElementById('heroSubtitle').innerText = t.subtitle;
+            document.getElementById('searchInput').placeholder = t.searchPlaceholder;
+            document.getElementById('searchBtn').innerText = t.searchBtn;
+            document.getElementById('btnAll').innerText = t.btnAll;
+            document.getElementById('btnLocal').innerText = t.btnLocal;
+            document.getElementById('btnUsed').innerText = t.btnUsed;
+            document.getElementById('platformTitle').innerText = t.platformTitle;
+            document.getElementById('whyTitle').innerText = t.whyTitle;
+            document.getElementById('f1Title').innerText = t.f1Title;
+            document.getElementById('f1Desc').innerText = t.f1Desc;
+            document.getElementById('f2Title').innerText = t.f2Title;
+            document.getElementById('f2Desc').innerText = t.f2Desc;
+            document.getElementById('f3Title').innerText = t.f3Title;
+            document.getElementById('f3Desc').innerText = t.f3Desc;
+        }
+
+        function executeSearch(event) {
+            event.preventDefault();
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) return;
+
+            const encodedQuery = encodeURIComponent(query);
+
+            // Mapeamento dinâmico de URLs de acordo com Idioma/Região do Usuário
+            if (selectedPlatform === 'amazon') {
+                let domain = currentLang === 'pt' ? 'amazon.com.br' : 'amazon.com';
+                let tag = currentLang === 'pt' ? AFFILIATE_TAGS.amazon_br : AFFILIATE_TAGS.amazon_us;
+                let url = `https://www.${domain}/s?k=${encodedQuery}`;
+                if (tag) url += `&tag=${tag}`;
+                window.open(url, '_blank');
+            } 
+            else if (selectedPlatform === 'ebay') {
+                let url = `https://www.ebay.com/sch/i.html?_nkw=${encodedQuery}`;
+                window.open(url, '_blank');
+            } 
+            else if (selectedPlatform === 'aliexpress') {
+                let url = `https://www.aliexpress.com/wholesale?SearchText=${encodedQuery}`;
+                window.open(url, '_blank');
+            } 
+            else if (selectedPlatform === 'local') {
+                if (currentLang === 'pt') {
+                    let url = `https://lista.mercadolivre.com.br/${encodedQuery}`;
+                    window.open(url, '_blank');
+                } else if (currentLang === 'es') {
+                    let url = `https://listado.mercadolibre.com/${encodedQuery}`;
+                    window.open(url, '_blank');
+                } else {
+                    let url = `https://www.walmart.com/search?q=${encodedQuery}`;
+                    window.open(url, '_blank');
+                }
+            } 
+            else if (selectedPlatform === 'used') {
+                if (currentLang === 'pt') {
+                    let url = `https://www.olx.com.br/brasil?q=${encodedQuery}`;
+                    window.open(url, '_blank');
+                } else {
+                    let url = `https://www.craigslist.org/search/sss?query=${encodedQuery}`;
+                    window.open(url, '_blank');
+                }
+            } 
+            else {
+                // MODO GLOBAL / ALL: Dispara as maiores lojas de acordo com o idioma do usuário
+                if (currentLang === 'pt') {
+                    window.open(`https://lista.mercadolivre.com.br/${encodedQuery}`, '_blank');
+                    window.open(`https://www.amazon.com.br/s?k=${encodedQuery}`, '_blank');
+                } else if (currentLang === 'es') {
+                    window.open(`https://listado.mercadolibre.com/${encodedQuery}`, '_blank');
+                    window.open(`https://www.amazon.com/s?k=${encodedQuery}`, '_blank');
+                    window.open(`https://www.ebay.com/sch/i.html?_nkw=${encodedQuery}`, '_blank');
+                } else {
+                    // Inglês / Global
+                    window.open(`https://www.amazon.com/s?k=${encodedQuery}`, '_blank');
+                    window.open(`https://www.ebay.com/sch/i.html?_nkw=${encodedQuery}`, '_blank');
+                    window.open(`https://www.aliexpress.com/wholesale?SearchText=${encodedQuery}`, '_blank');
+                }
             }
         }
     </script>
