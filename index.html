@@ -59,18 +59,25 @@
             gap: 12px;
         }
 
-        /* BARRA DE PESQUISA REPOSTA */
+        /* BARRA DE PESQUISA COM CÂMARA */
         .search-box {
             display: flex;
             gap: 10px;
             justify-content: center;
             width: 100%;
-            max-width: 600px;
+            max-width: 650px;
+        }
+
+        .search-input-wrapper {
+            position: relative;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
         }
 
         .search-input {
-            flex-grow: 1;
-            padding: 12px 18px;
+            width: 100%;
+            padding: 12px 45px 12px 18px;
             border-radius: 10px;
             border: 1px solid var(--card-border);
             background-color: var(--card-bg);
@@ -82,6 +89,21 @@
 
         .search-input:focus {
             border-color: var(--accent-blue);
+        }
+
+        .camera-btn {
+            position: absolute;
+            right: 12px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: color 0.2s;
+        }
+
+        .camera-btn:hover {
+            color: var(--accent-blue);
         }
 
         .search-btn {
@@ -321,11 +343,17 @@
                 <i class="fa-solid fa-cube"></i> LE.FIND
             </div>
             
-            <!-- CAIXA DE PESQUISA COM BOTÃO -->
+            <!-- CAIXA DE PESQUISA COM BOTÃO DE CÂMARA -->
             <div class="search-box">
-                <input type="text" id="searchInput" class="search-input" placeholder="O que deseja procurar? (Ex: Xbox, Air Fryer, iPhone...)">
+                <div class="search-input-wrapper">
+                    <input type="text" id="searchInput" class="search-input" placeholder="O que deseja procurar ou tirar foto?">
+                    <button class="camera-btn" onclick="ativarCamera()" title="Pesquisar por Foto"><i class="fa-solid fa-camera"></i></button>
+                </div>
                 <button class="search-btn" onclick="executarBusca()">Buscar</button>
             </div>
+
+            <!-- Input oculto para selecionar/tirar foto -->
+            <input type="file" id="fileInput" accept="image/*" capture="environment" style="display: none;" onchange="processarFoto(event)">
 
             <div class="trends-bar">
                 <span class="trends-title">Tendências:</span>
@@ -363,15 +391,9 @@
             let baseMin = 150;
             let baseMax = 550;
 
-            if (termoLower.includes('xbox series x')) {
+            if (termoLower.includes('xbox series x') || termoLower.includes('xbox')) {
                 baseMin = 3499.00;
                 baseMax = 3899.00;
-            } else if (termoLower.includes('xbox series s')) {
-                baseMin = 2199.00;
-                baseMax = 2499.00;
-            } else if (termoLower.includes('xbox')) {
-                baseMin = 2199.00;
-                baseMax = 2499.00;
             } else if (termoLower.includes('chupeta')) {
                 baseMin = 7.99;
                 baseMax = 19.99;
@@ -454,6 +476,20 @@
             const input = document.getElementById('searchInput').value.trim();
             if (input) {
                 renderizarOfertas(input, 'todos');
+            }
+        }
+
+        function ativarCamera() {
+            document.getElementById('fileInput').click();
+        }
+
+        function processarFoto(event) {
+            const file = event.target.files[0];
+            if (file) {
+                // Simulação de reconhecimento visual da IA detetando o produto
+                document.getElementById('searchInput').value = "Air Fryer";
+                renderizarOfertas("Air Fryer", 'todos');
+                document.getElementById('stats-banner').innerText = `📸 Imagem reconhecida com sucesso! Produto identificado: "Air Fryer". Mostrando ofertas globais.`;
             }
         }
 
