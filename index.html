@@ -44,7 +44,7 @@
             background-color: transparent;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 15px;
             align-items: center;
             text-align: center;
         }
@@ -59,7 +59,6 @@
             gap: 12px;
         }
 
-        /* BARRA DE PESQUISA COM CÂMARA */
         .search-box {
             display: flex;
             gap: 10px;
@@ -121,23 +120,23 @@
             background-color: #2563eb;
         }
 
-        .trends-bar {
+        .trends-bar, .history-bar {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             font-size: 0.9rem;
             flex-wrap: wrap;
             justify-content: center;
         }
 
-        .trends-title {
+        .trends-title, .history-title {
             color: var(--text-muted);
             font-weight: 600;
         }
 
-        .trend-chips {
+        .trend-chips, .history-chips {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             flex-wrap: wrap;
             justify-content: center;
         }
@@ -145,7 +144,7 @@
         .chip {
             background-color: var(--card-bg);
             color: var(--text-main);
-            padding: 6px 14px;
+            padding: 5px 12px;
             border-radius: 20px;
             font-size: 0.85rem;
             cursor: pointer;
@@ -158,21 +157,32 @@
             border-color: var(--accent-blue);
         }
 
+        .controls-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: 1160px;
+            padding: 0 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
         .filter-buttons {
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
-            justify-content: center;
         }
 
         .filter-btn {
             background-color: var(--card-bg);
             color: var(--text-main);
             border: 1px solid var(--card-border);
-            padding: 8px 18px;
+            padding: 8px 16px;
             border-radius: 8px;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -184,8 +194,19 @@
             background-color: rgba(59, 130, 246, 0.1);
         }
 
+        .sort-select {
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            border: 1px solid var(--card-border);
+            padding: 8px 14px;
+            border-radius: 8px;
+            outline: none;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
         .stats-banner {
-            margin: 10px 20px 20px 20px;
+            margin: 15px 20px 10px 20px;
             background-color: rgba(59, 130, 246, 0.1);
             border: 1px solid rgba(59, 130, 246, 0.3);
             padding: 12px 20px;
@@ -196,7 +217,7 @@
         }
 
         .results-grid {
-            padding: 0 20px 40px 20px;
+            padding: 10px 20px 40px 20px;
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
             gap: 20px;
@@ -333,6 +354,71 @@
         .btn-alert:hover {
             background-color: var(--card-border);
         }
+
+        /* MODAL DE ALERTA */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 30px;
+            border-radius: 12px;
+            width: 100%;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--text-main);
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 10px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--card-border);
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            outline: none;
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 10px;
+        }
+
+        .btn-cancel {
+            background: transparent;
+            border: 1px solid var(--card-border);
+            color: var(--text-muted);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        .btn-save {
+            background-color: var(--accent-blue);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
     </style>
 </head>
 <body>
@@ -343,7 +429,6 @@
                 <i class="fa-solid fa-cube"></i> LE.FIND
             </div>
             
-            <!-- CAIXA DE PESQUISA COM BOTÃO DE CÂMARA -->
             <div class="search-box">
                 <div class="search-input-wrapper">
                     <input type="text" id="searchInput" class="search-input" placeholder="O que deseja procurar ou tirar foto?">
@@ -352,7 +437,6 @@
                 <button class="search-btn" onclick="executarBusca()">Buscar</button>
             </div>
 
-            <!-- Input oculto para selecionar/tirar foto -->
             <input type="file" id="fileInput" accept="image/*" capture="environment" style="display: none;" onchange="processarFoto(event)">
 
             <div class="trends-bar">
@@ -365,23 +449,51 @@
                 </div>
             </div>
 
-            <div class="filter-buttons">
-                <button class="filter-btn active" onclick="filtrar('todos')"><i class="fa-solid fa-globe"></i> Todos</button>
-                <button class="filter-btn" onclick="filtrar('oficiais')"><i class="fa-solid fa-shield-halved"></i> Lojas Oficiais (Novos)</button>
-                <button class="filter-btn" onclick="filtrar('garimpo')"><i class="fa-solid fa-tags"></i> Garimpo (Usados)</button>
+            <!-- HISTÓRICO DE PESQUISAS DO USUÁRIO -->
+            <div class="history-bar" id="historyBar" style="display: none;">
+                <span class="history-title">Suas Buscas:</span>
+                <div class="history-chips" id="historyChips"></div>
             </div>
         </header>
+
+        <div class="controls-row">
+            <div class="filter-buttons">
+                <button class="filter-btn active" onclick="filtrar('todos', event)"><i class="fa-solid fa-globe"></i> Todos</button>
+                <button class="filter-btn" onclick="filtrar('oficiais', event)"><i class="fa-solid fa-shield-halved"></i> Lojas Oficiais (Novos)</button>
+                <button class="filter-btn" onclick="filtrar('garimpo', event)"><i class="fa-solid fa-tags"></i> Garimpo (Usados)</button>
+            </div>
+            <select class="sort-select" id="sortSelect" onchange="mudarOrdenacao()">
+                <option value="relevancia">Ordenar por: Relevância</option>
+                <option value="menor-preco">Menor Preço Global</option>
+                <option value="maior-preco">Maior Preço Global</option>
+            </select>
+        </div>
 
         <div class="stats-banner" id="stats-banner">
             Encontradas 6 lojas. Comparando as melhores ofertas em tempo real.
         </div>
 
-        <div class="results-grid" id="results-grid">
-            <!-- Cards injetados via JS -->
+        <div class="results-grid" id="results-grid"></div>
+    </div>
+
+    <!-- MODAL DE ALERTA DE PREÇO -->
+    <div class="modal-overlay" id="alertModal">
+        <div class="modal-content">
+            <div class="modal-title"><i class="fa-regular fa-bell"></i> Criar Alerta de Preço</div>
+            <p style="font-size: 0.9rem; color: var(--text-muted);">Avise-me quando o preço baixar para este item:</p>
+            <input type="email" id="alertEmail" class="modal-input" placeholder="Seu e-mail ou WhatsApp">
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="fecharModal()">Cancelar</button>
+                <button class="btn-save" onclick="salvarAlerta()">Ativar Alerta</button>
+            </div>
         </div>
     </div>
 
     <script>
+        let termoAtual = "Xbox Series X";
+        let filtroAtual = "todos";
+        let historicoBuscas = JSON.parse(localStorage.getItem('lefind_history')) || [];
+
         function normalizarTexto(texto) {
             return texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
         }
@@ -392,20 +504,15 @@
             let baseMax = 550;
 
             if (termoLower.includes('xbox series x') || termoLower.includes('xbox')) {
-                baseMin = 3499.00;
-                baseMax = 3899.00;
+                baseMin = 3499.00; baseMax = 3899.00;
             } else if (termoLower.includes('chupeta')) {
-                baseMin = 7.99;
-                baseMax = 19.99;
+                baseMin = 7.99; baseMax = 19.99;
             } else if (termoLower.includes('air fryer')) {
-                baseMin = 299.00;
-                baseMax = 599.00;
+                baseMin = 299.00; baseMax = 599.00;
             } else if (termoLower.includes('iphone')) {
-                baseMin = 4500.00;
-                baseMax = 7800.00;
+                baseMin = 4500.00; baseMax = 7800.00;
             } else {
-                baseMin = 120.00;
-                baseMax = 650.00;
+                baseMin = 120.00; baseMax = 650.00;
             }
 
             return [
@@ -418,27 +525,59 @@
             ];
         }
 
-        let termoAtual = "Xbox Series X";
+        function atualizarHistorico(termo) {
+            if (!historicoBuscas.includes(termo)) {
+                historicoBuscas.unshift(termo);
+                if (historicoBuscas.length > 5) historicoBuscas.pop();
+                localStorage.setItem('lefind_history', JSON.stringify(historicoBuscas));
+            }
+            renderizarHistoricoUI();
+        }
+
+        function renderizarHistoricoUI() {
+            const bar = document.getElementById('historyBar');
+            const chipsContainer = document.getElementById('historyChips');
+            chipsContainer.innerHTML = '';
+
+            if (historicoBuscas.length > 0) {
+                bar.style.display = 'flex';
+                historicoBuscas.forEach(t => {
+                    const btn = document.createElement('button');
+                    btn.className = 'chip';
+                    btn.innerText = t;
+                    btn.onclick = () => buscarTermo(t);
+                    chipsContainer.appendChild(btn);
+                });
+            } else {
+                bar.style.display = 'none';
+            }
+        }
 
         function renderizarOfertas(termo, filtroTipo = 'todos') {
             termoAtual = termo;
-            const ofertas = gerarPrecosDinamicos(termo);
+            filtroTipo = filtroAtual;
+            let ofertas = gerarPrecosDinamicos(termo);
+
+            if (filtroTipo === 'oficiais') {
+                ofertas = ofertas.filter(o => o.brand === "Lojas Oficiais" || o.brand === "Ofertas Diretas");
+            } else if (filtroTipo === 'garimpo') {
+                ofertas = ofertas.filter(o => o.condition === "used");
+            }
+
+            const sortVal = document.getElementById('sortSelect').value;
+            if (sortVal === 'menor-preco') {
+                ofertas.sort((a, b) => a.min - b.min);
+            } else if (sortVal === 'maior-preco') {
+                ofertas.sort((a, b) => b.min - a.min);
+            }
+
             const grid = document.getElementById('results-grid');
             grid.innerHTML = '';
 
-            let filtradas = ofertas;
-            if (filtroTipo === 'oficiais') {
-                filtradas = ofertas.filter(o => o.brand === "Lojas Oficiais" || o.brand === "Ofertas Diretas");
-            } else if (filtroTipo === 'garimpo') {
-                filtradas = ofertas.filter(o => o.condition === "used");
-            }
-
-            filtradas.forEach(item => {
+            ofertas.forEach(item => {
                 const card = document.createElement('div');
                 card.className = `offer-card ${item.best ? 'best-deal' : ''}`;
-                
                 let badgeHtml = item.best ? `<div class="best-badge"><i class="fa-solid fa-star"></i> Menor Preço Global</div>` : '';
-                
                 const precoFormatado = `R$ ${item.min.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})} - R$ ${item.max.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
 
                 card.innerHTML = `
@@ -458,24 +597,26 @@
                     </div>
                     <div class="card-actions">
                         <a href="#" class="btn-offer">Ver Ofertas</a>
-                        <button class="btn-alert"><i class="fa-regular fa-bell"></i> Alerta</button>
+                        <button class="btn-alert" onclick="abrirModal()"><i class="fa-regular fa-bell"></i> Alerta</button>
                     </div>
                 `;
                 grid.appendChild(card);
             });
 
-            document.getElementById('stats-banner').innerText = `Encontradas ${filtradas.length} lojas para "${termo}". Comparando as melhores ofertas em tempo real.`;
+            document.getElementById('stats-banner').innerText = `Encontradas ${ofertas.length} lojas para "${termo}". Comparando as melhores ofertas em tempo real.`;
         }
 
         function buscarTermo(termo) {
             document.getElementById('searchInput').value = termo;
-            renderizarOfertas(termo, 'todos');
+            atualizarHistorico(termo);
+            renderizarOfertas(termo);
         }
 
         function executarBusca() {
             const input = document.getElementById('searchInput').value.trim();
             if (input) {
-                renderizarOfertas(input, 'todos');
+                atualizarHistorico(input);
+                renderizarOfertas(input);
             }
         }
 
@@ -486,17 +627,42 @@
         function processarFoto(event) {
             const file = event.target.files[0];
             if (file) {
-                // Simulação de reconhecimento visual da IA detetando o produto
-                document.getElementById('searchInput').value = "Air Fryer";
-                renderizarOfertas("Air Fryer", 'todos');
-                document.getElementById('stats-banner').innerText = `📸 Imagem reconhecida com sucesso! Produto identificado: "Air Fryer". Mostrando ofertas globais.`;
+                const termoFoto = "Air Fryer";
+                document.getElementById('searchInput').value = termoFoto;
+                atualizarHistorico(termoFoto);
+                renderizarOfertas(termoFoto);
+                document.getElementById('stats-banner').innerText = `📸 Imagem reconhecida com sucesso! Produto identificado: "${termoFoto}". Mostrando ofertas globais.`;
             }
         }
 
-        function filtrar(tipo) {
+        function filtrar(tipo, e) {
+            filtroAtual = tipo;
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-            event.currentTarget.classList.add('active');
-            renderizarOfertas(termoAtual, tipo);
+            if(e) e.currentTarget.classList.add('active');
+            renderizarOfertas(termoAtual);
+        }
+
+        function mudarOrdenacao() {
+            renderizarOfertas(termoAtual);
+        }
+
+        function abrirModal() {
+            document.getElementById('alertModal').style.display = 'flex';
+        }
+
+        function fecharModal() {
+            document.getElementById('alertModal').style.display = 'none';
+        }
+
+        function salvarAlerta() {
+            const email = document.getElementById('alertEmail').value;
+            if (email) {
+                alert('Alerta configurado com sucesso! Avisaremos em breve.');
+                document.getElementById('alertEmail').value = '';
+                fecharModal();
+            } else {
+                alert('Por favor, digite um e-mail ou WhatsApp válido.');
+            }
         }
 
         document.getElementById('searchInput').addEventListener('keypress', function(e) {
@@ -505,7 +671,8 @@
             }
         });
 
-        // Inicializa com Xbox Series X
+        // Inicialização
+        renderizarHistoricoUI();
         renderizarOfertas('Xbox Series X');
     </script>
 </body>
