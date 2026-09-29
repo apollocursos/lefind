@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Le.Find - Motor de comparação de preços e ofertas globais</title>
+    <title>Le.Find - Agregador Global de Ofertas e Afiliados</title>
     <meta name="google-site-verification" content="C6zvBK7Uc4u-2kfo9SMO16AM4ZnawdpJmzie1EbztWM" />
     <meta name="lomadee" content="2324685" />
 
@@ -25,12 +25,12 @@
             padding: 20px;
         }
         .lefind-container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
             text-align: center;
         }
         h1 {
-            font-size: 1.8rem;
+            font-size: 2rem;
             margin-bottom: 5px;
             color: #60A5FA;
         }
@@ -99,7 +99,7 @@
         /* Grelha de Produtos */
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 20px;
             text-align: left;
         }
@@ -118,15 +118,10 @@
             border-color: #475569;
         }
         .product-title {
-            font-size: 0.95rem;
+            font-size: 1rem;
             font-weight: 600;
             margin-bottom: 10px;
             color: #F1F5F9;
-            height: 40px;
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
         }
         .product-price {
             font-size: 1.25rem;
@@ -145,6 +140,7 @@
         }
         .tag-new { background-color: #065F46; color: #34D399; }
         .tag-used { background-color: #78350F; color: #FBBF24; }
+        .tag-multi { background-color: #1E3A8A; color: #93C5FD; }
         
         .buy-btn {
             background-color: #2563EB;
@@ -164,54 +160,50 @@
 
     <div class="lefind-container">
         <h1>Le.Find</h1>
-        <p class="subtitle">Busca global sem restrições: novos e usados reunidos instantaneamente.</p>
+        <p class="subtitle">Agregador Global: Busque em todas as redes de afiliados e usados sem restrições.</p>
 
         <!-- BARRA DE PESQUISA -->
         <div class="search-box">
-            <input type="text" id="searchInput" class="search-input" placeholder="Procure qualquer coisa (Ex: iPhone, Ténis, Cadeira, PS5...)">
-            <button class="search-btn" onclick="executarBusca()">Pesquisar</button>
+            <input type="text" id="searchInput" class="search-input" placeholder="O que deseja procurar em todas as lojas? (Ex: iPhone, Notebook, Tênis...)">
+            <button class="search-btn" onclick="executarBuscaGlobal()">Buscar em Tudo</button>
         </div>
 
         <!-- FILTROS HÍBRIDOS -->
         <div class="lefind-filters">
-            <button class="filter-btn active" onclick="filtrarProdutos('all', this)">🔍 Todos</button>
-            <button class="filter-btn" onclick="filtrarProdutos('new', this)">✨ Só Novos</button>
-            <button class="filter-btn" onclick="filtrarProdutos('used', this)">♻️ Só Usados</button>
+            <button class="filter-btn active" onclick="filtrarCondicao('all', this)">🔍 Todos</button>
+            <button class="filter-btn" onclick="filtrarCondicao('new', this)">✨ Lojas Oficiais (Novos)</button>
+            <button class="filter-btn" onclick="filtrarCondicao('used', this)">♻️ Garimpo (Usados)</button>
         </div>
 
         <!-- GRELHA DE RESULTADOS -->
         <div id="productsGrid" class="products-grid">
-            <!-- Os produtos aparecerão aqui dinamicamente -->
+            <!-- Os itens iniciais e de busca aparecerão aqui -->
         </div>
     </div>
 
     <script>
-        // Base expandida de produtos para simular o motor global
-        const baseProdutos = [
-            { title: "Smartphone Apple iPhone 15 Pro Max 256GB", price: "R$ 6.899,00", condition: "new", tagText: "Novo (Lojas)", tagClass: "tag-new", url: "#" },
-            { title: "Ténis Nike Air Force 1 Original Seminovo", price: "R$ 280,00", condition: "used", tagText: "Usado / Garimpo", tagClass: "tag-used", url: "#" },
-            { title: "Cadeira de Escritório Presidente Ergonómica", price: "R$ 749,90", condition: "new", tagText: "Novo (Lojas)", tagClass: "tag-new", url: "#" },
-            { title: "Consola PlayStation 5 Com 2 comandos (Pouco uso)", price: "R$ 3.200,00", condition: "used", tagText: "Usado / Garimpo", tagClass: "tag-used", url: "#" },
-            { title: "Smart TV 50 4K UHD LED Wi-Fi", price: "R$ 2.199,00", condition: "new", tagText: "Novo (Lojas)", tagClass: "tag-new", url: "#" },
-            { title: "Bicicleta Caloi Aro 29 Alumínio Usada", price: "R$ 950,00", condition: "used", tagText: "Usado / Garimpo", tagClass: "tag-used", url: "#" }
+        // Base inicial de ofertas em destaque
+        let listaProdutos = [
+            { title: "Smartphone Apple iPhone 15 Pro Max 256GB", price: "R$ 6.899,00", condition: "new", store: "Amazon / Mercado Livre", tagClass: "tag-new", url: "https://www.mercadolivre.com.br" },
+            { title: "Tênis Nike Air Force 1 Original Seminovo", price: "R$ 280,00", condition: "used", store: "Garimpo Local / OLX", tagClass: "tag-used", url: "https://www.olx.com.br" },
+            { title: "Cadeira de Escritório Presidente Ergonômica", price: "R$ 749,90", condition: "new", store: "Shopee / Lomadee", tagClass: "tag-new", url: "https://www.shopee.com.br" },
+            { title: "Console PlayStation 5 Com 2 Controles", price: "R$ 3.200,00", condition: "used", store: "Enjoei / Usados", tagClass: "tag-used", url: "https://www.enjoei.com.br" },
+            { title: "Smart TV 50 4K UHD LED Wi-Fi", price: "R$ 2.199,00", condition: "new", store: "AliExpress / Awin", tagClass: "tag-new", url: "https://pt.aliexpress.com" }
         ];
 
-        let filtroAtual = 'all';
+        let filtroCondicaoAtual = 'all';
 
-        function renderizarProdutos(filtro = 'all', termoBusca = '') {
+        function renderizar(produtosParaMostrar) {
             const grid = document.getElementById('productsGrid');
             grid.innerHTML = '';
 
-            const termoNormalizado = termoBusca.toLowerCase().trim();
-
-            const filtrados = baseProdutos.filter(produto => {
-                const passaFiltroCondicao = (filtro === 'all') || (produto.condition === filtro);
-                const passaBusca = termoNormalizado === '' || produto.title.toLowerCase().includes(termoNormalizado);
-                return passaFiltroCondicao && passaBusca;
+            const filtrados = produtosParaMostrar.filter(p => {
+                if (filtroCondicaoAtual === 'all') return true;
+                return p.condition === filtroCondicaoAtual;
             });
 
             if (filtrados.length === 0) {
-                grid.innerHTML = '<p style="color: #94A3B8; grid-column: 1/-1; text-align:center;">Nenhum produto encontrado. Tente outro termo de busca sem restrições!</p>';
+                grid.innerHTML = '<p style="color: #94A3B8; grid-column: 1/-1; text-align:center;">Nenhum produto encontrado com este filtro.</p>';
                 return;
             }
 
@@ -220,40 +212,59 @@
                 card.className = 'product-card';
                 card.innerHTML = `
                     <div>
-                        <span class="product-tag ${produto.tagClass}">${produto.tagText}</span>
+                        <span class="product-tag ${produto.tagClass}">${produto.store}</span>
                         <div class="product-title">${produto.title}</div>
                         <div class="product-price">${produto.price}</div>
                     </div>
-                    <a href="${produto.url}" target="_blank" class="buy-btn">Ver Oferta</a>
+                    <a href="${produto.url}" target="_blank" class="buy-btn">Ver na Loja</a>
                 `;
                 grid.appendChild(card);
             });
         }
 
-        function filtrarProdutos(tipo, elemento) {
+        function executarBuscaGlobal() {
+            const termo = document.getElementById('searchInput').value.trim();
+            if (!termo) {
+                renderizar(listaProdutos);
+                return;
+            }
+
+            const termoCodificado = encodeURIComponent(termo);
+
+            // Gera automaticamente os links de busca direta para todas as APIs de Afiliados e Usados configuradas
+            const resultadosDinamicos = [
+                { title: `${termo} - Oferta Oficial em Destaque`, price: "Verificar na Loja", condition: "new", store: "Amazon (Afiliados)", tagClass: "tag-new", url: `https://www.amazon.com.br/s?k=${termoCodificado}` },
+                { title: `${termo} - Menor Preço Global`, price: "Verificar na Loja", condition: "new", store: "Mercado Livre", tagClass: "tag-new", url: `https://lista.mercadolivre.com.br/${termoCodificado}` },
+                { title: `${termo} com Frete Grátis`, price: "Verificar na Loja", condition: "new", store: "Shopee / Lomadee", tagClass: "tag-new", url: `https://shopee.com.br/search?keyword=${termoCodificado}` },
+                { title: `${termo} Importado Direto`, price: "Verificar na Loja", condition: "new", store: "AliExpress / Awin", tagClass: "tag-new", url: `https://pt.aliexpress.com/wholesale?SearchText=${termoCodificado}` },
+                { title: `${termo} Garimpo de Usados`, price: "Verificar na Loja", condition: "used", store: "OLX / Enjoei", tagClass: "tag-used", url: `https://www.olx.com.br/brasil?q=${termoCodificado}` },
+                { title: `${termo} Internacional Global`, price: "Verificar na Loja", condition: "new", store: "eBay / Impact", tagClass: "tag-multi", url: `https://www.ebay.com/sch/i.html?_nkw=${termoCodificado}` }
+            ];
+
+            renderizar(resultadosDinamicos);
+        }
+
+        function filtrarCondicao(tipo, elemento) {
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
             elemento.classList.add('active');
-            filtroAtual = tipo;
+            filtroCondicaoAtual = tipo;
             
-            const termo = document.getElementById('searchInput').value;
-            renderizarProdutos(filtroAtual, termo);
+            const termo = document.getElementById('searchInput').value.trim();
+            if (termo) {
+                executarBuscaGlobal();
+            } else {
+                renderizar(listaProdutos);
+            }
         }
 
-        function executarBusca() {
-            const termo = document.getElementById('searchInput').value;
-            renderizarProdutos(filtroAtual, termo);
-        }
-
-        // Pesquisa instantânea ao pressionar Enter
         document.getElementById('searchInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
-                executarBusca();
+                executarBuscaGlobal();
             }
         });
 
-        // Carrega todos os produtos sem restrição ao abrir a página
         window.onload = () => {
-            renderizarProdutos('all', '');
+            renderizar(listaProdutos);
         };
     </script>
 </body>
