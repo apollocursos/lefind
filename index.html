@@ -31,7 +31,6 @@
             overflow-x: hidden;
         }
 
-        /* Container Principal Centralizado */
         .main-wrapper {
             max-width: 1200px;
             margin: 0 auto;
@@ -58,6 +57,46 @@
             display: flex;
             align-items: center;
             gap: 12px;
+        }
+
+        /* BARRA DE PESQUISA REPOSTA */
+        .search-box {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .search-input {
+            flex-grow: 1;
+            padding: 12px 18px;
+            border-radius: 10px;
+            border: 1px solid var(--card-border);
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .search-input:focus {
+            border-color: var(--accent-blue);
+        }
+
+        .search-btn {
+            background-color: var(--accent-blue);
+            color: #FFFFFF;
+            border: none;
+            padding: 0 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .search-btn:hover {
+            background-color: #2563eb;
         }
 
         .trends-bar {
@@ -95,13 +134,6 @@
         .chip:hover {
             background-color: var(--accent-blue);
             border-color: var(--accent-blue);
-        }
-
-        .search-row {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            width: 100%;
         }
 
         .filter-buttons {
@@ -289,6 +321,12 @@
                 <i class="fa-solid fa-cube"></i> LE.FIND
             </div>
             
+            <!-- CAIXA DE PESQUISA COM BOTÃO -->
+            <div class="search-box">
+                <input type="text" id="searchInput" class="search-input" placeholder="O que deseja procurar? (Ex: Xbox, Air Fryer, iPhone...)">
+                <button class="search-btn" onclick="executarBusca()">Buscar</button>
+            </div>
+
             <div class="trends-bar">
                 <span class="trends-title">Tendências:</span>
                 <div class="trend-chips">
@@ -404,11 +442,19 @@
                 grid.appendChild(card);
             });
 
-            document.getElementById('stats-banner').innerText = `Encontradas ${filtradas.length} lojas. Comparando as melhores ofertas em tempo real.`;
+            document.getElementById('stats-banner').innerText = `Encontradas ${filtradas.length} lojas para "${termo}". Comparando as melhores ofertas em tempo real.`;
         }
 
         function buscarTermo(termo) {
+            document.getElementById('searchInput').value = termo;
             renderizarOfertas(termo, 'todos');
+        }
+
+        function executarBusca() {
+            const input = document.getElementById('searchInput').value.trim();
+            if (input) {
+                renderizarOfertas(input, 'todos');
+            }
         }
 
         function filtrar(tipo) {
@@ -417,6 +463,13 @@
             renderizarOfertas(termoAtual, tipo);
         }
 
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                executarBusca();
+            }
+        });
+
+        // Inicializa com Xbox Series X
         renderizarOfertas('Xbox Series X');
     </script>
 </body>
