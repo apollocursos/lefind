@@ -150,7 +150,7 @@
 
         <!-- BARRA DE PESQUISA -->
         <div class="search-box">
-            <input type="text" id="searchInput" class="search-input" placeholder="O que deseja procurar? (Ex: Air Fryer, iPhone, Tênis...)">
+            <input type="text" id="searchInput" class="search-input" placeholder="O que deseja procurar? (Ex: Air Fryer, Relogio, Tênis...)">
             <button class="search-btn" onclick="executarBuscaGlobal()">Buscar em Tudo</button>
         </div>
 
@@ -190,7 +190,7 @@
                 card.className = 'product-card';
                 card.innerHTML = `
                     <div>
-                        <span class="product-tag ${produto.tagClass}">{produto.store}</span>
+                        <span class="product-tag ${produto.tagClass}">${produto.store}</span>
                         <div class="product-title">${produto.title}</div>
                         <div class="price-range">${produto.price}</div>
                         <div class="brand-info">Plataforma Destaque</div>
@@ -210,36 +210,35 @@
 
             const termoCodificado = encodeURIComponent(termo);
 
-            // Simulação inteligente de faixa de preço e marcas por plataforma para dar a média imediata ao usuário
             const resultadosDinamicos = [
                 { 
                     store: "Amazon (Afiliados)", tagClass: "tag-new", condition: "new",
-                    price: "R$ 189,00 – R$ 549,00", brand: "Ex: Mondial, Philips Walita",
+                    price: "R$ 89,00 – R$ 450,00", brand: "Ex: Lojas Oficiais e Variedades",
                     url: `https://www.amazon.com.br/s?k=${termoCodificado}` 
                 },
                 { 
                     store: "Mercado Livre", tagClass: "tag-new", condition: "new",
-                    price: "R$ 150,00 – R$ 499,00", brand: "Ex: Britânia, Arno, Midea",
+                    price: "R$ 75,00 – R$ 399,00", brand: "Ex: Marcas Nacionais e Importadas",
                     url: `https://lista.mercadolivre.com.br/${termoCodificado}` 
                 },
                 { 
                     store: "Shopee / Lomadee", tagClass: "tag-new", condition: "new",
-                    price: "R$ 119,00 – R$ 380,00", brand: "Ex: Lenoxx, Mondial, genéricas",
+                    price: "R$ 45,00 – R$ 280,00", brand: "Ex: Ofertas Diretas e Fabricantes",
                     url: `https://shopee.com.br/search?keyword=${termoCodificado}` 
                 },
                 { 
                     store: "AliExpress / Awin", tagClass: "tag-new", condition: "new",
-                    price: "R$ 99,00 – R$ 320,00", brand: "Ex: Xiaomi, importados diretos",
+                    price: "R$ 35,00 – R$ 220,00", brand: "Ex: Direto da Fábrica / Internacionais",
                     url: `https://pt.aliexpress.com/wholesale?SearchText=${termoCodificado}` 
                 },
                 { 
                     store: "OLX / Enjoei (Usados)", tagClass: "tag-used", condition: "used",
-                    price: "R$ 70,00 – R$ 220,00", brand: "Ex: Seminovos bem conservados",
+                    price: "R$ 30,00 – R$ 150,00", brand: "Ex: Garimpo e Seminovos",
                     url: `https://www.olx.com.br/brasil?q=${termoCodificado}` 
                 },
                 { 
                     store: "eBay / Impact", tagClass: "tag-multi", condition: "new",
-                    price: "R$ 250,00 – R$ 890,00", brand: "Ex: Marcas internacionais",
+                    price: "R$ 120,00 – R$ 750,00", brand: "Ex: Importados Globais",
                     url: `https://www.ebay.com/sch/i.html?_nkw=${termoCodificado}` 
                 }
             ];
