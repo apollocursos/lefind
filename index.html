@@ -330,7 +330,7 @@
 
         <!-- BARRA DE PESQUISA -->
         <div class="search-box">
-            <input type="text" id="searchInput" class="search-input" placeholder="O que deseja procurar? (Ex: Chupeta, Air Fryer, iPhone, Vídeo Game...)">
+            <input type="text" id="searchInput" class="search-input" placeholder="O que deseja procurar? (Ex: Chupeta, Air Fryer, iPhone, Vídeo Game, Televisão...)">
             <button class="search-btn" onclick="executarBuscaGlobal()">Buscar em Tudo</button>
         </div>
 
@@ -427,9 +427,12 @@
             if (termoLower.includes('chupeta') || termoLower.includes('lapis') || termoLower.includes('caneta') || termoLower.includes('meia') || termoLower.includes('chinelo')) {
                 baseMin = 7.99;
                 baseMax = 45.00;
-            } else if (termoLower.includes('iphone') || termoLower.includes('playstation') || termoLower.includes('xbox') || termoLower.includes('video game') || termoLower.includes('notebook') || termoLower.includes('tv')) {
+            } else if (termoLower.includes('iphone') || termoLower.includes('playstation') || termoLower.includes('xbox') || termoLower.includes('video game') || termoLower.includes('notebook')) {
                 baseMin = 1800.00;
                 baseMax = 5500.00;
+            } else if (termoLower.includes('tv') || termoLower.includes('televisao') || termoLower.includes('televisão') || termoLower.includes('monitor')) {
+                baseMin = 899.00;
+                baseMax = 1899.00;
             } else if (termoLower.includes('air fryer') || termoLower.includes('tenis') || termoLower.includes('smartwatch') || termoLower.includes('cadeira')) {
                 baseMin = 120.00;
                 baseMax = 650.00;
@@ -439,7 +442,7 @@
                 { store: "Shopee / Lomadee", condition: "new", min: baseMin, max: baseMax * 0.85, brand: "Ofertas Diretas", frete: "📦 Frete Grátis", rating: "⭐ 4.9 (4.1k)", best: true },
                 { store: "Amazon (Afiliados)", condition: "new", min: baseMin * 1.15, max: baseMax * 1.1, brand: "Lojas Oficiais", frete: "📦 Frete Prime", rating: "⭐ 4.8 (2.3k)", best: false },
                 { store: "Mercado Livre", condition: "new", min: baseMin * 1.05, max: baseMax, brand: "Nacionais & Importadas", frete: "📦 Frete Full", rating: "⭐ 4.7 (1.8k)", best: false },
-                { store: "AliExpress / Awin", condition: "new", min: baseMin * 0.9, max: baseMax * 0.75, brand: "Direto da Fábrica", frete: "✈️️ Envio Internacional", rating: "⭐ 4.6 (950)", best: false },
+                { store: "AliExpress / Awin", condition: "new", min: baseMin * 0.9, max: baseMax * 0.75, brand: "Direto da Fábrica", frete: "✈ Envio Internacional", rating: "⭐ 4.6 (950)", best: false },
                 { store: "OLX / Enjoei", condition: "used", min: baseMin * 0.6, max: baseMax * 0.5, brand: "Garimpo e Seminovos", frete: "📍 Combinar com Vendedor", rating: "⭐ 4.5 (310)", best: false },
                 { store: "eBay / Impact", condition: "new", min: baseMin * 1.3, max: baseMax * 1.25, brand: "Importados Globais", frete: "📦 Envio Global", rating: "⭐ 4.8 (620)", best: false }
             ];
