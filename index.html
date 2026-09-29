@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Le.Find - Agregador Global Inteligente com Histórico e Afiliados</title>
+    <title>Le.Find - Agregador Global Inteligente com Correção de Ortografia e Afiliados</title>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
@@ -35,7 +35,7 @@
             display: flex;
             gap: 10px;
             justify-content: center;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
         .search-input {
             width: 70%;
@@ -64,6 +64,20 @@
         .search-btn:hover {
             background-color: #2563EB;
         }
+        /* Alerta de Correção de Digitação */
+        .did-you-mean {
+            font-size: 0.9rem;
+            color: #93C5FD;
+            margin-bottom: 20px;
+            min-height: 20px;
+        }
+        .did-you-mean span {
+            color: #34D399;
+            cursor: pointer;
+            text-decoration: underline;
+            font-weight: 600;
+        }
+
         /* Pílulas de Tendências */
         .trending-pills {
             display: flex;
@@ -326,20 +340,23 @@
 
     <div class="lefind-container">
         <h1>Le.Find</h1>
-        <p class="subtitle">Agregador Global Inteligente: Comparação de preços, links afiliados, histórico e alertas.</p>
+        <p class="subtitle">Agregador Global Inteligente: Busca avançada com correção ortográfica e histórico.</p>
 
         <!-- BARRA DE PESQUISA -->
         <div class="search-box">
-            <input type="text" id="searchInput" class="search-input" placeholder="O que deseja procurar? (Ex: Chupeta, Air Fryer, X Box, iPhone 18...)">
+            <input type="text" id="searchInput" class="search-input" placeholder="O que deseja procurar? (Ex: Chupeta, Air Fryer, X Box, iPhone...)">
             <button class="search-btn" onclick="executarBuscaGlobal()">Buscar em Tudo</button>
         </div>
+
+        <!-- MENSAGEM DE CORREÇÃO INTELIGENTE (IA FUZZY SEARCH) -->
+        <div id="didYouMean" class="did-you-mean"></div>
 
         <!-- PÍLULAS DE TENDÊNCIAS -->
         <div class="trending-pills">
             <span style="color: #64748B; font-size: 0.85rem; align-self: center;">Tendências:</span>
             <div class="pill" onclick="buscarPorTermo('Chupeta Infantil')">👶 Chupeta Infantil</div>
             <div class="pill" onclick="buscarPorTermo('Air Fryer')">🔥 Air Fryer</div>
-            <div class="pill" onclick="buscarPorTermo('X Box')">🎮 X Box / Series</div>
+            <div class="pill" onclick="buscarPorTermo('Xbox Series X')">🎮 Xbox Series X</div>
             <div class="pill" onclick="buscarPorTermo('iPhone 15')">📱 iPhone 15</div>
         </div>
 
@@ -387,6 +404,84 @@
         let filtroCondicaoAtual = 'all';
         let produtoSelecionadoAlerta = '';
 
+        // DICIONÁRIO DE CORREÇÃO INTELIGENTE DE ORTOGRAFIA (IA LOCAL DE TERMOS)
+        const dicionarioCorrecao = {
+            "xbox": ["xbox", "x box", "xibox", "istbox", "xbok"],
+            "playstation": ["playstation", "pleyhstacao", "ps5", "ps4", "pleisteison", "pisteixao"],
+            "iphone": ["iphone", "ifone", "aifone", "ifoni", "ipod"],
+            "air fryer": ["air fryer", "airfrier", "erfrier", "air frier", "frigideira eletrica", "airfrai"],
+            "televisao": ["televisao", "tv", "televezao", "monitor", "tela"],
+            "chupeta": ["chupeta", "chupet", "chupetinha", "bico"],
+            "notebook": ["notebook", "notbook", "laptop", "pc gamer", "computador"],
+            "smartphone": ["smartphone", "celular", "telefone", "galaxy", "xiaomi", "motorola"],
+            "tenis": ["tenis", "sapato", "tenis nike", "chuteira", "bota"]
+        };
+
+        function normalizarTexto(texto) {
+            return texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+        }
+
+        // ALGORITMO DE SIMILARIDADE (LEVENSTEIN SIMPLIFICADO PARA CORREÇÃO)
+        function calcularSimilaridade(s1, s2) {
+            let longer = s1;
+            let shorter = s2;
+            if (s1.length < s2.length) {
+                longer = s2;
+                shorter = s1;
+            }
+            let longerLength = longer.length;
+            if (longerLength === 0) {
+                return 1.0;
+            }
+            return (longerLength - editarDistancia(longer, shorter)) / parseFloat(longerLength);
+        }
+
+        function editarDistancia(s1, s2) {
+            s1 = s1.toLowerCase();
+            s2 = s2.toLowerCase();
+            let costs = new Array();
+            for (let i = 0; i <= s1.length; i++) {
+                let lastValue = i;
+                for (let j = 0; j <= s2.length; j++) {
+                    if (i === 0) costs[j] = j;
+                    else {
+                        if (j > 0) {
+                            let newValue = costs[j - 1];
+                            if (s1.charAt(i - 1) !== s2.charAt(j - 1))
+                                newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
+                            costs[j - 1] = lastValue;
+                            lastValue = newValue;
+                        }
+                    }
+                }
+                if (s1.length > 0) costs[s2.length] = lastValue;
+            }
+            return costs[s2.length];
+        }
+
+        function aplicarCorrecaoInteligente(termoDigitado) {
+            let termoNorm = normalizarTexto(termoDigitado);
+            let melhorCorrespondencia = termoDigitado;
+            let maiorScore = 0;
+
+            for (let chaveCorreta in dicionarioCorrecao) {
+                let sinônimos = dicionarioCorrecao[chaveCorreta];
+                for (let sin of sinônimos) {
+                    let score = calcularSimilaridade(termoNorm, sin);
+                    if (score > maiorScore) {
+                        maiorScore = score;
+                        melhorCorrespondencia = chaveCorreta;
+                    }
+                }
+            }
+
+            // Se encontrou com boa precisão (> 0.45) e for diferente, sugere/corrige
+            if (maiorScore > 0.45 && melhorCorrespondencia !== termoNorm) {
+                return { corrigido: melhorCorrespondencia.toUpperCase(), original: termoDigitado, foiCorrigido: true };
+            }
+            return { corrigido: termoDigitado.toUpperCase(), original: termoDigitado, foiCorrigido: false };
+        }
+
         function gerarLinkAfiliado(loja, termo) {
             const query = encodeURIComponent(termo);
             if (loja.includes('Shopee')) {
@@ -420,11 +515,11 @@
 
         // MOTOR DE PREÇOS REAIS E PRECISOS PARA O COMÉRCIO ELETRÓNICO GLOBAL
         function gerarPrecosDinamicos(termo) {
-            const termoLower = termo.toLowerCase().trim();
+            const termoLower = normalizarTexto(termo);
             let baseMin = 150;
             let baseMax = 550;
 
-            const ehTVouMonitor = termoLower.includes('tv') || termoLower.includes('televisao') || termoLower.includes('televisão') || termoLower.includes('monitor');
+            const ehTVouMonitor = termoLower.includes('tv') || termoLower.includes('televisao') || termoLower.includes('monitor');
             const numerosEncontrados = termo.match(/\d+/g);
             let fatorMultiplicador = 1;
 
@@ -436,32 +531,31 @@
             }
 
             // TABELA DE CORRESPONDÊNCIA DE PREÇOS REAIS DO MERCADO
-            if (termoLower.includes('chupeta') || termoLower.includes('lapis') || termoLower.includes('caneta') || termoLower.includes('meia') || termoLower.includes('chinelo') || termoLower.includes('livro')) {
+            if (termoLower.includes('chupeta') || termoLower.includes('lapis') || termoLower.includes('caneta') || termoLower.includes('meia')) {
                 baseMin = 7.99;
                 baseMax = 49.99;
-            } else if (termoLower.includes('iphone') || termoLower.includes('smartphone') || termoLower.includes('celular') || termoLower.includes('galaxy') || termoLower.includes('xiaomi') || termoLower.includes('motorola')) {
+            } else if (termoLower.includes('iphone') || termoLower.includes('smartphone') || termoLower.includes('celular') || termoLower.includes('galaxy') || termoLower.includes('xiaomi')) {
                 baseMin = 1200.00;
                 baseMax = 7800.00;
             } else if (termoLower.includes('xbox') || termoLower.includes('playstation') || termoLower.includes('ps5') || termoLower.includes('ps4') || termoLower.includes('nintendo') || termoLower.includes('switch')) {
                 baseMin = 1800.00;
                 baseMax = 4200.00;
-            } else if (termoLower.includes('notebook') || termoLower.includes('laptop') || termoLower.includes('pc gamer') || termoLower.includes('computador')) {
+            } else if (termoLower.includes('notebook') || termoLower.includes('laptop') || termoLower.includes('pc gamer')) {
                 baseMin = 2200.00;
                 baseMax = 7500.00;
             } else if (ehTVouMonitor) {
                 baseMin = 1100.00 * fatorMultiplicador;
                 baseMax = 3200.00 * fatorMultiplicador;
-            } else if (termoLower.includes('air fryer') || termoLower.includes('microondas') || termoLower.includes('fogao') || termoLower.includes('geladeira')) {
+            } else if (termoLower.includes('air fryer') || termoLower.includes('microondas') || termoLower.includes('geladeira')) {
                 baseMin = 280.00;
                 baseMax = 2400.00;
-            } else if (termoLower.includes('tenis') || termoLower.includes('sapato') || termoLower.includes('chuteira') || termoLower.includes('bota')) {
+            } else if (termoLower.includes('tenis') || termoLower.includes('sapato') || termoLower.includes('bota')) {
                 baseMin = 120.00;
                 baseMax = 650.00;
-            } else if (termoLower.includes('smartwatch') || termoLower.includes('relogio') || termoLower.includes('fone') || termoLower.includes('headset')) {
+            } else if (termoLower.includes('smartwatch') || termoLower.includes('relogio') || termoLower.includes('fone')) {
                 baseMin = 80.00;
                 baseMax = 900.00;
             } else {
-                // Estimativa inteligente padrão para outros produtos gerais
                 baseMin = 120.00;
                 baseMax = 650.00;
             }
@@ -478,6 +572,7 @@
 
         function renderizarInicial(produtosParaMostrar) {
             document.getElementById('economyBanner').style.display = 'none';
+            document.getElementById('didYouMean').innerHTML = '';
             const grid = document.getElementById('productsGrid');
             grid.innerHTML = '';
 
@@ -521,14 +616,26 @@
         }
 
         function executarBuscaGlobal() {
-            const termo = document.getElementById('searchInput').value.trim();
-            if (!termo) {
+            let termoBruto = document.getElementById('searchInput').value.trim();
+            if (!termoBruto) {
                 renderizarInicial(listaProdutosInicial);
                 return;
             }
 
+            // Aplicar Correção Ortográfica Inteligente
+            let resultadoIA = aplicarCorrecaoInteligente(termoBruto);
+            let termoFinal = resultadoIA.corrigido;
+
+            const didYouMeanDiv = document.getElementById('didYouMean');
+            if (resultadoIA.foiCorrigido) {
+                didYouMeanDiv.innerHTML = `Você quis dizer: <span onclick="buscarPorTermo('${resultadoIA.corrigido}')">${resultadoIA.corrigido}</span>? (Corrigido automaticamente)`;
+                document.getElementById('searchInput').value = resultadoIA.corrigido;
+            } else {
+                didYouMeanDiv.innerHTML = '';
+            }
+
             document.getElementById('economyBanner').style.display = 'block';
-            const resultadosDinamicos = gerarPrecosDinamicos(termo);
+            const resultadosDinamicos = gerarPrecosDinamicos(termoFinal);
 
             const grid = document.getElementById('productsGrid');
             grid.innerHTML = '';
@@ -545,14 +652,14 @@
 
             filtrados.forEach(produto => {
                 const precoFormatado = `R$ ${produto.min.toFixed(2).replace('.', ',')} – R$ ${produto.max.toFixed(2).replace('.', ',')}`;
-                const linkAfiliadoReal = gerarLinkAfiliado(produto.store, termo);
+                const linkAfiliadoReal = gerarLinkAfiliado(produto.store, termoFinal);
                 const card = document.createElement('div');
                 card.className = `product-card ${produto.best ? 'best-deal' : ''}`;
                 
                 card.innerHTML = `
                     <div>
                         ${produto.best ? '<span class="badge-best">🏆 Menor Preço Global</span>' : ''}
-                        <div class="product-title">${termo.toUpperCase()} (${produto.brand})</div>
+                        <div class="product-title">${termoFinal} (${produto.brand})</div>
                         <div class="price-range">${precoFormatado}</div>
                         <div class="meta-badges">
                             <span class="meta-tag tag-frete">${produto.frete}</span>
@@ -566,7 +673,7 @@
                     </div>
                     <div class="card-actions">
                         <a href="${linkAfiliadoReal}" target="_blank" class="buy-btn">Ver Ofertas</a>
-                        <button class="alert-btn" onclick="abrirModal('${termo} (${produto.store})')">🔔 Alerta</button>
+                        <button class="alert-btn" onclick="abrirModal('${termoFinal} (${produto.store})')">🔔 Alerta</button>
                     </div>
                 `;
                 grid.appendChild(card);
