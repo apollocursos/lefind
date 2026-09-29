@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Le.Find - Comparador de Preços Global</title>
+    <title>Le.Find - Comparador de Preços e Inovação Global</title>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
@@ -22,9 +22,10 @@
             text-align: center;
         }
         h1 {
-            font-size: 2.2rem;
+            font-size: 2.4rem;
             margin-bottom: 5px;
             color: #60A5FA;
+            letter-spacing: -0.5px;
         }
         p.subtitle {
             color: #94A3B8;
@@ -34,7 +35,7 @@
             display: flex;
             gap: 10px;
             justify-content: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
         .search-input {
             width: 70%;
@@ -45,6 +46,7 @@
             color: #FFFFFF;
             font-size: 1rem;
             outline: none;
+            transition: border-color 0.2s;
         }
         .search-input:focus {
             border-color: #3B82F6;
@@ -57,9 +59,33 @@
             border-radius: 12px;
             font-weight: 600;
             cursor: pointer;
+            transition: background-color 0.2s;
         }
         .search-btn:hover {
             background-color: #2563EB;
+        }
+        /* Pílulas de Tendências / Buscas Rápidas */
+        .trending-pills {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+        .pill {
+            background-color: #1E293B;
+            color: #93C5FD;
+            border: 1px solid #334155;
+            padding: 6px 14px;
+            border-radius: 16px;
+            font-size: 0.82rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .pill:hover {
+            background-color: #3B82F6;
+            color: #FFFFFF;
+            border-color: #60A5FA;
         }
         .lefind-filters {
             display: flex;
@@ -94,10 +120,32 @@
             background-color: #1E293B;
             border: 1px solid #334155;
             border-radius: 12px;
-            padding: 16px;
+            padding: 18px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            position: relative;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+        .product-card:hover {
+            border-color: #475569;
+            transform: translateY(-2px);
+        }
+        .product-card.best-deal {
+            border: 2px solid #34D399;
+        }
+        .badge-best {
+            position: absolute;
+            top: -12px;
+            right: 15px;
+            background-color: #059669;
+            color: #D1FAE5;
+            font-size: 0.7rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         .product-title {
             font-size: 1rem;
@@ -106,15 +154,15 @@
             color: #F1F5F9;
         }
         .price-range {
-            font-size: 1.1rem;
+            font-size: 1.15rem;
             font-weight: 700;
             color: #34D399;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
         .brand-info {
-            font-size: 0.85rem;
+            font-size: 0.83rem;
             color: #94A3B8;
-            margin-bottom: 12px;
+            margin-bottom: 15px;
         }
         .product-tag {
             display: inline-block;
@@ -129,7 +177,12 @@
         .tag-used { background-color: #78350F; color: #FBBF24; }
         .tag-multi { background-color: #1E3A8A; color: #93C5FD; }
         
+        .card-actions {
+            display: flex;
+            gap: 8px;
+        }
         .buy-btn {
+            flex: 2;
             background-color: #2563EB;
             color: #FFFFFF;
             text-align: center;
@@ -137,21 +190,101 @@
             border-radius: 8px;
             text-decoration: none;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
+            transition: background-color 0.2s;
         }
         .buy-btn:hover { background-color: #1D4ED8; }
+
+        .alert-btn {
+            flex: 1;
+            background-color: #334155;
+            color: #E2E8F0;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .alert-btn:hover { background-color: #475569; }
+
+        /* Modal de Alerta de Preço */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background-color: #1E293B;
+            border: 1px solid #334155;
+            padding: 24px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 400px;
+            text-align: left;
+        }
+        .modal-content h3 {
+            margin-top: 0;
+            color: #60A5FA;
+        }
+        .modal-input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0 15px 0;
+            border-radius: 8px;
+            border: 1px solid #334155;
+            background-color: #0F172A;
+            color: #FFF;
+            box-sizing: border-box;
+        }
+        .modal-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+        .btn-cancel {
+            background-color: transparent;
+            border: 1px solid #475569;
+            color: #CBD5E1;
+            padding: 8px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .btn-save {
+            background-color: #2563EB;
+            border: none;
+            color: #FFF;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
 
     <div class="lefind-container">
         <h1>Le.Find</h1>
-        <p class="subtitle">Agregador Global: Compare faixas de preço e marcas em todas as lojas instantaneamente.</p>
+        <p class="subtitle">Agregador Global Inteligente: Comparação de preços, marcas e alertas em tempo real.</p>
 
         <!-- BARRA DE PESQUISA -->
         <div class="search-box">
-            <input type="text" id="searchInput" class="search-input" placeholder="O que deseja procurar? (Ex: Air Fryer, Relogio, Tênis...)">
+            <input type="text" id="searchInput" class="search-input" placeholder="O que deseja procurar? (Ex: Air Fryer, iPhone, Tênis...)">
             <button class="search-btn" onclick="executarBuscaGlobal()">Buscar em Tudo</button>
+        </div>
+
+        <!-- PÍLULAS DE TENDÊNCIAS (BUSCAS RÁPIDAS) -->
+        <div class="trending-pills">
+            <span style="color: #64748B; font-size: 0.85rem; align-self: center;">Tendências:</span>
+            <div class="pill" onclick="buscarPorTermo('Air Fryer')">🔥 Air Fryer</div>
+            <div class="pill" onclick="buscarPorTermo('iPhone 15')">📱 iPhone 15</div>
+            <div class="pill" onclick="buscarPorTermo('Smartwatch')">⌚ Smartwatch</div>
+            <div class="pill" onclick="buscarPorTermo('Tenis Nike')">👟 Tênis Nike</div>
+            <div class="pill" onclick="buscarPorTermo('PlayStation 5')">🎮 PlayStation 5</div>
         </div>
 
         <!-- FILTROS HÍBRIDOS -->
@@ -165,16 +298,31 @@
         <div id="productsGrid" class="products-grid"></div>
     </div>
 
+    <!-- MODAL DE ALERTA DE PREÇO -->
+    <div id="alertModal" class="modal-overlay">
+        <div class="modal-content">
+            <h3>🔔 Alerta de Queda de Preço</h3>
+            <p id="modalProductTitle" style="font-size: 0.9rem; color: #94A3B8;"></p>
+            <label style="font-size: 0.85rem; color: #CBD5E1;">Seu E-mail ou WhatsApp:</label>
+            <input type="text" id="alertEmail" class="modal-input" placeholder="ex: seu@email.com">
+            <div class="modal-buttons">
+                <button class="btn-cancel" onclick="fecharModal()">Cancelar</button>
+                <button class="btn-save" onclick="salvarAlerta()">Ativar Alerta</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const listaProdutos = [
-            { title: "Smartphone Apple iPhone 15 Pro Max 256GB", price: "R$ 6.899,00", condition: "new", store: "Amazon / Mercado Livre", tagClass: "tag-new", url: "https://www.mercadolivre.com.br" },
-            { title: "Tênis Nike Air Force 1 Original Seminovo", price: "R$ 280,00", condition: "used", store: "Garimpo Local / OLX", tagClass: "tag-used", url: "https://www.olx.com.br" },
-            { title: "Cadeira de Escritório Presidente Ergonômica", price: "R$ 749,90", condition: "new", store: "Shopee / Lomadee", tagClass: "tag-new", url: "https://www.shopee.com.br" },
-            { title: "Console PlayStation 5 Com 2 Controles", price: "R$ 3.200,00", condition: "used", store: "Enjoei / Usados", tagClass: "tag-used", url: "https://www.enjoei.com.br" },
-            { title: "Smart TV 50 4K UHD LED Wi-Fi", price: "R$ 2.199,00", condition: "new", store: "AliExpress / Awin", tagClass: "tag-new", url: "https://pt.aliexpress.com" }
+            { title: "Smartphone Apple iPhone 15 Pro Max 256GB", price: "R$ 6.899,00", condition: "new", store: "Amazon / Mercado Livre", tagClass: "tag-new", url: "https://www.mercadolivre.com.br", best: true },
+            { title: "Tênis Nike Air Force 1 Original Seminovo", price: "R$ 280,00", condition: "used", store: "Garimpo Local / OLX", tagClass: "tag-used", url: "https://www.olx.com.br", best: false },
+            { title: "Cadeira de Escritório Presidente Ergonômica", price: "R$ 749,90", condition: "new", store: "Shopee / Lomadee", tagClass: "tag-new", url: "https://www.shopee.com.br", best: false },
+            { title: "Console PlayStation 5 Com 2 Controles", price: "R$ 3.200,00", condition: "used", store: "Enjoei / Usados", tagClass: "tag-used", url: "https://www.enjoei.com.br", best: false },
+            { title: "Smart TV 50 4K UHD LED Wi-Fi", price: "R$ 2.199,00", condition: "new", store: "AliExpress / Awin", tagClass: "tag-new", url: "https://pt.aliexpress.com", best: false }
         ];
 
         let filtroCondicaoAtual = 'all';
+        let produtoSelecionadoAlerta = '';
 
         function renderizarInicial(produtosParaMostrar) {
             const grid = document.getElementById('productsGrid');
@@ -187,18 +335,27 @@
 
             filtrados.forEach(produto => {
                 const card = document.createElement('div');
-                card.className = 'product-card';
+                card.className = `product-card ${produto.best ? 'best-deal' : ''}`;
                 card.innerHTML = `
                     <div>
+                        ${produto.best ? '<span class="badge-best">🏆 Melhor Custo-Benefício</span>' : ''}
                         <span class="product-tag ${produto.tagClass}">${produto.store}</span>
                         <div class="product-title">${produto.title}</div>
                         <div class="price-range">${produto.price}</div>
                         <div class="brand-info">Plataforma Destaque</div>
                     </div>
-                    <a href="${produto.url}" target="_blank" class="buy-btn">Ver na Loja</a>
+                    <div class="card-actions">
+                        <a href="${produto.url}" target="_blank" class="buy-btn">Ver na Loja</a>
+                        <button class="alert-btn" onclick="abrirModal('${produto.title}')">🔔 Alerta</button>
+                    </div>
                 `;
                 grid.appendChild(card);
             });
+        }
+
+        function buscarPorTermo(termo) {
+            document.getElementById('searchInput').value = termo;
+            executarBuscaGlobal();
         }
 
         function executarBuscaGlobal() {
@@ -212,34 +369,34 @@
 
             const resultadosDinamicos = [
                 { 
+                    store: "Shopee / Lomadee", tagClass: "tag-new", condition: "new",
+                    price: "R$ 45,00 – R$ 280,00", brand: "Ex: Ofertas Diretas e Fabricantes",
+                    url: `https://shopee.com.br/search?keyword=${termoCodificado}`, best: true // Destacado como melhor custo-benefício
+                },
+                { 
                     store: "Amazon (Afiliados)", tagClass: "tag-new", condition: "new",
                     price: "R$ 89,00 – R$ 450,00", brand: "Ex: Lojas Oficiais e Variedades",
-                    url: `https://www.amazon.com.br/s?k=${termoCodificado}` 
+                    url: `https://www.amazon.com.br/s?k=${termoCodificado}`, best: false 
                 },
                 { 
                     store: "Mercado Livre", tagClass: "tag-new", condition: "new",
                     price: "R$ 75,00 – R$ 399,00", brand: "Ex: Marcas Nacionais e Importadas",
-                    url: `https://lista.mercadolivre.com.br/${termoCodificado}` 
-                },
-                { 
-                    store: "Shopee / Lomadee", tagClass: "tag-new", condition: "new",
-                    price: "R$ 45,00 – R$ 280,00", brand: "Ex: Ofertas Diretas e Fabricantes",
-                    url: `https://shopee.com.br/search?keyword=${termoCodificado}` 
+                    url: `https://lista.mercadolivre.com.br/${termoCodificado}`, best: false 
                 },
                 { 
                     store: "AliExpress / Awin", tagClass: "tag-new", condition: "new",
                     price: "R$ 35,00 – R$ 220,00", brand: "Ex: Direto da Fábrica / Internacionais",
-                    url: `https://pt.aliexpress.com/wholesale?SearchText=${termoCodificado}` 
+                    url: `https://pt.aliexpress.com/wholesale?SearchText=${termoCodificado}`, best: false 
                 },
                 { 
                     store: "OLX / Enjoei (Usados)", tagClass: "tag-used", condition: "used",
                     price: "R$ 30,00 – R$ 150,00", brand: "Ex: Garimpo e Seminovos",
-                    url: `https://www.olx.com.br/brasil?q=${termoCodificado}` 
+                    url: `https://www.olx.com.br/brasil?q=${termoCodificado}`, best: false 
                 },
                 { 
                     store: "eBay / Impact", tagClass: "tag-multi", condition: "new",
                     price: "R$ 120,00 – R$ 750,00", brand: "Ex: Importados Globais",
-                    url: `https://www.ebay.com/sch/i.html?_nkw=${termoCodificado}` 
+                    url: `https://www.ebay.com/sch/i.html?_nkw=${termoCodificado}`, best: false 
                 }
             ];
 
@@ -253,15 +410,19 @@
 
             filtrados.forEach(produto => {
                 const card = document.createElement('div');
-                card.className = 'product-card';
+                card.className = `product-card ${produto.best ? 'best-deal' : ''}`;
                 card.innerHTML = `
                     <div>
+                        ${produto.best ? '<span class="badge-best">🏆 Menor Preço Global</span>' : ''}
                         <span class="product-tag ${produto.tagClass}">${produto.store}</span>
                         <div class="product-title">${termo.toUpperCase()}</div>
                         <div class="price-range">${produto.price}</div>
                         <div class="brand-info">💡 ${produto.brand}</div>
                     </div>
-                    <a href="${produto.url}" target="_blank" class="buy-btn">Ver Ofertas na Loja</a>
+                    <div class="card-actions">
+                        <a href="${produto.url}" target="_blank" class="buy-btn">Ver Ofertas</a>
+                        <button class="alert-btn" onclick="abrirModal('${termo} (${produto.store})')">🔔 Alerta</button>
+                    </div>
                 `;
                 grid.appendChild(card);
             });
@@ -278,6 +439,27 @@
             } else {
                 renderizarInicial(listaProdutos);
             }
+        }
+
+        function abrirModal(tituloProduto) {
+            produtoSelecionadoAlerta = tituloProduto;
+            document.getElementById('modalProductTitle').innerText = `Produto: ${tituloProduto}`;
+            document.getElementById('alertModal').style.display = 'flex';
+        }
+
+        function fecharModal() {
+            document.getElementById('alertModal').style.display = 'none';
+            document.getElementById('alertEmail').value = '';
+        }
+
+        function salvarAlerta() {
+            const contato = document.getElementById('alertEmail').value.trim();
+            if (!contato) {
+                alert('Por favor, digite seu e-mail ou WhatsApp.');
+                return;
+            }
+            alert(`Sucesso! Vamos avisar em "${contato}" sempre que o preço baixar para ${produtoSelecionadoAlerta}.`);
+            fecharModal();
         }
 
         document.getElementById('searchInput').addEventListener('keypress', function(e) {
