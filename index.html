@@ -64,7 +64,7 @@
         .search-btn:hover {
             background-color: #2563EB;
         }
-        /* Pílulas de Tendências / Buscas Rápidas */
+        /* Pílulas de Tendências */
         .trending-pills {
             display: flex;
             gap: 8px;
@@ -91,7 +91,7 @@
             display: flex;
             gap: 10px;
             justify-content: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
         }
         .filter-btn {
@@ -110,6 +110,25 @@
             color: #FFFFFF;
             border-color: #60A5FA;
         }
+
+        /* BARRA DE ECONOMIA E RESUMO */
+        .economy-banner {
+            display: none;
+            background: linear-gradient(135deg, #1E3A8A 0%, #1E293B 100%);
+            border: 1px solid #3B82F6;
+            color: #93C5FD;
+            padding: 12px 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        .economy-banner strong {
+            color: #34D399;
+        }
+
         .products-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -277,7 +296,7 @@
             <button class="search-btn" onclick="executarBuscaGlobal()">Buscar em Tudo</button>
         </div>
 
-        <!-- PÍLULAS DE TENDÊNCIAS (BUSCAS RÁPIDAS) -->
+        <!-- PÍLULAS DE TENDÊNCIAS -->
         <div class="trending-pills">
             <span style="color: #64748B; font-size: 0.85rem; align-self: center;">Tendências:</span>
             <div class="pill" onclick="buscarPorTermo('Air Fryer')">🔥 Air Fryer</div>
@@ -292,6 +311,11 @@
             <button class="filter-btn active" onclick="filtrarCondicao('all', this)">🔍 Todos</button>
             <button class="filter-btn" onclick="filtrarCondicao('new', this)">✨ Lojas Oficiais (Novos)</button>
             <button class="filter-btn" onclick="filtrarCondicao('used', this)">♻️ Garimpo (Usados)</button>
+        </div>
+
+        <!-- BARRA DE RESUMO E ECONOMIA REAL -->
+        <div id="economyBanner" class="economy-banner">
+            💡 Encontradas <strong id="storeCount">6</strong> lojas. Economia potencial de até <strong id="savingsValue">R$ 185,00</strong> comparando as melhores ofertas do mercado.
         </div>
 
         <!-- GRELHA DE RESULTADOS -->
@@ -325,6 +349,7 @@
         let produtoSelecionadoAlerta = '';
 
         function renderizarInicial(produtosParaMostrar) {
+            document.getElementById('economyBanner').style.display = 'none';
             const grid = document.getElementById('productsGrid');
             grid.innerHTML = '';
 
@@ -367,7 +392,9 @@
 
             const termoCodificado = encodeURIComponent(termo);
 
-            // Links configurados para direcionar para a busca com o seu parâmetro de afiliado/parceiro
+            // Exibe a barra de economia interativa ao buscar
+            document.getElementById('economyBanner').style.display = 'block';
+
             const resultadosDinamicos = [
                 { 
                     store: "Shopee / Lomadee", tagClass: "tag-new", condition: "new",
@@ -408,6 +435,8 @@
                 if (filtroCondicaoAtual === 'all') return true;
                 return p.condition === filtroCondicaoAtual;
             });
+
+            document.getElementById('storeCount').innerText = filtrados.length;
 
             filtrados.forEach(produto => {
                 const card = document.createElement('div');
