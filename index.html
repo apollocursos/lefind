@@ -3,263 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Le.Find - Motor de comparação de preços e ofertas globais</title>
-    <meta name="google-site-verification" content="C6zvBK7Uc4u-2kfo9SMO16AM4ZnawdpJmzie1EbztWM" />
-    <meta name="lomadee" content="2324685" />
-
-    <!-- CONFIGURAÇÕES PWA -->
-    <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#0F172A" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="Le.Find" />
-    <link rel="apple-touch-icon" href="/icon-192.png" />
-
-    <!-- ESTILOS DO MOTOR HÍBRIDO -->
+    <title>Le.Find - Motor de Comparação de Preços</title>
     <style>
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: Arial, sans-serif;
             background-color: #0F172A;
-            color: #F8FAFC;
+            color: #FFFFFF;
             margin: 0;
             padding: 20px;
-        }
-        .lefind-container {
-            max-width: 900px;
-            margin: 0 auto;
             text-align: center;
         }
-        h1 {
-            font-size: 1.8rem;
-            margin-bottom: 5px;
-            color: #60A5FA;
-        }
-        p.subtitle {
-            color: #94A3B8;
-            margin-bottom: 25px;
-        }
-        /* Barra de Pesquisa */
+        h1 { color: #60A5FA; }
         .search-box {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-bottom: 20px;
+            margin: 20px 0;
         }
-        .search-input {
-            width: 70%;
-            padding: 14px 18px;
-            border-radius: 12px;
+        input {
+            padding: 12px;
+            width: 60%;
+            border-radius: 8px;
             border: 1px solid #334155;
-            background-color: #1E293B;
-            color: #FFFFFF;
+            background: #1E293B;
+            color: #FFF;
             font-size: 1rem;
-            outline: none;
-            transition: border-color 0.2s;
         }
-        .search-input:focus {
-            border-color: #3B82F6;
-        }
-        .search-btn {
-            background-color: #3B82F6;
-            color: #FFFFFF;
+        button {
+            padding: 12px 20px;
+            border-radius: 8px;
             border: none;
-            padding: 0 24px;
-            border-radius: 12px;
-            font-weight: 600;
+            background: #3B82F6;
+            color: #FFF;
+            font-weight: bold;
             cursor: pointer;
-            transition: background-color 0.2s;
         }
-        .search-btn:hover {
-            background-color: #2563EB;
-        }
-        /* Filtros */
-        .lefind-filters {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            margin-bottom: 30px;
-            flex-wrap: wrap;
-        }
-        .filter-btn {
-            background-color: #1E293B;
-            color: #CBD5E1;
-            border: 1px solid #334155;
-            padding: 8px 16px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: 500;
-            font-size: 0.9rem;
-            transition: all 0.2s ease;
-        }
-        .filter-btn.active, .filter-btn:hover {
-            background-color: #3B82F6;
-            color: #FFFFFF;
-            border-color: #60A5FA;
-        }
-        /* Grelha de Produtos */
-        .products-grid {
+        .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
             gap: 20px;
+            margin-top: 30px;
             text-align: left;
         }
-        .product-card {
-            background-color: #1E293B;
+        .card {
+            background: #1E293B;
             border: 1px solid #334155;
-            border-radius: 12px;
             padding: 16px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: transform 0.2s;
+            border-radius: 10px;
         }
-        .product-card:hover {
-            transform: translateY(-3px);
-            border-color: #475569;
-        }
-        .product-title {
-            font-size: 0.95rem;
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: #F1F5F9;
-            height: 40px;
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-        }
-        .product-price {
-            font-size: 1.25rem;
-            font-weight: 700;
+        .price {
             color: #34D399;
-            margin-bottom: 12px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin: 10px 0;
         }
-        .product-tag {
-            display: inline-block;
-            font-size: 0.75rem;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-weight: 600;
-            margin-bottom: 12px;
-            width: fit-content;
-        }
-        .tag-new { background-color: #065F46; color: #34D399; }
-        .tag-used { background-color: #78350F; color: #FBBF24; }
-        
-        .buy-btn {
-            background-color: #2563EB;
-            color: #FFFFFF;
+        .btn-buy {
+            display: block;
+            background: #2563EB;
+            color: #FFF;
             text-align: center;
-            padding: 10px;
-            border-radius: 8px;
+            padding: 8px;
             text-decoration: none;
-            font-weight: 600;
-            font-size: 0.9rem;
-            transition: background-color 0.2s;
+            border-radius: 6px;
+            font-weight: bold;
         }
-        .buy-btn:hover { background-color: #1D4ED8; }
     </style>
 </head>
 <body>
 
-    <div class="lefind-container">
-        <h1>Le.Find</h1>
-        <p class="subtitle">Encontre o melhor preço entre produtos novos e usados em segundos.</p>
+    <h1>Le.Find</h1>
+    <p>O seu agregador inteligente de novos e usados.</p>
 
-        <!-- BARRA DE PESQUISA -->
-        <div class="search-box">
-            <input type="text" id="searchInput" class="search-input" placeholder="O que procura hoje? (Ex: iPhone, Ténis, Cadeira...)">
-            <button class="search-btn" onclick="executarBusca()">Pesquisar</button>
+    <div class="search-box">
+        <input type="text" id="termo" placeholder="O que procura hoje?">
+        <button onclick="pesquisar()">Pesquisar</button>
+    </div>
+
+    <div id="resultados" class="grid">
+        <div class="card">
+            <h3>iPhone 15 Pro Max</h3>
+            <div class="price">R$ 6.899,00</div>
+            <a href="#" class="btn-buy">Ver Oferta</a>
         </div>
-
-        <!-- FILTROS HÍBRIDOS -->
-        <div class="lefind-filters">
-            <button class="filter-btn active" onclick="filtrarProdutos('all', this)">🔍 Todos</button>
-            <button class="filter-btn" onclick="filtrarProdutos('new', this)">✨ Só Novos</button>
-            <button class="filter-btn" onclick="filtrarProdutos('used', this)">♻️ Só Usados</button>
-        </div>
-
-        <!-- GRELHA DE RESULTADOS -->
-        <div id="productsGrid" class="products-grid">
-            <!-- Os produtos aparecerão aqui -->
+        <div class="card">
+            <h3>Tênis Nike Air Force (Seminovo)</h3>
+            <div class="price">R$ 280,00</div>
+            <a href="#" class="btn-buy">Ver Oferta</a>
         </div>
     </div>
 
     <script>
-        const baseProdutos = [
-            { title: "Smartphone Apple iPhone 15 Pro Max 256GB", price: "R$ 6.899,00", condition: "new", tagText: "Novo (Lojas)", tagClass: "tag-new", url: "#" },
-            { title: "Ténis Nike Air Force 1 Original Seminovo", price: "R$ 280,00", condition: "used", tagText: "Usado / Garimpo", tagClass: "tag-used", url: "#" },
-            { title: "Cadeira de Escritório Presidente Ergonómica", price: "R$ 749,90", condition: "new", tagText: "Novo (Lojas)", tagClass: "tag-new", url: "#" },
-            { title: "Consola PlayStation 5 Com 2 comandos (Pouco uso)", price: "R$ 3.200,00", condition: "used", tagText: "Usado / Garimpo", tagClass: "tag-used", url: "#" }
-        ];
-
-        let filtroAtual = 'all';
-
-        function renderizarProdutos(filtro = 'all', termoBusca = '') {
-            const grid = document.getElementById('productsGrid');
-            grid.innerHTML = '';
-
-            const termoNormalizado = termoBusca.toLowerCase().trim();
-
-            const filtrados = baseProdutos.filter(produto => {
-                const passaFiltroCondicao = (filtro === 'all') || (produto.condition === filtro);
-                const passaBusca = termoNormalizado === '' || produto.title.toLowerCase().includes(termoNormalizado);
-                return passaFiltroCondicao && passaBusca;
-            });
-
-            if (filtrados.length === 0) {
-                grid.innerHTML = '<p style="color: #94A3B8; grid-column: 1/-1; text-align:center;">Nenhum produto encontrado para esta busca.</p>';
-                return;
-            }
-
-            filtrados.forEach(produto => {
-                const card = document.createElement('div');
-                card.className = 'product-card';
-                card.innerHTML = `
-                    <div>
-                        <span class="product-tag ${produto.tagClass}">${produto.tagText}</span>
-                        <div class="product-title">${produto.title}</div>
-                        <div class="product-price">${produto.price}</div>
-                    </div>
-                    <a href="${produto.url}" target="_blank" class="buy-btn">Ver Oferta</a>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        function filtrarProdutos(tipo, elemento) {
-            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-            elemento.classList.add('active');
-            filtroAtual = tipo;
-            
-            const termo = document.getElementById('searchInput').value;
-            renderizarProdutos(filtroAtual, termo);
-        }
-
-        function executarBusca() {
-            const termo = document.getElementById('searchInput').value;
-            renderizarProdutos(filtroAtual, termo);
-        }
-
-        document.getElementById('searchInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                executarBusca();
-            }
-        });
-
-        window.onload = () => {
-            renderizarProdutos('all', '');
-        };
-    </script>
-
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(reg => console.log('Trabalhador de serviço registrado:', reg))
-                    .catch(err => console.log('Erro no Trabalhador de Serviços:', err));
-            });
+        function pesquisar() {
+            const query = document.getElementById('termo').value;
+            alert("A pesquisar por: " + query);
         }
     </script>
+
 </body>
 </html>
