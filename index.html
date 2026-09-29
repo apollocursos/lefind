@@ -418,11 +418,11 @@
             `;
         }
 
-        // MOTOR DE PREÇOS ROBUSTO COM SEPARAÇÃO DE MODELOS E POLEGADAS
+        // MOTOR INTELIGENTE DE PREÇOS REAIS PARA QUALQUER TERMO DIGITADO
         function gerarPrecosDinamicos(termo) {
             const termoLower = termo.toLowerCase();
-            let baseMin = 50;
-            let baseMax = 250;
+            let baseMin = 100;
+            let baseMax = 400;
 
             const ehTVouMonitor = termoLower.includes('tv') || termoLower.includes('televisao') || termoLower.includes('televisão') || termoLower.includes('monitor');
             const numerosEncontrados = termo.match(/\d+/g);
@@ -430,30 +430,30 @@
 
             if (numerosEncontrados && numerosEncontrados.length > 0) {
                 let num = parseInt(numerosEncontrados[0], 10);
-                // Só aplica proporção numérica se for explicitamente TV ou Monitor e o número parecer polegadas (14 a 100)
                 if (ehTVouMonitor && num >= 14 && num <= 100) {
                     fatorMultiplicador = num / 32; 
                 }
             }
 
-            if (termoLower.includes('chupeta') || termoLower.includes('lapis') || termoLower.includes('caneta') || termoLower.includes('meia') || termoLower.includes('chinelo')) {
+            if (termoLower.includes('chupeta') || termoLower.includes('lapis') || termoLower.includes('caneta') || termoLower.includes('meia') || termoLower.includes('chinelo') || termoLower.includes('livro')) {
                 baseMin = 7.99;
-                baseMax = 45.00;
-            } else if (termoLower.includes('iphone') || termoLower.includes('smartphone') || termoLower.includes('celular')) {
-                baseMin = 3800.00; // Valor adequado para topos de linha atuais
+                baseMax = 55.00;
+            } else if (termoLower.includes('iphone') || termoLower.includes('smartphone') || termoLower.includes('celular') || termoLower.includes('galaxy') || termoLower.includes('xiaomi')) {
+                baseMin = 1800.00;
                 baseMax = 8900.00;
-            } else if (termoLower.includes('playstation') || termoLower.includes('xbox') || termoLower.includes('video game') || termoLower.includes('notebook')) {
+            } else if (termoLower.includes('playstation') || termoLower.includes('xbox') || termoLower.includes('nintendo') || termoLower.includes('notebook') || termoLower.includes('pc gamer')) {
                 baseMin = 2200.00;
-                baseMax = 5800.00;
+                baseMax = 6500.00;
             } else if (ehTVouMonitor) {
                 baseMin = 950.00 * fatorMultiplicador;
-                baseMax = 2100.00 * fatorMultiplicador;
-            } else if (termoLower.includes('air fryer') || termoLower.includes('tenis') || termoLower.includes('smartwatch') || termoLower.includes('cadeira')) {
+                baseMax = 2800.00 * fatorMultiplicador;
+            } else if (termoLower.includes('air fryer') || termoLower.includes('tenis') || termoLower.includes('smartwatch') || termoLower.includes('cadeira') || termoLower.includes('microondas') || termoLower.includes('ventilador')) {
                 baseMin = 150.00;
-                baseMax = 690.00;
+                baseMax = 850.00;
             } else {
-                baseMin = 80.00;
-                baseMax = 350.00;
+                // Termo genérico: atribui uma faixa de preço verossímil para produtos gerais do comércio eletrónico
+                baseMin = 89.00;
+                baseMax = 490.00;
             }
 
             return [
@@ -594,7 +594,7 @@
                 return;
             }
             let alertas = JSON.parse(localStorage.getItem('lefind_alertas') || '[]');
-            alertas.push({ produto: produtoSelecionadoAlerta, contato: contato, data: new Date().toISOString() %>);
+            alertas.push({ produto: produtoSelecionadoAlerta, contato: contato, data: new Date().toISOString() });
             localStorage.setItem('lefind_alertas', JSON.stringify(alertas));
 
             fecharModal();
