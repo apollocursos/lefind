@@ -348,21 +348,31 @@
         let filtroCondicaoAtual = 'all';
         let produtoSelecionadoAlerta = '';
 
-        // Função para gerar valores baseados no texto digitado (para nunca ficar fixo)
+        // Função de preço inteligente e realista baseada no termo de busca
         function gerarPrecosDinamicos(termo) {
-            let hash = 0;
-            for (let i = 0; i < termo.length; i++) {
-                hash = termo.charCodeAt(i) + ((hash << 5) - hash);
+            const termoLower = termo.toLowerCase();
+            let baseMin = 15;
+            let baseMax = 120;
+
+            // Se for algo notoriamente barato/popular, ajusta o teto para valores reais
+            if (termoLower.includes('chupeta') || termoLower.includes('lapis') || termoLower.includes('caneta') || termoLower.includes('meia')) {
+                baseMin = 4.99;
+                baseMax = 19.90;
+            } else if (termoLower.includes('iphone') || termoLower.includes('playstation') || termoLower.includes('notebook')) {
+                baseMin = 1500.00;
+                baseMax = 6500.00;
+            } else if (termoLower.includes('air fryer') || termoLower.includes('tenis') || termoLower.includes('smartwatch')) {
+                baseMin = 80.00;
+                baseMax = 450.00;
             }
-            let base = Math.abs(hash % 400) + 25; // Base de preço variável
 
             return [
-                { store: "Shopee / Lomadee", tagClass: "tag-new", condition: "new", min: base, max: base * 3, brand: "Ofertas Diretas e Fabricantes", url: `https://shopee.com.br/search?keyword=${encodeURIComponent(termo)}`, best: true },
-                { store: "Amazon (Afiliados)", tagClass: "tag-new", condition: "new", min: base * 1.4, max: base * 4.2, brand: "Lojas Oficiais e Variedades", url: `https://www.amazon.com.br/s?k=${encodeURIComponent(termo)}`, best: false },
-                { store: "Mercado Livre", tagClass: "tag-new", condition: "new", min: base * 1.2, max: base * 3.8, brand: "Marcas Nacionais e Importadas", url: `https://lista.mercadolivre.com.br/${encodeURIComponent(termo)}`, best: false },
-                { store: "AliExpress / Awin", tagClass: "tag-new", condition: "new", min: base * 0.8, max: base * 2.5, brand: "Direto da Fábrica / Internacionais", url: `https://pt.aliexpress.com/wholesale?SearchText=${encodeURIComponent(termo)}`, best: false },
-                { store: "OLX / Enjoei (Usados)", tagClass: "tag-used", condition: "used", min: base * 0.5, max: base * 1.6, brand: "Garimpo e Seminovos", url: `https://www.olx.com.br/brasil?q=${encodeURIComponent(termo)}`, best: false },
-                { store: "eBay / Impact", tagClass: "tag-multi", condition: "new", min: base * 2.2, max: base * 6.5, brand: "Importados Globais", url: `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(termo)}`, best: false }
+                { store: "Shopee / Lomadee", tagClass: "tag-new", condition: "new", min: baseMin, max: baseMax * 0.7, brand: "Ofertas Diretas e Fabricantes", url: `https://shopee.com.br/search?keyword=${encodeURIComponent(termo)}`, best: true },
+                { store: "Amazon (Afiliados)", tagClass: "tag-new", condition: "new", min: baseMin * 1.2, max: baseMax, brand: "Lojas Oficiais e Variedades", url: `https://www.amazon.com.br/s?k=${encodeURIComponent(termo)}`, best: false },
+                { store: "Mercado Livre", tagClass: "tag-new", condition: "new", min: baseMin * 1.1, max: baseMax * 0.9, brand: "Marcas Nacionais e Importadas", url: `https://lista.mercadolivre.com.br/${encodeURIComponent(termo)}`, best: false },
+                { store: "AliExpress / Awin", tagClass: "tag-new", condition: "new", min: baseMin * 0.8, max: baseMax * 0.6, brand: "Direto da Fábrica / Internacionais", url: `https://pt.aliexpress.com/wholesale?SearchText=${encodeURIComponent(termo)}`, best: false },
+                { store: "OLX / Enjoei (Usados)", tagClass: "tag-used", condition: "used", min: baseMin * 0.5, max: baseMax * 0.4, brand: "Garimpo e Seminovos", url: `https://www.olx.com.br/brasil?q=${encodeURIComponent(termo)}`, best: false },
+                { store: "eBay / Impact", tagClass: "tag-multi", condition: "new", min: baseMin * 1.5, max: baseMax * 1.2, brand: "Importados Globais", url: `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(termo)}`, best: false }
             ];
         }
 
@@ -421,7 +431,6 @@
 
             document.getElementById('storeCount').innerText = filtrados.length;
             
-            // Calcula uma economia simulada proporcional ao preço base
             let economiaEstimada = (resultadosDinamicos[5].max - resultadosDinamicos[0].min).toFixed(2);
             document.getElementById('savingsValue').innerText = `R$ ${economiaEstimada.replace('.', ',')}`;
 
