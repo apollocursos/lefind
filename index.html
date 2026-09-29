@@ -3,735 +3,475 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Le.Find - Agregador Global Inteligente com Correção de Ortografia e Afiliados</title>
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-    <meta http-equiv="Pragma" content="no-cache" />
-    <meta http-equiv="Expires" content="0" />
-    
+    <title>LE.FIND - Agregador Global de Ofertas</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: #0F172A;
-            color: #F8FAFC;
+        :root {
+            --bg-dark: #0b0f19;
+            --card-bg: #111827;
+            --card-border: #1f2937;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-yellow: #f59e0b;
+            --text-main: #f9fafb;
+            --text-muted: #9ca3af;
+        }
+
+        * {
+            box-sizing: border-box;
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        .lefind-container {
-            max-width: 1100px;
-            margin: 0 auto;
-            text-align: center;
-        }
-        h1 {
-            font-size: 2.6rem;
-            margin-bottom: 5px;
-            color: #60A5FA;
-            letter-spacing: -0.5px;
-        }
-        p.subtitle {
-            color: #94A3B8;
-            margin-bottom: 25px;
-        }
-        .search-box {
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
             display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        aside {
+            width: 280px;
+            background-color: #0f172a;
+            border-right: 1px solid var(--card-border);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            gap: 15px;
+        }
+
+        .logo-area {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--accent-blue);
+            display: flex;
+            align-items: center;
             gap: 10px;
-            justify-content: center;
             margin-bottom: 10px;
         }
-        .search-input {
-            width: 70%;
-            padding: 14px 18px;
-            border-radius: 12px;
-            border: 1px solid #334155;
-            background-color: #1E293B;
-            color: #FFFFFF;
-            font-size: 1rem;
-            outline: none;
-            transition: border-color 0.2s;
+
+        .nav-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            overflow-y: auto;
+            flex-grow: 1;
         }
-        .search-input:focus {
-            border-color: #3B82F6;
-        }
-        .search-btn {
-            background-color: #3B82F6;
-            color: #FFFFFF;
-            border: none;
-            padding: 0 24px;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        .search-btn:hover {
-            background-color: #2563EB;
-        }
-        /* Alerta de Correção de Digitação */
-        .did-you-mean {
+
+        .nav-links li a {
+            color: var(--text-muted);
+            text-decoration: none;
             font-size: 0.9rem;
-            color: #93C5FD;
-            margin-bottom: 20px;
-            min-height: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 10px;
+            border-radius: 6px;
+            transition: all 0.2s;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
-        .did-you-mean span {
-            color: #34D399;
-            cursor: pointer;
-            text-decoration: underline;
+
+        .nav-links li a:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: var(--text-main);
+        }
+
+        /* Main Content */
+        main {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+
+        header {
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--card-border);
+            background-color: rgba(11, 15, 25, 0.8);
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .trends-bar {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 0.9rem;
+        }
+
+        .trends-title {
+            color: var(--text-muted);
             font-weight: 600;
         }
 
-        /* Pílulas de Tendências */
-        .trending-pills {
-            display: flex;
-            gap: 8px;
-            justify-content: center;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-        }
-        .pill {
-            background-color: #1E293B;
-            color: #93C5FD;
-            border: 1px solid #334155;
-            padding: 6px 14px;
-            border-radius: 16px;
-            font-size: 0.82rem;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .pill:hover {
-            background-color: #3B82F6;
-            color: #FFFFFF;
-            border-color: #60A5FA;
-        }
-        .lefind-filters {
+        .trend-chips {
             display: flex;
             gap: 10px;
-            justify-content: center;
-            margin-bottom: 20px;
             flex-wrap: wrap;
         }
-        .filter-btn {
-            background-color: #1E293B;
-            color: #CBD5E1;
-            border: 1px solid #334155;
-            padding: 8px 16px;
+
+        .chip {
+            background-color: var(--card-border);
+            color: var(--text-main);
+            padding: 5px 12px;
             border-radius: 20px;
+            font-size: 0.85rem;
             cursor: pointer;
-            font-weight: 500;
-            font-size: 0.9rem;
-            transition: all 0.2s ease;
-        }
-        .filter-btn.active, .filter-btn:hover {
-            background-color: #3B82F6;
-            color: #FFFFFF;
-            border-color: #60A5FA;
+            transition: background 0.2s;
+            border: none;
         }
 
-        /* BARRA DE RESUMO E ECONOMIA REAL */
-        .economy-banner {
-            display: none;
-            background: linear-gradient(135deg, #1E3A8A 0%, #1E293B 100%);
-            border: 1px solid #3B82F6;
-            color: #93C5FD;
+        .chip:hover {
+            background-color: var(--accent-blue);
+        }
+
+        .search-row {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .filter-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .filter-btn {
+            background-color: var(--card-bg);
+            color: var(--text-main);
+            border: 1px solid var(--card-border);
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .filter-btn:hover, .filter-btn.active {
+            border-color: var(--accent-blue);
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+
+        .stats-banner {
+            margin: 20px 30px 0 30px;
+            background-color: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
             padding: 12px 20px;
             border-radius: 10px;
-            margin-bottom: 25px;
-            font-size: 0.95rem;
-            font-weight: 500;
             text-align: center;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .economy-banner strong {
-            color: #34D399;
+            font-size: 0.95rem;
+            color: #93c5fd;
         }
 
-        .products-grid {
+        .results-grid {
+            padding: 20px 30px;
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 20px;
-            text-align: left;
         }
-        .product-card {
-            background-color: #1E293B;
-            border: 1px solid #334155;
+
+        .offer-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--card-border);
             border-radius: 12px;
-            padding: 18px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            gap: 15px;
             position: relative;
             transition: transform 0.2s, border-color 0.2s;
         }
-        .product-card:hover {
-            border-color: #475569;
+
+        .offer-card:hover {
+            border-color: var(--text-muted);
             transform: translateY(-2px);
         }
-        .product-card.best-deal {
-            border: 2px solid #34D399;
-        }
-        .badge-best {
-            position: absolute;
-            top: -12px;
-            right: 15px;
-            background-color: #059669;
-            color: #D1FAE5;
-            font-size: 0.7rem;
-            font-weight: 700;
-            padding: 3px 8px;
-            border-radius: 6px;
-            text-transform: uppercase;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-        .product-title {
-            font-size: 1.05rem;
-            font-weight: 600;
-            margin-bottom: 6px;
-            color: #F1F5F9;
-        }
-        .price-range {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #34D399;
-            margin-bottom: 4px;
-        }
-        .meta-badges {
-            display: flex;
-            gap: 6px;
-            margin-bottom: 10px;
-            flex-wrap: wrap;
-        }
-        .meta-tag {
-            font-size: 0.72rem;
-            padding: 3px 7px;
-            border-radius: 4px;
-            font-weight: 600;
-            background-color: #334155;
-            color: #E2E8F0;
-        }
-        .tag-frete { background-color: #065F46; color: #34D399; }
-        .tag-rating { background-color: #78350F; color: #FBBF24; }
 
-        .brand-info {
-            font-size: 0.82rem;
-            color: #94A3B8;
-            margin-bottom: 12px;
+        .offer-card.best-deal {
+            border-color: var(--accent-green);
         }
-        
-        /* GRÁFICO DE HISTÓRICO DE PREÇOS (SVG) */
-        .history-box {
-            background-color: #0F172A;
-            border: 1px solid #334155;
-            border-radius: 8px;
-            padding: 8px;
-            margin-bottom: 15px;
-        }
-        .history-title {
+
+        .best-badge {
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            background-color: var(--accent-green);
+            color: #000;
             font-size: 0.75rem;
-            color: #94A3B8;
-            margin-bottom: 4px;
+            font-weight: bold;
+            padding: 3px 10px;
+            border-radius: 4px;
+            text-transform: uppercase;
+        }
+
+        .card-header {
             display: flex;
             justify-content: space-between;
+            align-items: flex-start;
         }
-        .history-svg {
-            width: 100%;
-            height: 45px;
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .price-tag {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: var(--text-main);
+        }
+
+        .card-tags {
+            display: flex;
+            gap: 8px;
+            font-size: 0.8rem;
+        }
+
+        .tag-frete {
+            background-color: rgba(16, 185, 129, 0.1);
+            color: var(--accent-green);
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+
+        .tag-rating {
+            background-color: rgba(245, 158, 11, 0.1);
+            color: var(--accent-yellow);
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+
+        .platform-info {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .history-box {
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+
+        .trend-down {
+            color: var(--accent-green);
+            font-weight: 500;
         }
 
         .card-actions {
             display: flex;
-            gap: 8px;
-        }
-        .buy-btn {
-            flex: 2;
-            background-color: #2563EB;
-            color: #FFFFFF;
-            text-align: center;
-            padding: 10px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.85rem;
-            transition: background-color 0.2s;
-        }
-        .buy-btn:hover { background-color: #1D4ED8; }
-
-        .alert-btn {
-            flex: 1;
-            background-color: #334155;
-            color: #E2E8F0;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.8rem;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        .alert-btn:hover { background-color: #475569; }
-
-        /* Modal de Alerta de Preço */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .modal-content {
-            background-color: #1E293B;
-            border: 1px solid #334155;
-            padding: 24px;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 400px;
-            text-align: left;
-        }
-        .modal-content h3 {
-            margin-top: 0;
-            color: #60A5FA;
-        }
-        .modal-input {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0 15px 0;
-            border-radius: 8px;
-            border: 1px solid #334155;
-            background-color: #0F172A;
-            color: #FFF;
-            box-sizing: border-box;
-        }
-        .modal-buttons {
-            display: flex;
-            justify-content: flex-end;
             gap: 10px;
+            margin-top: 5px;
         }
-        .btn-cancel {
-            background-color: transparent;
-            border: 1px solid #475569;
-            color: #CBD5E1;
-            padding: 8px 14px;
-            border-radius: 6px;
-            cursor: pointer;
-        }
-        .btn-save {
-            background-color: #2563EB;
+
+        .btn-offer {
+            flex-grow: 2;
+            background-color: var(--accent-blue);
+            color: white;
             border: none;
-            color: #FFF;
-            padding: 8px 14px;
-            border-radius: 6px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        .toast-msg {
-            display: none;
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: #059669;
-            color: #FFF;
-            padding: 12px 20px;
+            padding: 10px;
             border-radius: 8px;
+            cursor: pointer;
             font-weight: 600;
-            z-index: 2000;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            text-align: center;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+
+        .btn-offer:hover {
+            background-color: #2563eb;
+        }
+
+        .btn-alert {
+            flex-grow: 1;
+            background-color: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--card-border);
+            padding: 10px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+
+        .btn-alert:hover {
+            background-color: var(--card-border);
         }
     </style>
 </head>
 <body>
 
-    <div class="lefind-container">
-        <h1>Le.Find</h1>
-        <p class="subtitle">Agregador Global Inteligente: Busca avançada com correção ortográfica e histórico.</p>
-
-        <!-- BARRA DE PESQUISA -->
-        <div class="search-box">
-            <input type="text" id="searchInput" class="search-input" placeholder="O que deseja procurar? (Ex: Chupeta, Air Fryer, X Box, iPhone...)">
-            <button class="search-btn" onclick="executarBuscaGlobal()">Buscar em Tudo</button>
+    <!-- Sidebar de Histórico / Atalhos -->
+    <aside>
+        <div class="logo-area">
+            <i class="fa-solid fa-cube"></i> LE.FIND
         </div>
+        <ul class="nav-links" id="sidebar-history">
+            <li><a href="#"><i class="fa-solid fa-clock-rotate-left"></i> Automatizando Corridas de Api</a></li>
+            <li><a href="#"><i class="fa-solid fa-clock-rotate-left"></i> Le.Find Global Scale & Hybrid E</a></li>
+            <li><a href="#"><i class="fa-solid fa-clock-rotate-left"></i> Login - Vercel</a></li>
+            <li><a href="#"><i class="fa-solid fa-clock-rotate-left"></i> Sign in or Register | eBay Devel</a></li>
+            <li><a href="#"><i class="fa-solid fa-clock-rotate-left"></i> Criadores e Afiliados Shopee | S</a></li>
+            <li><a href="#"><i class="fa-solid fa-clock-rotate-left"></i> Gerenciando lefindapp.com - S</a></li>
+            <li><a href="#"><i class="fa-solid fa-clock-rotate-left"></i> Aplicativo Le.Find: Buscador Glo</a></li>
+            <li><a href="#"><i class="fa-solid fa-clock-rotate-left"></i> Email - leandro rafael - Outlook</a></li>
+            <li><a href="#"><i class="fa-solid fa-clock-rotate-left"></i> WhatsApp</a></li>
+            <li><a href="#"><i class="fa-solid fa-clock-rotate-left"></i> Seu código de autenticação par</a></li>
+        </ul>
+    </aside>
 
-        <!-- MENSAGEM DE CORREÇÃO INTELIGENTE (IA FUZZY SEARCH) -->
-        <div id="didYouMean" class="did-you-mean"></div>
-
-        <!-- PÍLULAS DE TENDÊNCIAS -->
-        <div class="trending-pills">
-            <span style="color: #64748B; font-size: 0.85rem; align-self: center;">Tendências:</span>
-            <div class="pill" onclick="buscarPorTermo('Chupeta Infantil')">👶 Chupeta Infantil</div>
-            <div class="pill" onclick="buscarPorTermo('Air Fryer')">🔥 Air Fryer</div>
-            <div class="pill" onclick="buscarPorTermo('Xbox Series X')">🎮 Xbox Series X</div>
-            <div class="pill" onclick="buscarPorTermo('iPhone 15')">📱 iPhone 15</div>
-        </div>
-
-        <!-- FILTROS HÍBRIDOS -->
-        <div class="lefind-filters">
-            <button class="filter-btn active" onclick="filtrarCondicao('all', this)">🔍 Todos</button>
-            <button class="filter-btn" onclick="filtrarCondicao('new', this)">✨ Lojas Oficiais (Novos)</button>
-            <button class="filter-btn" onclick="filtrarCondicao('used', this)">♻️ Garimpo (Usados)</button>
-        </div>
-
-        <!-- BARRA DE RESUMO E ECONOMIA REAL -->
-        <div id="economyBanner" class="economy-banner">
-            💡 Encontradas <strong id="storeCount">6</strong> lojas. Economia potencial de até <strong id="savingsValue">R$ 0,00</strong> comparando as melhores ofertas.
-        </div>
-
-        <!-- GRELHA DE RESULTADOS -->
-        <div id="productsGrid" class="products-grid"></div>
-    </div>
-
-    <!-- MODAL DE ALERTA DE PREÇO -->
-    <div id="alertModal" class="modal-overlay">
-        <div class="modal-content">
-            <h3>🔔 Alerta de Queda de Preço</h3>
-            <p id="modalProductTitle" style="font-size: 0.9rem; color: #94A3B8;"></p>
-            <label style="font-size: 0.85rem; color: #CBD5E1;">Seu E-mail ou WhatsApp:</label>
-            <input type="text" id="alertEmail" class="modal-input" placeholder="ex: seu@email.com ou (11) 99999-9999">
-            <div class="modal-buttons">
-                <button class="btn-cancel" onclick="fecharModal()">Cancelar</button>
-                <button class="btn-save" onclick="salvarAlerta()">Ativar Alerta</button>
+    <!-- Área Principal -->
+    <main>
+        <header>
+            <div class="trends-bar">
+                <span class="trends-title">Tendências:</span>
+                <div class="trend-chips">
+                    <button class="chip" onclick="buscarTermo('Chupeta Infantil')">Chupeta Infantil</button>
+                    <button class="chip" onclick="buscarTermo('Air Fryer')">Air Fryer</button>
+                    <button class="chip" onclick="buscarTermo('Xbox Series X')">Xbox Series X</button>
+                    <button class="chip" onclick="buscarTermo('iPhone 15')">iPhone 15</button>
+                </div>
             </div>
-        </div>
-    </div>
+            <div class="search-row">
+                <div class="filter-buttons">
+                    <button class="filter-btn active" onclick="filtrar('todos')"><i class="fa-solid fa-globe"></i> Todos</button>
+                    <button class="filter-btn" onclick="filtrar('oficiais')"><i class="fa-solid fa-shield-halved"></i> Lojas Oficiais (Novos)</button>
+                    <button class="filter-btn" onclick="filtrar('garimpo')"><i class="fa-solid fa-tags"></i> Garimpo (Usados)</button>
+                </div>
+            </div>
+        </header>
 
-    <!-- TOAST DE NOTIFICAÇÃO -->
-    <div id="toast" class="toast-msg">✅ Alerta ativado com sucesso! Avisaremos via WhatsApp/E-mail.</div>
+        <div class="stats-banner" id="stats-banner">
+            Encontradas 6 lojas. Economia potencial de até R$ 3240,00 comparando as melhores ofertas.
+        </div>
+
+        <div class="results-grid" id="results-grid">
+            <!-- Cards injetados via JS -->
+        </div>
+    </main>
 
     <script>
-        const listaProdutosInicial = [
-            { title: "Chupeta Infantil Silicone Ortodôntica Bico Duplo", price: "R$ 7,99", condition: "new", store: "Shopee / Lomadee", tagClass: "tag-new", url: "https://shopee.com.br", best: true, frete: "📦 Frete Grátis", rating: "⭐ 4.9 (3.2k)" },
-            { title: "Smartphone Apple iPhone 15 Pro Max 256GB", price: "R$ 6.899,00", condition: "new", store: "Amazon / Afiliados", tagClass: "tag-new", url: "https://www.amazon.com.br", best: false, frete: "📦 Frete Prime", rating: "⭐ 4.8 (1.5k)" },
-            { title: "Console Microsoft Xbox Series X / S", price: "R$ 2.699,00", condition: "new", store: "Mercado Livre", tagClass: "tag-new", url: "https://www.mercadolivre.com.br", best: false, frete: "📦 Frete Full", rating: "⭐ 4.9 (2.1k)" },
-            { title: "Tênis Nike Air Force 1 Original Seminovo", price: "R$ 280,00", condition: "used", store: "Garimpo Local / OLX", tagClass: "tag-used", url: "https://www.olx.com.br", best: false, frete: "📍 Retirada / Envio", rating: "⭐ 4.7 (420)" }
-        ];
-
-        let filtroCondicaoAtual = 'all';
-        let produtoSelecionadoAlerta = '';
-
-        // DICIONÁRIO DE CORREÇÃO INTELIGENTE DE ORTOGRAFIA (IA LOCAL DE TERMOS)
-        const dicionarioCorrecao = {
-            "xbox": ["xbox", "x box", "xibox", "istbox", "xbok"],
-            "playstation": ["playstation", "pleyhstacao", "ps5", "ps4", "pleisteison", "pisteixao"],
-            "iphone": ["iphone", "ifone", "aifone", "ifoni", "ipod"],
-            "air fryer": ["air fryer", "airfrier", "erfrier", "air frier", "frigideira eletrica", "airfrai"],
-            "televisao": ["televisao", "tv", "televezao", "monitor", "tela"],
-            "chupeta": ["chupeta", "chupet", "chupetinha", "bico"],
-            "notebook": ["notebook", "notbook", "laptop", "pc gamer", "computador"],
-            "smartphone": ["smartphone", "celular", "telefone", "galaxy", "xiaomi", "motorola"],
-            "tenis": ["tenis", "sapato", "tenis nike", "chuteira", "bota"]
-        };
-
         function normalizarTexto(texto) {
-            return texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim();
+            return texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
         }
 
-        // ALGORITMO DE SIMILARIDADE (LEVENSTEIN SIMPLIFICADO PARA CORREÇÃO)
-        function calcularSimilaridade(s1, s2) {
-            let longer = s1;
-            let shorter = s2;
-            if (s1.length < s2.length) {
-                longer = s2;
-                shorter = s1;
-            }
-            let longerLength = longer.length;
-            if (longerLength === 0) {
-                return 1.0;
-            }
-            return (longerLength - editarDistancia(longer, shorter)) / parseFloat(longerLength);
-        }
-
-        function editarDistancia(s1, s2) {
-            s1 = s1.toLowerCase();
-            s2 = s2.toLowerCase();
-            let costs = new Array();
-            for (let i = 0; i <= s1.length; i++) {
-                let lastValue = i;
-                for (let j = 0; j <= s2.length; j++) {
-                    if (i === 0) costs[j] = j;
-                    else {
-                        if (j > 0) {
-                            let newValue = costs[j - 1];
-                            if (s1.charAt(i - 1) !== s2.charAt(j - 1))
-                                newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
-                            costs[j - 1] = lastValue;
-                            lastValue = newValue;
-                        }
-                    }
-                }
-                if (s1.length > 0) costs[s2.length] = lastValue;
-            }
-            return costs[s2.length];
-        }
-
-        function aplicarCorrecaoInteligente(termoDigitado) {
-            let termoNorm = normalizarTexto(termoDigitado);
-            let melhorCorrespondencia = termoDigitado;
-            let maiorScore = 0;
-
-            for (let chaveCorreta in dicionarioCorrecao) {
-                let sinônimos = dicionarioCorrecao[chaveCorreta];
-                for (let sin of sinônimos) {
-                    let score = calcularSimilaridade(termoNorm, sin);
-                    if (score > maiorScore) {
-                        maiorScore = score;
-                        melhorCorrespondencia = chaveCorreta;
-                    }
-                }
-            }
-
-            // Se encontrou com boa precisão (> 0.45) e for diferente, sugere/corrige
-            if (maiorScore > 0.45 && melhorCorrespondencia !== termoNorm) {
-                return { corrigido: melhorCorrespondencia.toUpperCase(), original: termoDigitado, foiCorrigido: true };
-            }
-            return { corrigido: termoDigitado.toUpperCase(), original: termoDigitado, foiCorrigido: false };
-        }
-
-        function gerarLinkAfiliado(loja, termo) {
-            const query = encodeURIComponent(termo);
-            if (loja.includes('Shopee')) {
-                return `https://shopee.com.br/search?keyword=${query}&affiliates_id=lefind_app`;
-            } else if (loja.includes('Amazon')) {
-                return `https://www.amazon.com.br/s?k=${query}&tag=lefind-20`;
-            } else if (loja.includes('Mercado Livre')) {
-                return `https://lista.mercadolivre.com.br/${query}_eshop_lefind`;
-            } else if (loja.includes('AliExpress')) {
-                return `https://pt.aliexpress.com/wholesale?SearchText=${query}&aff_fcid=lefind`;
-            } else if (loja.includes('OLX')) {
-                return `https://www.olx.com.br/brasil?q=${query}`;
-            } else {
-                return `https://www.ebay.com/sch/i.html?_nkw=${query}&mkcid=1&mkrid=711-53200-19255-0`;
-            }
-        }
-
-        function gerarSVGHistorico(precoAtual) {
-            let p1 = (precoAtual * (1 + (Math.random() * 0.15 - 0.03))).toFixed(2);
-            let p2 = (precoAtual * (1 + (Math.random() * 0.1 - 0.05))).toFixed(2);
-            let p3 = (precoAtual * (1 + (Math.random() * 0.08 - 0.02))).toFixed(2);
-            let p4 = precoAtual;
-
-            return `
-                <svg class="history-svg" viewBox="0 0 200 45">
-                    <polyline fill="none" stroke="#34D399" stroke-width="2.5" points="0,35 50,${40 - (p1/precoAtual)*15} 100,${40 - (p2/precoAtual)*15} 150,${40 - (p3/precoAtual)*15} 200,${40 - (p4/precoAtual)*15}" />
-                    <circle cx="200" cy="${40 - (p4/precoAtual)*15}" r="3.5" fill="#34D399" />
-                </svg>
-            `;
-        }
-
-        // MOTOR DE PREÇOS REAIS E PRECISOS PARA O COMÉRCIO ELETRÓNICO GLOBAL
+        // FUNÇÃO DE PREÇOS REAIS E DINÂMICOS AJUSTADA
         function gerarPrecosDinamicos(termo) {
             const termoLower = normalizarTexto(termo);
             let baseMin = 150;
             let baseMax = 550;
 
-            const ehTVouMonitor = termoLower.includes('tv') || termoLower.includes('televisao') || termoLower.includes('monitor');
-            const numerosEncontrados = termo.match(/\d+/g);
-            let fatorMultiplicador = 1;
-
-            if (numerosEncontrados && numerosEncontrados.length > 0) {
-                let num = parseInt(numerosEncontrados[0], 10);
-                if (ehTVouMonitor && num >= 14 && num <= 100) {
-                    fatorMultiplicador = num / 32; 
-                }
-            }
-
-            // TABELA DE CORRESPONDÊNCIA DE PREÇOS REAIS DO MERCADO
-            if (termoLower.includes('chupeta') || termoLower.includes('lapis') || termoLower.includes('caneta') || termoLower.includes('meia')) {
+            if (termoLower.includes('xbox series x')) {
+                baseMin = 3499.00;
+                baseMax = 3899.00;
+            } else if (termoLower.includes('xbox series s')) {
+                baseMin = 2199.00;
+                baseMax = 2499.00;
+            } else if (termoLower.includes('xbox')) {
+                baseMin = 2199.00;
+                baseMax = 2499.00;
+            } else if (termoLower.includes('chupeta')) {
                 baseMin = 7.99;
-                baseMax = 49.99;
-            } else if (termoLower.includes('iphone') || termoLower.includes('smartphone') || termoLower.includes('celular') || termoLower.includes('galaxy') || termoLower.includes('xiaomi')) {
-                baseMin = 1200.00;
+                baseMax = 19.99;
+            } else if (termoLower.includes('air fryer')) {
+                baseMin = 299.00;
+                baseMax = 599.00;
+            } else if (termoLower.includes('iphone')) {
+                baseMin = 4500.00;
                 baseMax = 7800.00;
-            } else if (termoLower.includes('xbox') || termoLower.includes('playstation') || termoLower.includes('ps5') || termoLower.includes('ps4') || termoLower.includes('nintendo') || termoLower.includes('switch')) {
-                baseMin = 1800.00;
-                baseMax = 4200.00;
-            } else if (termoLower.includes('notebook') || termoLower.includes('laptop') || termoLower.includes('pc gamer')) {
-                baseMin = 2200.00;
-                baseMax = 7500.00;
-            } else if (ehTVouMonitor) {
-                baseMin = 1100.00 * fatorMultiplicador;
-                baseMax = 3200.00 * fatorMultiplicador;
-            } else if (termoLower.includes('air fryer') || termoLower.includes('microondas') || termoLower.includes('geladeira')) {
-                baseMin = 280.00;
-                baseMax = 2400.00;
-            } else if (termoLower.includes('tenis') || termoLower.includes('sapato') || termoLower.includes('bota')) {
-                baseMin = 120.00;
-                baseMax = 650.00;
-            } else if (termoLower.includes('smartwatch') || termoLower.includes('relogio') || termoLower.includes('fone')) {
-                baseMin = 80.00;
-                baseMax = 900.00;
             } else {
                 baseMin = 120.00;
                 baseMax = 650.00;
             }
 
             return [
-                { store: "Shopee / Lomadee", condition: "new", min: baseMin, max: baseMax * 0.88, brand: "Ofertas Diretas", frete: "📦 Frete Grátis", rating: "⭐ 4.9 (4.1k)", best: true },
-                { store: "Amazon (Afiliados)", condition: "new", min: baseMin * 1.12, max: baseMax * 1.08, brand: "Lojas Oficiais", frete: "📦 Frete Prime", rating: "⭐ 4.8 (2.3k)", best: false },
-                { store: "Mercado Livre", condition: "new", min: baseMin * 1.05, max: baseMax, brand: "Nacionais & Importadas", frete: "📦 Frete Full", rating: "⭐ 4.7 (1.8k)", best: false },
-                { store: "AliExpress / Awin", condition: "new", min: baseMin * 0.92, max: baseMax * 0.78, brand: "Direto da Fábrica", frete: "✈ Envio Internacional", rating: "⭐ 4.6 (950)", best: false },
-                { store: "OLX / Enjoei", condition: "used", min: baseMin * 0.65, max: baseMax * 0.52, brand: "Garimpo e Seminovos", frete: "📍 Combinar com Vendedor", rating: "⭐ 4.5 (310)", best: false },
-                { store: "eBay / Impact", condition: "new", min: baseMin * 1.25, max: baseMax * 1.20, brand: "Importados Globais", frete: "📦 Envio Global", rating: "⭐ 4.8 (620)", best: false }
+                { store: "Shopee / Lomadee", condition: "new", min: baseMin * 0.95, max: baseMax * 0.95, brand: "Ofertas Diretas", frete: "📦 Frete Grátis", rating: "⭐ 4.9 (4.1k)", best: true },
+                { store: "Amazon (Afiliados)", condition: "new", min: baseMin, max: baseMax, brand: "Lojas Oficiais", frete: "📦 Frete Prime", rating: "⭐ 4.8 (2.3k)", best: false },
+                { store: "Mercado Livre", condition: "new", min: baseMin * 1.02, max: baseMax * 1.05, brand: "Nacionais & Importadas", frete: "📦 Frete Full", rating: "⭐ 4.7 (1.8k)", best: false },
+                { store: "AliExpress / Awin", condition: "new", min: baseMin * 0.90, max: baseMax * 0.90, brand: "Direto da Fábrica", frete: "✈ Envio Internacional", rating: "⭐ 4.6 (950)", best: false },
+                { store: "OLX / Enjoei", condition: "used", min: baseMin * 0.60, max: baseMax * 0.70, brand: "Garimpo e Seminovos", frete: "📍 Combinar com Vendedor", rating: "⭐ 4.5 (310)", best: false },
+                { store: "eBay / Impact", condition: "new", min: baseMin * 1.10, max: baseMax * 1.15, brand: "Importados Globais", frete: "📦 Envio Global", rating: "⭐ 4.8 (620)", best: false }
             ];
         }
 
-        function renderizarInicial(produtosParaMostrar) {
-            document.getElementById('economyBanner').style.display = 'none';
-            document.getElementById('didYouMean').innerHTML = '';
-            const grid = document.getElementById('productsGrid');
+        let termoAtual = "Xbox Series X";
+
+        function renderizarOfertas(termo, filtroTipo = 'todos') {
+            termoAtual = termo;
+            const ofertas = gerarPrecosDinamicos(termo);
+            const grid = document.getElementById('results-grid');
             grid.innerHTML = '';
 
-            const filtrados = produtosParaMostrar.filter(p => {
-                if (filtroCondicaoAtual === 'all') return true;
-                return p.condition === filtroCondicaoAtual;
-            });
-
-            filtrados.forEach(produto => {
-                const card = document.createElement('div');
-                card.className = `product-card ${produto.best ? 'best-deal' : ''}`;
-                let numPreco = parseFloat(produto.price.replace('R$ ', '').replace('.', '').replace(',', '.')) || 50;
-
-                card.innerHTML = `
-                    <div>
-                        ${produto.best ? '<span class="badge-best">🏆 Melhor Custo-Benefício</span>' : ''}
-                        <div class="product-title">${produto.title}</div>
-                        <div class="price-range">${produto.price}</div>
-                        <div class="meta-badges">
-                            <span class="meta-tag tag-frete">${produto.frete}</span>
-                            <span class="meta-tag tag-rating">${produto.rating}</span>
-                        </div>
-                        <div class="brand-info">Loja: ${produto.store}</div>
-                        <div class="history-box">
-                            <div class="history-title"><span>📊 Histórico (30d): Menor preço</span><span style="color:#34D399; font-weight:bold;">Estável</span></div>
-                            ${gerarSVGHistorico(numPreco)}
-                        </div>
-                    </div>
-                    <div class="card-actions">
-                        <a href="${produto.url}" target="_blank" class="buy-btn">Ver na Loja</a>
-                        <button class="alert-btn" onclick="abrirModal('${produto.title}')">🔔 Alerta</button>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        function buscarPorTermo(termo) {
-            document.getElementById('searchInput').value = termo;
-            executarBuscaGlobal();
-        }
-
-        function executarBuscaGlobal() {
-            let termoBruto = document.getElementById('searchInput').value.trim();
-            if (!termoBruto) {
-                renderizarInicial(listaProdutosInicial);
-                return;
+            let filtradas = ofertas;
+            if (filtroTipo === 'oficiais') {
+                filtradas = ofertas.filter(o => o.brand === "Lojas Oficiais" || o.brand === "Ofertas Diretas");
+            } else if (filtroTipo === 'garimpo') {
+                filtradas = ofertas.filter(o => o.condition === "used");
             }
 
-            // Aplicar Correção Ortográfica Inteligente
-            let resultadoIA = aplicarCorrecaoInteligente(termoBruto);
-            let termoFinal = resultadoIA.corrigido;
-
-            const didYouMeanDiv = document.getElementById('didYouMean');
-            if (resultadoIA.foiCorrigido) {
-                didYouMeanDiv.innerHTML = `Você quis dizer: <span onclick="buscarPorTermo('${resultadoIA.corrigido}')">${resultadoIA.corrigido}</span>? (Corrigido automaticamente)`;
-                document.getElementById('searchInput').value = resultadoIA.corrigido;
-            } else {
-                didYouMeanDiv.innerHTML = '';
-            }
-
-            document.getElementById('economyBanner').style.display = 'block';
-            const resultadosDinamicos = gerarPrecosDinamicos(termoFinal);
-
-            const grid = document.getElementById('productsGrid');
-            grid.innerHTML = '';
-
-            const filtrados = resultadosDinamicos.filter(p => {
-                if (filtroCondicaoAtual === 'all') return true;
-                return p.condition === filtroCondicaoAtual;
-            });
-
-            document.getElementById('storeCount').innerText = filtrados.length;
-            
-            let economiaEstimada = (resultadosDinamicos[5].max - resultadosDinamicos[0].min).toFixed(2);
-            document.getElementById('savingsValue').innerText = `R$ ${economiaEstimada.replace('.', ',')}`;
-
-            filtrados.forEach(produto => {
-                const precoFormatado = `R$ ${produto.min.toFixed(2).replace('.', ',')} – R$ ${produto.max.toFixed(2).replace('.', ',')}`;
-                const linkAfiliadoReal = gerarLinkAfiliado(produto.store, termoFinal);
+            filtradas.forEach(item => {
                 const card = document.createElement('div');
-                card.className = `product-card ${produto.best ? 'best-deal' : ''}`;
+                card.className = `offer-card ${item.best ? 'best-deal' : ''}`;
                 
+                let badgeHtml = item.best ? `<div class="best-badge"><i class="fa-solid fa-star"></i> Menor Preço Global</div>` : '';
+                
+                const precoFormatado = `R$ ${item.min.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})} - R$ ${item.max.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+
                 card.innerHTML = `
-                    <div>
-                        ${produto.best ? '<span class="badge-best">🏆 Menor Preço Global</span>' : ''}
-                        <div class="product-title">${termoFinal} (${produto.brand})</div>
-                        <div class="price-range">${precoFormatado}</div>
-                        <div class="meta-badges">
-                            <span class="meta-tag tag-frete">${produto.frete}</span>
-                            <span class="meta-tag tag-rating">${produto.rating}</span>
-                        </div>
-                        <div class="brand-info">Plataforma: ${produto.store}</div>
-                        <div class="history-box">
-                            <div class="history-title"><span>📊 Histórico (30d): Tendência</span><span style="color:#34D399; font-weight:bold;">Em Queda 🔥</span></div>
-                            ${gerarSVGHistorico(produto.min)}
-                        </div>
+                    ${badgeHtml}
+                    <div class="card-header">
+                        <div class="card-title">${termo.toUpperCase()} (${item.brand})</div>
+                    </div>
+                    <div class="price-tag">${precoFormatado}</div>
+                    <div class="card-tags">
+                        <span class="tag-frete">${item.frete}</span>
+                        <span class="tag-rating">${item.rating}</span>
+                    </div>
+                    <div class="platform-info">Plataforma: ${item.store}</div>
+                    <div class="history-box">
+                        <span>Histórico (30d): Tendência</span>
+                        <span class="trend-down"><i class="fa-solid fa-arrow-trend-down"></i> Em Queda ↓</span>
                     </div>
                     <div class="card-actions">
-                        <a href="${linkAfiliadoReal}" target="_blank" class="buy-btn">Ver Ofertas</a>
-                        <button class="alert-btn" onclick="abrirModal('${termoFinal} (${produto.store})')">🔔 Alerta</button>
+                        <a href="#" class="btn-offer">Ver Ofertas</a>
+                        <button class="btn-alert"><i class="fa-regular fa-bell"></i> Alerta</button>
                     </div>
                 `;
                 grid.appendChild(card);
             });
+
+            document.getElementById('stats-banner').innerText = `Encontradas ${filtradas.length} lojas. Comparando as melhores ofertas em tempo real.`;
         }
 
-        function filtrarCondicao(tipo, elemento) {
+        function buscarTermo(termo) {
+            renderizarOfertas(termo, 'todos');
+        }
+
+        function filtrar(tipo) {
             document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-            elemento.classList.add('active');
-            filtroCondicaoAtual = tipo;
-            
-            const termo = document.getElementById('searchInput').value.trim();
-            if (termo) {
-                executarBuscaGlobal();
-            } else {
-                renderizarInicial(listaProdutosInicial);
-            }
+            event.currentTarget.classList.add('active');
+            renderizarOfertas(termoAtual, tipo);
         }
 
-        function abrirModal(tituloProduto) {
-            produtoSelecionadoAlerta = tituloProduto;
-            document.getElementById('modalProductTitle').innerText = `Produto: ${tituloProduto}`;
-            document.getElementById('alertModal').style.display = 'flex';
-        }
-
-        function fecharModal() {
-            document.getElementById('alertModal').style.display = 'none';
-            document.getElementById('alertEmail').value = '';
-        }
-
-        function salvarAlerta() {
-            const contato = document.getElementById('alertEmail').value.trim();
-            if (!contato) {
-                alert('Por favor, digite seu e-mail ou WhatsApp.');
-                return;
-            }
-            let alertas = JSON.parse(localStorage.getItem('lefind_alertas') || '[]');
-            alertas.push({ produto: produtoSelecionadoAlerta, contato: contato, data: new Date().toISOString() });
-            localStorage.setItem('lefind_alertas', JSON.stringify(alertas));
-
-            fecharModal();
-
-            const toast = document.getElementById('toast');
-            toast.style.display = 'block';
-            setTimeout(() => {
-                toast.style.display = 'none';
-            }, 3500);
-        }
-
-        document.getElementById('searchInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                executarBuscaGlobal();
-            }
-        });
-
-        window.onload = () => {
-            renderizarInicial(listaProdutosInicial);
-        };
+        // Inicializa com Xbox Series X
+        renderizarOfertas('Xbox Series X');
     </script>
 </body>
 </html>
