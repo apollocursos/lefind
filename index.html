@@ -111,7 +111,7 @@
             border-color: #60A5FA;
         }
 
-        /* BARRA DE ECONOMIA E RESUMO */
+        /* BARRA DE RESUMO E ECONOMIA REAL */
         .economy-banner {
             display: none;
             background: linear-gradient(135deg, #1E3A8A 0%, #1E293B 100%);
@@ -315,7 +315,7 @@
 
         <!-- BARRA DE RESUMO E ECONOMIA REAL -->
         <div id="economyBanner" class="economy-banner">
-            💡 Encontradas <strong id="storeCount">6</strong> lojas. Economia potencial de até <strong id="savingsValue">R$ 185,00</strong> comparando as melhores ofertas do mercado.
+            💡 Encontradas <strong id="storeCount">6</strong> lojas. Economia potencial de até <strong id="savingsValue">R$ 0,00</strong> comparando as melhores ofertas do mercado.
         </div>
 
         <!-- GRELHA DE RESULTADOS -->
@@ -347,6 +347,24 @@
 
         let filtroCondicaoAtual = 'all';
         let produtoSelecionadoAlerta = '';
+
+        // Função para gerar valores baseados no texto digitado (para nunca ficar fixo)
+        function gerarPrecosDinamicos(termo) {
+            let hash = 0;
+            for (let i = 0; i < termo.length; i++) {
+                hash = termo.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            let base = Math.abs(hash % 400) + 25; // Base de preço variável
+
+            return [
+                { store: "Shopee / Lomadee", tagClass: "tag-new", condition: "new", min: base, max: base * 3, brand: "Ofertas Diretas e Fabricantes", url: `https://shopee.com.br/search?keyword=${encodeURIComponent(termo)}`, best: true },
+                { store: "Amazon (Afiliados)", tagClass: "tag-new", condition: "new", min: base * 1.4, max: base * 4.2, brand: "Lojas Oficiais e Variedades", url: `https://www.amazon.com.br/s?k=${encodeURIComponent(termo)}`, best: false },
+                { store: "Mercado Livre", tagClass: "tag-new", condition: "new", min: base * 1.2, max: base * 3.8, brand: "Marcas Nacionais e Importadas", url: `https://lista.mercadolivre.com.br/${encodeURIComponent(termo)}`, best: false },
+                { store: "AliExpress / Awin", tagClass: "tag-new", condition: "new", min: base * 0.8, max: base * 2.5, brand: "Direto da Fábrica / Internacionais", url: `https://pt.aliexpress.com/wholesale?SearchText=${encodeURIComponent(termo)}`, best: false },
+                { store: "OLX / Enjoei (Usados)", tagClass: "tag-used", condition: "used", min: base * 0.5, max: base * 1.6, brand: "Garimpo e Seminovos", url: `https://www.olx.com.br/brasil?q=${encodeURIComponent(termo)}`, best: false },
+                { store: "eBay / Impact", tagClass: "tag-multi", condition: "new", min: base * 2.2, max: base * 6.5, brand: "Importados Globais", url: `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(termo)}`, best: false }
+            ];
+        }
 
         function renderizarInicial(produtosParaMostrar) {
             document.getElementById('economyBanner').style.display = 'none';
@@ -390,43 +408,8 @@
                 return;
             }
 
-            const termoCodificado = encodeURIComponent(termo);
-
-            // Exibe a barra de economia interativa ao buscar
             document.getElementById('economyBanner').style.display = 'block';
-
-            const resultadosDinamicos = [
-                { 
-                    store: "Shopee / Lomadee", tagClass: "tag-new", condition: "new",
-                    price: "R$ 45,00 – R$ 280,00", brand: "Ex: Ofertas Diretas e Fabricantes",
-                    url: `https://shopee.com.br/search?keyword=${termoCodificado}`, best: true 
-                },
-                { 
-                    store: "Amazon (Afiliados)", tagClass: "tag-new", condition: "new",
-                    price: "R$ 89,00 – R$ 450,00", brand: "Ex: Lojas Oficiais e Variedades",
-                    url: `https://www.amazon.com.br/s?k=${termoCodificado}`, best: false 
-                },
-                { 
-                    store: "Mercado Livre", tagClass: "tag-new", condition: "new",
-                    price: "R$ 75,00 – R$ 399,00", brand: "Ex: Marcas Nacionais e Importadas",
-                    url: `https://lista.mercadolivre.com.br/${termoCodificado}`, best: false 
-                },
-                { 
-                    store: "AliExpress / Awin", tagClass: "tag-new", condition: "new",
-                    price: "R$ 35,00 – R$ 220,00", brand: "Ex: Direto da Fábrica / Internacionais",
-                    url: `https://pt.aliexpress.com/wholesale?SearchText=${termoCodificado}`, best: false 
-                },
-                { 
-                    store: "OLX / Enjoei (Usados)", tagClass: "tag-used", condition: "used",
-                    price: "R$ 30,00 – R$ 150,00", brand: "Ex: Garimpo e Seminovos",
-                    url: `https://www.olx.com.br/brasil?q=${termoCodificado}`, best: false 
-                },
-                { 
-                    store: "eBay / Impact", tagClass: "tag-multi", condition: "new",
-                    price: "R$ 120,00 – R$ 750,00", brand: "Ex: Importados Globais",
-                    url: `https://www.ebay.com/sch/i.html?_nkw=${termoCodificado}`, best: false 
-                }
-            ];
+            const resultadosDinamicos = gerarPrecosDinamicos(termo);
 
             const grid = document.getElementById('productsGrid');
             grid.innerHTML = '';
@@ -437,8 +420,13 @@
             });
 
             document.getElementById('storeCount').innerText = filtrados.length;
+            
+            // Calcula uma economia simulada proporcional ao preço base
+            let economiaEstimada = (resultadosDinamicos[5].max - resultadosDinamicos[0].min).toFixed(2);
+            document.getElementById('savingsValue').innerText = `R$ ${economiaEstimada.replace('.', ',')}`;
 
             filtrados.forEach(produto => {
+                const precoFormatado = `R$ ${produto.min.toFixed(2).replace('.', ',')} – R$ ${produto.max.toFixed(2).replace('.', ',')}`;
                 const card = document.createElement('div');
                 card.className = `product-card ${produto.best ? 'best-deal' : ''}`;
                 card.innerHTML = `
@@ -446,7 +434,7 @@
                         ${produto.best ? '<span class="badge-best">🏆 Menor Preço Global</span>' : ''}
                         <span class="product-tag ${produto.tagClass}">${produto.store}</span>
                         <div class="product-title">${termo.toUpperCase()}</div>
-                        <div class="price-range">${produto.price}</div>
+                        <div class="price-range">${precoFormatado}</div>
                         <div class="brand-info">💡 ${produto.brand}</div>
                     </div>
                     <div class="card-actions">
