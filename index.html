@@ -330,7 +330,7 @@
 
         <!-- BARRA DE PESQUISA -->
         <div class="search-box">
-            <input type="text" id="searchInput" class="search-input" placeholder="O que deseja procurar? (Ex: Chupeta, Air Fryer, iPhone, Vídeo Game, Televisão...)">
+            <input type="text" id="searchInput" class="search-input" placeholder="O que deseja procurar? (Ex: Chupeta, Air Fryer, iPhone 15, Televisao 60...)">
             <button class="search-btn" onclick="executarBuscaGlobal()">Buscar em Tudo</button>
         </div>
 
@@ -340,7 +340,7 @@
             <div class="pill" onclick="buscarPorTermo('Chupeta Infantil')">👶 Chupeta Infantil</div>
             <div class="pill" onclick="buscarPorTermo('Air Fryer')">🔥 Air Fryer</div>
             <div class="pill" onclick="buscarPorTermo('iPhone 15')">📱 iPhone 15</div>
-            <div class="pill" onclick="buscarPorTermo('Video Game')">🎮 Vídeo Game</div>
+            <div class="pill" onclick="buscarPorTermo('Televisao 60')">📺 Televisão 60"</div>
         </div>
 
         <!-- FILTROS HÍBRIDOS -->
@@ -418,33 +418,51 @@
             `;
         }
 
-        // MOTOR DE PREÇOS INTELIGENTE COM BASE NO TIPO DE PRODUTO BUSCADO
+        // MOTOR DE PREÇOS INTELIGENTE COM EXTRAÇÃO DINÂMICA DE CATEGORIA E NÚMEROS/TAMANHOS
         function gerarPrecosDinamicos(termo) {
             const termoLower = termo.toLowerCase();
             let baseMin = 50;
             let baseMax = 250;
 
+            // Extrair números do termo digitado (ex: o "60" de "televisao 60" ou "55" de "tv 55")
+            const numerosEncontrados = termo.match(/\d+/g);
+            let fatorMultiplicador = 1;
+
+            if (numerosEncontrados && numerosEncontrados.length > 0) {
+                let num = parseInt(numerosEncontrados[0], 10);
+                // Se o número parecer polegadas ou capacidade (ex: entre 14 e 100)
+                if (num >= 14 && num <= 100 && (termoLower.includes('tv') || termoLower.includes('televisao') || termoLower.includes('monitor'))) {
+                    fatorMultiplicador = num / 32; // Usa 32 polegadas como base de escala
+                } else if (num > 100) {
+                    fatorMultiplicador = num / 500; // Para valores maiores (ex: celulares, consoles)
+                }
+            }
+
             if (termoLower.includes('chupeta') || termoLower.includes('lapis') || termoLower.includes('caneta') || termoLower.includes('meia') || termoLower.includes('chinelo')) {
                 baseMin = 7.99;
                 baseMax = 45.00;
             } else if (termoLower.includes('iphone') || termoLower.includes('playstation') || termoLower.includes('xbox') || termoLower.includes('video game') || termoLower.includes('notebook')) {
-                baseMin = 1800.00;
-                baseMax = 5500.00;
+                baseMin = 2200.00;
+                baseMax = 5800.00;
             } else if (termoLower.includes('tv') || termoLower.includes('televisao') || termoLower.includes('televisão') || termoLower.includes('monitor')) {
-                baseMin = 899.00;
-                baseMax = 1899.00;
+                baseMin = 950.00 * (fatorMultiplicador !== 1 ? fatorMultiplicador : 1);
+                baseMax = 2100.00 * (fatorMultiplicador !== 1 ? fatorMultiplicador : 1);
             } else if (termoLower.includes('air fryer') || termoLower.includes('tenis') || termoLower.includes('smartwatch') || termoLower.includes('cadeira')) {
-                baseMin = 120.00;
-                baseMax = 650.00;
+                baseMin = 150.00;
+                baseMax = 690.00;
+            } else {
+                // Caso genérico mas aplicando o fator numérico se houver
+                baseMin = 80.00 * (fatorMultiplicador !== 1 ? fatorMultiplicador : 1);
+                baseMax = 350.00 * (fatorMultiplicador !== 1 ? fatorMultiplicador : 1);
             }
 
             return [
-                { store: "Shopee / Lomadee", condition: "new", min: baseMin, max: baseMax * 0.85, brand: "Ofertas Diretas", frete: "📦 Frete Grátis", rating: "⭐ 4.9 (4.1k)", best: true },
-                { store: "Amazon (Afiliados)", condition: "new", min: baseMin * 1.15, max: baseMax * 1.1, brand: "Lojas Oficiais", frete: "📦 Frete Prime", rating: "⭐ 4.8 (2.3k)", best: false },
+                { store: "Shopee / Lomadee", condition: "new", min: baseMin, max: baseMax * 0.88, brand: "Ofertas Diretas", frete: "📦 Frete Grátis", rating: "⭐ 4.9 (4.1k)", best: true },
+                { store: "Amazon (Afiliados)", condition: "new", min: baseMin * 1.12, max: baseMax * 1.08, brand: "Lojas Oficiais", frete: "📦 Frete Prime", rating: "⭐ 4.8 (2.3k)", best: false },
                 { store: "Mercado Livre", condition: "new", min: baseMin * 1.05, max: baseMax, brand: "Nacionais & Importadas", frete: "📦 Frete Full", rating: "⭐ 4.7 (1.8k)", best: false },
-                { store: "AliExpress / Awin", condition: "new", min: baseMin * 0.9, max: baseMax * 0.75, brand: "Direto da Fábrica", frete: "✈ Envio Internacional", rating: "⭐ 4.6 (950)", best: false },
-                { store: "OLX / Enjoei", condition: "used", min: baseMin * 0.6, max: baseMax * 0.5, brand: "Garimpo e Seminovos", frete: "📍 Combinar com Vendedor", rating: "⭐ 4.5 (310)", best: false },
-                { store: "eBay / Impact", condition: "new", min: baseMin * 1.3, max: baseMax * 1.25, brand: "Importados Globais", frete: "📦 Envio Global", rating: "⭐ 4.8 (620)", best: false }
+                { store: "AliExpress / Awin", condition: "new", min: baseMin * 0.92, max: baseMax * 0.78, brand: "Direto da Fábrica", frete: "✈ Envio Internacional", rating: "⭐ 4.6 (950)", best: false },
+                { store: "OLX / Enjoei", condition: "used", min: baseMin * 0.65, max: baseMax * 0.52, brand: "Garimpo e Seminovos", frete: "📍 Combinar com Vendedor", rating: "⭐ 4.5 (310)", best: false },
+                { store: "eBay / Impact", condition: "new", min: baseMin * 1.25, max: baseMax * 1.20, brand: "Importados Globais", frete: "📦 Envio Global", rating: "⭐ 4.8 (620)", best: false }
             ];
         }
 
