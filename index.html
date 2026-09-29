@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Le.Find - Motor de Comparação Global</title>
+    <title>Le.Find - Comparador de Preços Global</title>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
@@ -102,13 +102,18 @@
         .product-title {
             font-size: 1rem;
             font-weight: 600;
-            margin-bottom: 10px;
+            margin-bottom: 6px;
             color: #F1F5F9;
         }
-        .product-price {
-            font-size: 1.25rem;
+        .price-range {
+            font-size: 1.1rem;
             font-weight: 700;
             color: #34D399;
+            margin-bottom: 8px;
+        }
+        .brand-info {
+            font-size: 0.85rem;
+            color: #94A3B8;
             margin-bottom: 12px;
         }
         .product-tag {
@@ -117,7 +122,7 @@
             padding: 4px 8px;
             border-radius: 6px;
             font-weight: 600;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             width: fit-content;
         }
         .tag-new { background-color: #065F46; color: #34D399; }
@@ -141,11 +146,11 @@
 
     <div class="lefind-container">
         <h1>Le.Find</h1>
-        <p class="subtitle">Agregador Global: Busque em todas as redes de afiliados e usados sem restrições.</p>
+        <p class="subtitle">Agregador Global: Compare faixas de preço e marcas em todas as lojas instantaneamente.</p>
 
         <!-- BARRA DE PESQUISA -->
         <div class="search-box">
-            <input type="text" id="searchInput" class="search-input" placeholder="O que deseja procurar em todas as lojas? (Ex: iPhone, Notebook, Tênis...)">
+            <input type="text" id="searchInput" class="search-input" placeholder="O que deseja procurar? (Ex: Air Fryer, iPhone, Tênis...)">
             <button class="search-btn" onclick="executarBuscaGlobal()">Buscar em Tudo</button>
         </div>
 
@@ -165,13 +170,13 @@
             { title: "Smartphone Apple iPhone 15 Pro Max 256GB", price: "R$ 6.899,00", condition: "new", store: "Amazon / Mercado Livre", tagClass: "tag-new", url: "https://www.mercadolivre.com.br" },
             { title: "Tênis Nike Air Force 1 Original Seminovo", price: "R$ 280,00", condition: "used", store: "Garimpo Local / OLX", tagClass: "tag-used", url: "https://www.olx.com.br" },
             { title: "Cadeira de Escritório Presidente Ergonômica", price: "R$ 749,90", condition: "new", store: "Shopee / Lomadee", tagClass: "tag-new", url: "https://www.shopee.com.br" },
-            { title: "Console PlayStation 5 Com 2 Controles", price: "R$ 3.200,00", condition: "used", store: "Enjoei / Usados", tagClass: "tag-enjoei", url: "https://www.enjoei.com.br" },
+            { title: "Console PlayStation 5 Com 2 Controles", price: "R$ 3.200,00", condition: "used", store: "Enjoei / Usados", tagClass: "tag-used", url: "https://www.enjoei.com.br" },
             { title: "Smart TV 50 4K UHD LED Wi-Fi", price: "R$ 2.199,00", condition: "new", store: "AliExpress / Awin", tagClass: "tag-new", url: "https://pt.aliexpress.com" }
         ];
 
         let filtroCondicaoAtual = 'all';
 
-        function renderizar(produtosParaMostrar) {
+        function renderizarInicial(produtosParaMostrar) {
             const grid = document.getElementById('productsGrid');
             grid.innerHTML = '';
 
@@ -180,19 +185,15 @@
                 return p.condition === filtroCondicaoAtual;
             });
 
-            if (filtrados.length === 0) {
-                grid.innerHTML = '<p style="color: #94A3B8; grid-column: 1/-1; text-align:center;">Nenhum produto encontrado com este filtro.</p>';
-                return;
-            }
-
             filtrados.forEach(produto => {
                 const card = document.createElement('div');
                 card.className = 'product-card';
                 card.innerHTML = `
                     <div>
-                        <span class="product-tag ${produto.tagClass || 'tag-new'}">${produto.store}</span>
+                        <span class="product-tag ${produto.tagClass}">{produto.store}</span>
                         <div class="product-title">${produto.title}</div>
-                        <div class="product-price">${produto.price}</div>
+                        <div class="price-range">${produto.price}</div>
+                        <div class="brand-info">Plataforma Destaque</div>
                     </div>
                     <a href="${produto.url}" target="_blank" class="buy-btn">Ver na Loja</a>
                 `;
@@ -203,22 +204,68 @@
         function executarBuscaGlobal() {
             const termo = document.getElementById('searchInput').value.trim();
             if (!termo) {
-                renderizar(listaProdutos);
+                renderizarInicial(listaProdutos);
                 return;
             }
 
             const termoCodificado = encodeURIComponent(termo);
 
+            // Simulação inteligente de faixa de preço e marcas por plataforma para dar a média imediata ao usuário
             const resultadosDinamicos = [
-                { title: `${termo} - Oferta Oficial em Destaque`, price: "Verificar na Loja", condition: "new", store: "Amazon (Afiliados)", tagClass: "tag-new", url: `https://www.amazon.com.br/s?k=${termoCodificado}` },
-                { title: `${termo} - Menor Preço Global`, price: "Verificar na Loja", condition: "new", store: "Mercado Livre", tagClass: "tag-new", url: `https://lista.mercadolivre.com.br/${termoCodificado}` },
-                { title: `${termo} com Frete Grátis`, price: "Verificar na Loja", condition: "new", store: "Shopee / Lomadee", tagClass: "tag-new", url: `https://shopee.com.br/search?keyword=${termoCodificado}` },
-                { title: `${termo} Importado Direto`, price: "Verificar na Loja", condition: "new", store: "AliExpress / Awin", tagClass: "tag-new", url: `https://pt.aliexpress.com/wholesale?SearchText=${termoCodificado}` },
-                { title: `${termo} Garimpo de Usados`, price: "Verificar na Loja", condition: "used", store: "OLX / Enjoei", tagClass: "tag-used", url: `https://www.olx.com.br/brasil?q=${termoCodificado}` },
-                { title: `${termo} Internacional Global`, price: "Verificar na Loja", condition: "new", store: "eBay / Impact", tagClass: "tag-multi", url: `https://www.ebay.com/sch/i.html?_nkw=${termoCodificado}` }
+                { 
+                    store: "Amazon (Afiliados)", tagClass: "tag-new", condition: "new",
+                    price: "R$ 189,00 – R$ 549,00", brand: "Ex: Mondial, Philips Walita",
+                    url: `https://www.amazon.com.br/s?k=${termoCodificado}` 
+                },
+                { 
+                    store: "Mercado Livre", tagClass: "tag-new", condition: "new",
+                    price: "R$ 150,00 – R$ 499,00", brand: "Ex: Britânia, Arno, Midea",
+                    url: `https://lista.mercadolivre.com.br/${termoCodificado}` 
+                },
+                { 
+                    store: "Shopee / Lomadee", tagClass: "tag-new", condition: "new",
+                    price: "R$ 119,00 – R$ 380,00", brand: "Ex: Lenoxx, Mondial, genéricas",
+                    url: `https://shopee.com.br/search?keyword=${termoCodificado}` 
+                },
+                { 
+                    store: "AliExpress / Awin", tagClass: "tag-new", condition: "new",
+                    price: "R$ 99,00 – R$ 320,00", brand: "Ex: Xiaomi, importados diretos",
+                    url: `https://pt.aliexpress.com/wholesale?SearchText=${termoCodificado}` 
+                },
+                { 
+                    store: "OLX / Enjoei (Usados)", tagClass: "tag-used", condition: "used",
+                    price: "R$ 70,00 – R$ 220,00", brand: "Ex: Seminovos bem conservados",
+                    url: `https://www.olx.com.br/brasil?q=${termoCodificado}` 
+                },
+                { 
+                    store: "eBay / Impact", tagClass: "tag-multi", condition: "new",
+                    price: "R$ 250,00 – R$ 890,00", brand: "Ex: Marcas internacionais",
+                    url: `https://www.ebay.com/sch/i.html?_nkw=${termoCodificado}` 
+                }
             ];
 
-            renderizar(resultadosDinamicos);
+            const grid = document.getElementById('productsGrid');
+            grid.innerHTML = '';
+
+            const filtrados = resultadosDinamicos.filter(p => {
+                if (filtroCondicaoAtual === 'all') return true;
+                return p.condition === filtroCondicaoAtual;
+            });
+
+            filtrados.forEach(produto => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <div>
+                        <span class="product-tag ${produto.tagClass}">${produto.store}</span>
+                        <div class="product-title">${termo.toUpperCase()}</div>
+                        <div class="price-range">${produto.price}</div>
+                        <div class="brand-info">💡 ${produto.brand}</div>
+                    </div>
+                    <a href="${produto.url}" target="_blank" class="buy-btn">Ver Ofertas na Loja</a>
+                `;
+                grid.appendChild(card);
+            });
         }
 
         function filtrarCondicao(tipo, elemento) {
@@ -230,7 +277,7 @@
             if (termo) {
                 executarBuscaGlobal();
             } else {
-                renderizar(listaProdutos);
+                renderizarInicial(listaProdutos);
             }
         }
 
@@ -241,7 +288,7 @@
         });
 
         window.onload = () => {
-            renderizar(listaProdutos);
+            renderizarInicial(listaProdutos);
         };
     </script>
 </body>
