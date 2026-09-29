@@ -330,7 +330,7 @@
 
         <!-- BARRA DE PESQUISA -->
         <div class="search-box">
-            <input type="text" id="searchInput" class="search-input" placeholder="O que deseja procurar? (Ex: Chupeta, Air Fryer, iPhone 15, Televisao 60...)">
+            <input type="text" id="searchInput" class="search-input" placeholder="O que deseja procurar? (Ex: Chupeta, Air Fryer, iPhone 18, Televisao 60...)">
             <button class="search-btn" onclick="executarBuscaGlobal()">Buscar em Tudo</button>
         </div>
 
@@ -339,7 +339,7 @@
             <span style="color: #64748B; font-size: 0.85rem; align-self: center;">Tendências:</span>
             <div class="pill" onclick="buscarPorTermo('Chupeta Infantil')">👶 Chupeta Infantil</div>
             <div class="pill" onclick="buscarPorTermo('Air Fryer')">🔥 Air Fryer</div>
-            <div class="pill" onclick="buscarPorTermo('iPhone 15')">📱 iPhone 15</div>
+            <div class="pill" onclick="buscarPorTermo('iPhone 18')">📱 iPhone 18</div>
             <div class="pill" onclick="buscarPorTermo('Televisao 60')">📺 Televisão 60"</div>
         </div>
 
@@ -418,42 +418,42 @@
             `;
         }
 
-        // MOTOR DE PREÇOS INTELIGENTE COM EXTRAÇÃO DINÂMICA DE CATEGORIA E NÚMEROS/TAMANHOS
+        // MOTOR DE PREÇOS ROBUSTO COM SEPARAÇÃO DE MODELOS E POLEGADAS
         function gerarPrecosDinamicos(termo) {
             const termoLower = termo.toLowerCase();
             let baseMin = 50;
             let baseMax = 250;
 
-            // Extrair números do termo digitado (ex: o "60" de "televisao 60" ou "55" de "tv 55")
+            const ehTVouMonitor = termoLower.includes('tv') || termoLower.includes('televisao') || termoLower.includes('televisão') || termoLower.includes('monitor');
             const numerosEncontrados = termo.match(/\d+/g);
             let fatorMultiplicador = 1;
 
             if (numerosEncontrados && numerosEncontrados.length > 0) {
                 let num = parseInt(numerosEncontrados[0], 10);
-                // Se o número parecer polegadas ou capacidade (ex: entre 14 e 100)
-                if (num >= 14 && num <= 100 && (termoLower.includes('tv') || termoLower.includes('televisao') || termoLower.includes('monitor'))) {
-                    fatorMultiplicador = num / 32; // Usa 32 polegadas como base de escala
-                } else if (num > 100) {
-                    fatorMultiplicador = num / 500; // Para valores maiores (ex: celulares, consoles)
+                // Só aplica proporção numérica se for explicitamente TV ou Monitor e o número parecer polegadas (14 a 100)
+                if (ehTVouMonitor && num >= 14 && num <= 100) {
+                    fatorMultiplicador = num / 32; 
                 }
             }
 
             if (termoLower.includes('chupeta') || termoLower.includes('lapis') || termoLower.includes('caneta') || termoLower.includes('meia') || termoLower.includes('chinelo')) {
                 baseMin = 7.99;
                 baseMax = 45.00;
-            } else if (termoLower.includes('iphone') || termoLower.includes('playstation') || termoLower.includes('xbox') || termoLower.includes('video game') || termoLower.includes('notebook')) {
+            } else if (termoLower.includes('iphone') || termoLower.includes('smartphone') || termoLower.includes('celular')) {
+                baseMin = 3800.00; // Valor adequado para topos de linha atuais
+                baseMax = 8900.00;
+            } else if (termoLower.includes('playstation') || termoLower.includes('xbox') || termoLower.includes('video game') || termoLower.includes('notebook')) {
                 baseMin = 2200.00;
                 baseMax = 5800.00;
-            } else if (termoLower.includes('tv') || termoLower.includes('televisao') || termoLower.includes('televisão') || termoLower.includes('monitor')) {
-                baseMin = 950.00 * (fatorMultiplicador !== 1 ? fatorMultiplicador : 1);
-                baseMax = 2100.00 * (fatorMultiplicador !== 1 ? fatorMultiplicador : 1);
+            } else if (ehTVouMonitor) {
+                baseMin = 950.00 * fatorMultiplicador;
+                baseMax = 2100.00 * fatorMultiplicador;
             } else if (termoLower.includes('air fryer') || termoLower.includes('tenis') || termoLower.includes('smartwatch') || termoLower.includes('cadeira')) {
                 baseMin = 150.00;
                 baseMax = 690.00;
             } else {
-                // Caso genérico mas aplicando o fator numérico se houver
-                baseMin = 80.00 * (fatorMultiplicador !== 1 ? fatorMultiplicador : 1);
-                baseMax = 350.00 * (fatorMultiplicador !== 1 ? fatorMultiplicador : 1);
+                baseMin = 80.00;
+                baseMax = 350.00;
             }
 
             return [
@@ -594,7 +594,7 @@
                 return;
             }
             let alertas = JSON.parse(localStorage.getItem('lefind_alertas') || '[]');
-            alertas.push({ produto: produtoSelecionadoAlerta, contato: contato, data: new Date().toISOString() });
+            alertas.push({ produto: produtoSelecionadoAlerta, contato: contato, data: new Date().toISOString() %>);
             localStorage.setItem('lefind_alertas', JSON.stringify(alertas));
 
             fecharModal();
