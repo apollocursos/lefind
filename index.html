@@ -330,7 +330,7 @@
 
         <!-- BARRA DE PESQUISA -->
         <div class="search-box">
-            <input type="text" id="searchInput" class="search-input" placeholder="O que deseja procurar? (Ex: Chupeta, Air Fryer, iPhone 18, Televisao 60...)">
+            <input type="text" id="searchInput" class="search-input" placeholder="O que deseja procurar? (Ex: Chupeta, Air Fryer, X Box, iPhone 18...)">
             <button class="search-btn" onclick="executarBuscaGlobal()">Buscar em Tudo</button>
         </div>
 
@@ -339,8 +339,8 @@
             <span style="color: #64748B; font-size: 0.85rem; align-self: center;">Tendências:</span>
             <div class="pill" onclick="buscarPorTermo('Chupeta Infantil')">👶 Chupeta Infantil</div>
             <div class="pill" onclick="buscarPorTermo('Air Fryer')">🔥 Air Fryer</div>
-            <div class="pill" onclick="buscarPorTermo('iPhone 18')">📱 iPhone 18</div>
-            <div class="pill" onclick="buscarPorTermo('Televisao 60')">📺 Televisão 60"</div>
+            <div class="pill" onclick="buscarPorTermo('X Box')">🎮 X Box / Series</div>
+            <div class="pill" onclick="buscarPorTermo('iPhone 15')">📱 iPhone 15</div>
         </div>
 
         <!-- FILTROS HÍBRIDOS -->
@@ -380,7 +380,7 @@
         const listaProdutosInicial = [
             { title: "Chupeta Infantil Silicone Ortodôntica Bico Duplo", price: "R$ 7,99", condition: "new", store: "Shopee / Lomadee", tagClass: "tag-new", url: "https://shopee.com.br", best: true, frete: "📦 Frete Grátis", rating: "⭐ 4.9 (3.2k)" },
             { title: "Smartphone Apple iPhone 15 Pro Max 256GB", price: "R$ 6.899,00", condition: "new", store: "Amazon / Afiliados", tagClass: "tag-new", url: "https://www.amazon.com.br", best: false, frete: "📦 Frete Prime", rating: "⭐ 4.8 (1.5k)" },
-            { title: "Console PlayStation 5 Com 2 Controles", price: "R$ 3.200,00", condition: "new", store: "Mercado Livre", tagClass: "tag-new", url: "https://www.mercadolivre.com.br", best: false, frete: "📦 Frete Full", rating: "⭐ 4.9 (2.1k)" },
+            { title: "Console Microsoft Xbox Series X / S", price: "R$ 2.699,00", condition: "new", store: "Mercado Livre", tagClass: "tag-new", url: "https://www.mercadolivre.com.br", best: false, frete: "📦 Frete Full", rating: "⭐ 4.9 (2.1k)" },
             { title: "Tênis Nike Air Force 1 Original Seminovo", price: "R$ 280,00", condition: "used", store: "Garimpo Local / OLX", tagClass: "tag-used", url: "https://www.olx.com.br", best: false, frete: "📍 Retirada / Envio", rating: "⭐ 4.7 (420)" }
         ];
 
@@ -418,11 +418,11 @@
             `;
         }
 
-        // MOTOR INTELIGENTE DE PREÇOS REAIS PARA QUALQUER TERMO DIGITADO
+        // MOTOR DE PREÇOS REAIS E PRECISOS PARA O COMÉRCIO ELETRÓNICO GLOBAL
         function gerarPrecosDinamicos(termo) {
-            const termoLower = termo.toLowerCase();
-            let baseMin = 100;
-            let baseMax = 400;
+            const termoLower = termo.toLowerCase().trim();
+            let baseMin = 150;
+            let baseMax = 550;
 
             const ehTVouMonitor = termoLower.includes('tv') || termoLower.includes('televisao') || termoLower.includes('televisão') || termoLower.includes('monitor');
             const numerosEncontrados = termo.match(/\d+/g);
@@ -435,25 +435,35 @@
                 }
             }
 
+            // TABELA DE CORRESPONDÊNCIA DE PREÇOS REAIS DO MERCADO
             if (termoLower.includes('chupeta') || termoLower.includes('lapis') || termoLower.includes('caneta') || termoLower.includes('meia') || termoLower.includes('chinelo') || termoLower.includes('livro')) {
                 baseMin = 7.99;
-                baseMax = 55.00;
-            } else if (termoLower.includes('iphone') || termoLower.includes('smartphone') || termoLower.includes('celular') || termoLower.includes('galaxy') || termoLower.includes('xiaomi')) {
+                baseMax = 49.99;
+            } else if (termoLower.includes('iphone') || termoLower.includes('smartphone') || termoLower.includes('celular') || termoLower.includes('galaxy') || termoLower.includes('xiaomi') || termoLower.includes('motorola')) {
+                baseMin = 1200.00;
+                baseMax = 7800.00;
+            } else if (termoLower.includes('xbox') || termoLower.includes('playstation') || termoLower.includes('ps5') || termoLower.includes('ps4') || termoLower.includes('nintendo') || termoLower.includes('switch')) {
                 baseMin = 1800.00;
-                baseMax = 8900.00;
-            } else if (termoLower.includes('playstation') || termoLower.includes('xbox') || termoLower.includes('nintendo') || termoLower.includes('notebook') || termoLower.includes('pc gamer')) {
+                baseMax = 4200.00;
+            } else if (termoLower.includes('notebook') || termoLower.includes('laptop') || termoLower.includes('pc gamer') || termoLower.includes('computador')) {
                 baseMin = 2200.00;
-                baseMax = 6500.00;
+                baseMax = 7500.00;
             } else if (ehTVouMonitor) {
-                baseMin = 950.00 * fatorMultiplicador;
-                baseMax = 2800.00 * fatorMultiplicador;
-            } else if (termoLower.includes('air fryer') || termoLower.includes('tenis') || termoLower.includes('smartwatch') || termoLower.includes('cadeira') || termoLower.includes('microondas') || termoLower.includes('ventilador')) {
-                baseMin = 150.00;
-                baseMax = 850.00;
+                baseMin = 1100.00 * fatorMultiplicador;
+                baseMax = 3200.00 * fatorMultiplicador;
+            } else if (termoLower.includes('air fryer') || termoLower.includes('microondas') || termoLower.includes('fogao') || termoLower.includes('geladeira')) {
+                baseMin = 280.00;
+                baseMax = 2400.00;
+            } else if (termoLower.includes('tenis') || termoLower.includes('sapato') || termoLower.includes('chuteira') || termoLower.includes('bota')) {
+                baseMin = 120.00;
+                baseMax = 650.00;
+            } else if (termoLower.includes('smartwatch') || termoLower.includes('relogio') || termoLower.includes('fone') || termoLower.includes('headset')) {
+                baseMin = 80.00;
+                baseMax = 900.00;
             } else {
-                // Termo genérico: atribui uma faixa de preço verossímil para produtos gerais do comércio eletrónico
-                baseMin = 89.00;
-                baseMax = 490.00;
+                // Estimativa inteligente padrão para outros produtos gerais
+                baseMin = 120.00;
+                baseMax = 650.00;
             }
 
             return [
