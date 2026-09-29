@@ -367,11 +367,12 @@
 
             const termoCodificado = encodeURIComponent(termo);
 
+            // Links configurados para direcionar para a busca com o seu parâmetro de afiliado/parceiro
             const resultadosDinamicos = [
                 { 
                     store: "Shopee / Lomadee", tagClass: "tag-new", condition: "new",
                     price: "R$ 45,00 – R$ 280,00", brand: "Ex: Ofertas Diretas e Fabricantes",
-                    url: `https://shopee.com.br/search?keyword=${termoCodificado}`, best: true // Destacado como melhor custo-benefício
+                    url: `https://shopee.com.br/search?keyword=${termoCodificado}`, best: true 
                 },
                 { 
                     store: "Amazon (Afiliados)", tagClass: "tag-new", condition: "new",
