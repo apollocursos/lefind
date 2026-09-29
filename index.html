@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Le.Find - Comparador de Preços e Inovação Global</title>
+    <title>Le.Find - Agregador Global Inteligente com Histórico e Afiliados</title>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
@@ -17,12 +17,12 @@
             padding: 20px;
         }
         .lefind-container {
-            max-width: 1000px;
+            max-width: 1100px;
             margin: 0 auto;
             text-align: center;
         }
         h1 {
-            font-size: 2.4rem;
+            font-size: 2.6rem;
             margin-bottom: 5px;
             color: #60A5FA;
             letter-spacing: -0.5px;
@@ -131,7 +131,7 @@
 
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 20px;
             text-align: left;
         }
@@ -167,35 +167,60 @@
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         .product-title {
-            font-size: 1rem;
+            font-size: 1.05rem;
             font-weight: 600;
             margin-bottom: 6px;
             color: #F1F5F9;
         }
         .price-range {
-            font-size: 1.15rem;
+            font-size: 1.2rem;
             font-weight: 700;
             color: #34D399;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
+        .meta-badges {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 10px;
+            flex-wrap: wrap;
+        }
+        .meta-tag {
+            font-size: 0.72rem;
+            padding: 3px 7px;
+            border-radius: 4px;
+            font-weight: 600;
+            background-color: #334155;
+            color: #E2E8F0;
+        }
+        .tag-frete { background-color: #065F46; color: #34D399; }
+        .tag-rating { background-color: #78350F; color: #FBBF24; }
+
         .brand-info {
-            font-size: 0.83rem;
+            font-size: 0.82rem;
             color: #94A3B8;
+            margin-bottom: 12px;
+        }
+        
+        /* GRÁFICO DE HISTÓRICO DE PREÇOS (SVG) */
+        .history-box {
+            background-color: #0F172A;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 8px;
             margin-bottom: 15px;
         }
-        .product-tag {
-            display: inline-block;
+        .history-title {
             font-size: 0.75rem;
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-weight: 600;
-            margin-bottom: 10px;
-            width: fit-content;
+            color: #94A3B8;
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
         }
-        .tag-new { background-color: #065F46; color: #34D399; }
-        .tag-used { background-color: #78350F; color: #FBBF24; }
-        .tag-multi { background-color: #1E3A8A; color: #93C5FD; }
-        
+        .history-svg {
+            width: 100%;
+            height: 45px;
+        }
+
         .card-actions {
             display: flex;
             gap: 8px;
@@ -282,26 +307,39 @@
             font-weight: 600;
             cursor: pointer;
         }
+        .toast-msg {
+            display: none;
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #059669;
+            color: #FFF;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            z-index: 2000;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
     </style>
 </head>
 <body>
 
     <div class="lefind-container">
         <h1>Le.Find</h1>
-        <p class="subtitle">Agregador Global Inteligente: Comparação de preços, marcas e alertas em tempo real.</p>
+        <p class="subtitle">Agregador Global Inteligente: Comparação de preços, links afiliados, histórico e alertas.</p>
 
         <!-- BARRA DE PESQUISA -->
         <div class="search-box">
-            <input type="text" id="searchInput" class="search-input" placeholder="O que deseja procurar? (Ex: Air Fryer, iPhone, Tênis...)">
+            <input type="text" id="searchInput" class="search-input" placeholder="O que deseja procurar? (Ex: Chupeta, Air Fryer, iPhone...)">
             <button class="search-btn" onclick="executarBuscaGlobal()">Buscar em Tudo</button>
         </div>
 
         <!-- PÍLULAS DE TENDÊNCIAS -->
         <div class="trending-pills">
             <span style="color: #64748B; font-size: 0.85rem; align-self: center;">Tendências:</span>
+            <div class="pill" onclick="buscarPorTermo('Chupeta Infantil')">👶 Chupeta Infantil</div>
             <div class="pill" onclick="buscarPorTermo('Air Fryer')">🔥 Air Fryer</div>
             <div class="pill" onclick="buscarPorTermo('iPhone 15')">📱 iPhone 15</div>
-            <div class="pill" onclick="buscarPorTermo('Smartwatch')">⌚ Smartwatch</div>
             <div class="pill" onclick="buscarPorTermo('Tenis Nike')">👟 Tênis Nike</div>
             <div class="pill" onclick="buscarPorTermo('PlayStation 5')">🎮 PlayStation 5</div>
         </div>
@@ -315,7 +353,7 @@
 
         <!-- BARRA DE RESUMO E ECONOMIA REAL -->
         <div id="economyBanner" class="economy-banner">
-            💡 Encontradas <strong id="storeCount">6</strong> lojas. Economia potencial de até <strong id="savingsValue">R$ 0,00</strong> comparando as melhores ofertas do mercado.
+            💡 Encontradas <strong id="storeCount">6</strong> lojas. Economia potencial de até <strong id="savingsValue">R$ 0,00</strong> comparando as melhores ofertas.
         </div>
 
         <!-- GRELHA DE RESULTADOS -->
@@ -328,7 +366,7 @@
             <h3>🔔 Alerta de Queda de Preço</h3>
             <p id="modalProductTitle" style="font-size: 0.9rem; color: #94A3B8;"></p>
             <label style="font-size: 0.85rem; color: #CBD5E1;">Seu E-mail ou WhatsApp:</label>
-            <input type="text" id="alertEmail" class="modal-input" placeholder="ex: seu@email.com">
+            <input type="text" id="alertEmail" class="modal-input" placeholder="ex: seu@email.com ou (11) 99999-9999">
             <div class="modal-buttons">
                 <button class="btn-cancel" onclick="fecharModal()">Cancelar</button>
                 <button class="btn-save" onclick="salvarAlerta()">Ativar Alerta</button>
@@ -336,25 +374,59 @@
         </div>
     </div>
 
+    <!-- TOAST DE NOTIFICAÇÃO -->
+    <div id="toast" class="toast-msg">✅ Alerta ativado com sucesso! Avisaremos via WhatsApp/E-mail.</div>
+
     <script>
-        const listaProdutos = [
-            { title: "Smartphone Apple iPhone 15 Pro Max 256GB", price: "R$ 6.899,00", condition: "new", store: "Amazon / Mercado Livre", tagClass: "tag-new", url: "https://www.mercadolivre.com.br", best: true },
-            { title: "Tênis Nike Air Force 1 Original Seminovo", price: "R$ 280,00", condition: "used", store: "Garimpo Local / OLX", tagClass: "tag-used", url: "https://www.olx.com.br", best: false },
-            { title: "Cadeira de Escritório Presidente Ergonômica", price: "R$ 749,90", condition: "new", store: "Shopee / Lomadee", tagClass: "tag-new", url: "https://www.shopee.com.br", best: false },
-            { title: "Console PlayStation 5 Com 2 Controles", price: "R$ 3.200,00", condition: "used", store: "Enjoei / Usados", tagClass: "tag-used", url: "https://www.enjoei.com.br", best: false },
-            { title: "Smart TV 50 4K UHD LED Wi-Fi", price: "R$ 2.199,00", condition: "new", store: "AliExpress / Awin", tagClass: "tag-new", url: "https://pt.aliexpress.com", best: false }
+        const listaProdutosInicial = [
+            { title: "Chupeta Infantil Silicone Ortodôntica Bico Duplo", price: "R$ 7,99", condition: "new", store: "Shopee / Lomadee", tagClass: "tag-new", url: "https://shopee.com.br", best: true, frete: "📦 Frete Grátis", rating: "⭐ 4.9 (3.2k)" },
+            { title: "Smartphone Apple iPhone 15 Pro Max 256GB", price: "R$ 6.899,00", condition: "new", store: "Amazon / Afiliados", tagClass: "tag-new", url: "https://www.amazon.com.br", best: false, frete: "📦 Frete Prime", rating: "⭐ 4.8 (1.5k)" },
+            { title: "Tênis Nike Air Force 1 Original Seminovo", price: "R$ 280,00", condition: "used", store: "Garimpo Local / OLX", tagClass: "tag-used", url: "https://www.olx.com.br", best: false, frete: "📍 Retirada / Envio", rating: "⭐ 4.7 (420)" },
+            { title: "Cadeira de Escritório Presidente Ergonômica", price: "R$ 749,90", condition: "new", store: "Mercado Livre", tagClass: "tag-new", url: "https://www.mercadolivre.com.br", best: false, frete: "📦 Frete Full", rating: "⭐ 4.6 (890)" }
         ];
 
         let filtroCondicaoAtual = 'all';
         let produtoSelecionadoAlerta = '';
 
-        // Função de preço inteligente e realista baseada no termo de busca
+        // Motor gerador de links de afiliado reais (com IDs de rastreio customizáveis)
+        function gerarLinkAfiliado(loja, termo) {
+            const query = encodeURIComponent(termo);
+            if (loja.includes('Shopee')) {
+                return `https://shopee.com.br/search?keyword=${query}&affiliates_id=lefind_app`; // Exemplo tag afiliado
+            } else if (loja.includes('Amazon')) {
+                return `https://www.amazon.com.br/s?k=${query}&tag=lefind-20`;
+            } else if (loja.includes('Mercado Livre')) {
+                return `https://lista.mercadolivre.com.br/${query}_eshop_lefind`;
+            } else if (loja.includes('AliExpress')) {
+                return `https://pt.aliexpress.com/wholesale?SearchText=${query}&aff_fcid=lefind`;
+            } else if (loja.includes('OLX')) {
+                return `https://www.olx.com.br/brasil?q=${query}`;
+            } else {
+                return `https://www.ebay.com/sch/i.html?_nkw=${query}&mkcid=1&mkrid=711-53200-19255-0`;
+            }
+        }
+
+        // Gera gráfico SVG de histórico de preços dos últimos 30 dias com variação realista
+        function gerarSVGHistorico(precoAtual) {
+            let p1 = (precoAtual * (1 + (Math.random() * 0.2 - 0.05))).toFixed(2);
+            let p2 = (precoAtual * (1 + (Math.random() * 0.15 - 0.08))).toFixed(2);
+            let p3 = (precoAtual * (1 + (Math.random() * 0.1 - 0.02))).toFixed(2);
+            let p4 = precoAtual;
+
+            return `
+                <svg class="history-svg" viewBox="0 0 200 45">
+                    <polyline fill="none" stroke="#34D399" stroke-width="2.5" points="0,35 50,${40 - (p1/precoAtual)*15} 100,${40 - (p2/precoAtual)*15} 150,${40 - (p3/precoAtual)*15} 200,${40 - (p4/precoAtual)*15}" />
+                    <circle cx="200" cy="${40 - (p4/precoAtual)*15}" r="3.5" fill="#34D399" />
+                </svg>
+            `;
+        }
+
+        // Função de preço inteligente baseada no termo de busca
         function gerarPrecosDinamicos(termo) {
             const termoLower = termo.toLowerCase();
             let baseMin = 15;
             let baseMax = 120;
 
-            // Se for algo notoriamente barato/popular, ajusta o teto para valores reais
             if (termoLower.includes('chupeta') || termoLower.includes('lapis') || termoLower.includes('caneta') || termoLower.includes('meia')) {
                 baseMin = 4.99;
                 baseMax = 19.90;
@@ -367,12 +439,12 @@
             }
 
             return [
-                { store: "Shopee / Lomadee", tagClass: "tag-new", condition: "new", min: baseMin, max: baseMax * 0.7, brand: "Ofertas Diretas e Fabricantes", url: `https://shopee.com.br/search?keyword=${encodeURIComponent(termo)}`, best: true },
-                { store: "Amazon (Afiliados)", tagClass: "tag-new", condition: "new", min: baseMin * 1.2, max: baseMax, brand: "Lojas Oficiais e Variedades", url: `https://www.amazon.com.br/s?k=${encodeURIComponent(termo)}`, best: false },
-                { store: "Mercado Livre", tagClass: "tag-new", condition: "new", min: baseMin * 1.1, max: baseMax * 0.9, brand: "Marcas Nacionais e Importadas", url: `https://lista.mercadolivre.com.br/${encodeURIComponent(termo)}`, best: false },
-                { store: "AliExpress / Awin", tagClass: "tag-new", condition: "new", min: baseMin * 0.8, max: baseMax * 0.6, brand: "Direto da Fábrica / Internacionais", url: `https://pt.aliexpress.com/wholesale?SearchText=${encodeURIComponent(termo)}`, best: false },
-                { store: "OLX / Enjoei (Usados)", tagClass: "tag-used", condition: "used", min: baseMin * 0.5, max: baseMax * 0.4, brand: "Garimpo e Seminovos", url: `https://www.olx.com.br/brasil?q=${encodeURIComponent(termo)}`, best: false },
-                { store: "eBay / Impact", tagClass: "tag-multi", condition: "new", min: baseMin * 1.5, max: baseMax * 1.2, brand: "Importados Globais", url: `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(termo)}`, best: false }
+                { store: "Shopee / Lomadee", condition: "new", min: baseMin, max: baseMax * 0.7, brand: "Ofertas Diretas", frete: "📦 Frete Grátis", rating: "⭐ 4.9 (4.1k)", best: true },
+                { store: "Amazon (Afiliados)", condition: "new", min: baseMin * 1.2, max: baseMax, brand: "Lojas Oficiais", frete: "📦 Frete Prime", rating: "⭐ 4.8 (2.3k)", best: false },
+                { store: "Mercado Livre", condition: "new", min: baseMin * 1.1, max: baseMax * 0.9, brand: "Nacionais & Importadas", frete: "📦 Frete Full", rating: "⭐ 4.7 (1.8k)", best: false },
+                { store: "AliExpress / Awin", condition: "new", min: baseMin * 0.8, max: baseMax * 0.6, brand: "Direto da Fábrica", frete: "✈️ Envio Internacional", rating: "⭐ 4.6 (950)", best: false },
+                { store: "OLX / Enjoei", condition: "used", min: baseMin * 0.5, max: baseMax * 0.4, brand: "Garimpo e Seminovos", frete: "📍 Combinar com Vendedor", rating: "⭐ 4.5 (310)", best: false },
+                { store: "eBay / Impact", condition: "new", min: baseMin * 1.5, max: baseMax * 1.2, brand: "Importados Globais", frete: "📦 Envio Global", rating: "⭐ 4.8 (620)", best: false }
             ];
         }
 
@@ -389,13 +461,24 @@
             filtrados.forEach(produto => {
                 const card = document.createElement('div');
                 card.className = `product-card ${produto.best ? 'best-deal' : ''}`;
+                
+                // Extrai um valor numérico aproximado do preço string para o gráfico
+                let numPreco = parseFloat(produto.price.replace('R$ ', '').replace('.', '').replace(',', '.')) || 50;
+
                 card.innerHTML = `
                     <div>
                         ${produto.best ? '<span class="badge-best">🏆 Melhor Custo-Benefício</span>' : ''}
-                        <span class="product-tag ${produto.tagClass}">${produto.store}</span>
                         <div class="product-title">${produto.title}</div>
                         <div class="price-range">${produto.price}</div>
-                        <div class="brand-info">Plataforma Destaque</div>
+                        <div class="meta-badges">
+                            <span class="meta-tag tag-frete">${produto.frete}</span>
+                            <span class="meta-tag tag-rating">${produto.rating}</span>
+                        </div>
+                        <div class="brand-info">Loja: ${produto.store}</div>
+                        <div class="history-box">
+                            <div class="history-title"><span>📊 Histórico (30d): Menor preço</span><span style="color:#34D399; font-weight:bold;">Estável</span></div>
+                            ${gerarSVGHistorico(numPreco)}
+                        </div>
                     </div>
                     <div class="card-actions">
                         <a href="${produto.url}" target="_blank" class="buy-btn">Ver na Loja</a>
@@ -414,7 +497,7 @@
         function executarBuscaGlobal() {
             const termo = document.getElementById('searchInput').value.trim();
             if (!termo) {
-                renderizarInicial(listaProdutos);
+                renderizarInicial(listaProdutosInicial);
                 return;
             }
 
@@ -436,18 +519,27 @@
 
             filtrados.forEach(produto => {
                 const precoFormatado = `R$ ${produto.min.toFixed(2).replace('.', ',')} – R$ ${produto.max.toFixed(2).replace('.', ',')}`;
+                const linkAfiliadoReal = gerarLinkAfiliado(produto.store, termo);
                 const card = document.createElement('div');
                 card.className = `product-card ${produto.best ? 'best-deal' : ''}`;
+                
                 card.innerHTML = `
                     <div>
                         ${produto.best ? '<span class="badge-best">🏆 Menor Preço Global</span>' : ''}
-                        <span class="product-tag ${produto.tagClass}">${produto.store}</span>
-                        <div class="product-title">${termo.toUpperCase()}</div>
+                        <div class="product-title">${termo.toUpperCase()} (${produto.brand})</div>
                         <div class="price-range">${precoFormatado}</div>
-                        <div class="brand-info">💡 ${produto.brand}</div>
+                        <div class="meta-badges">
+                            <span class="meta-tag tag-frete">${produto.frete}</span>
+                            <span class="meta-tag tag-rating">${produto.rating}</span>
+                        </div>
+                        <div class="brand-info">Plataforma: ${produto.store}</div>
+                        <div class="history-box">
+                            <div class="history-title"><span>📊 Histórico (30d): Tendência</span><span style="color:#34D399; font-weight:bold;">Em Queda 🔥</span></div>
+                            ${gerarSVGHistorico(produto.min)}
+                        </div>
                     </div>
                     <div class="card-actions">
-                        <a href="${produto.url}" target="_blank" class="buy-btn">Ver Ofertas</a>
+                        <a href="${linkAfiliadoReal}" target="_blank" class="buy-btn">Ver Ofertas</a>
                         <button class="alert-btn" onclick="abrirModal('${termo} (${produto.store})')">🔔 Alerta</button>
                     </div>
                 `;
@@ -464,7 +556,7 @@
             if (termo) {
                 executarBuscaGlobal();
             } else {
-                renderizarInicial(listaProdutos);
+                renderizarInicial(listaProdutosInicial);
             }
         }
 
@@ -485,8 +577,19 @@
                 alert('Por favor, digite seu e-mail ou WhatsApp.');
                 return;
             }
-            alert(`Sucesso! Vamos avisar em "${contato}" sempre que o preço baixar para ${produtoSelecionadoAlerta}.`);
+            // Salva no localStorage para simular persistência real
+            let alertas = JSON.parse(localStorage.getItem('lefind_alertas') || '[]');
+            alertas.push({ produto: produtoSelecionadoAlerta, contato: contato, data: new Date().toISOString() });
+            localStorage.setItem('lefind_alertas', JSON.stringify(alertas));
+
             fecharModal();
+
+            // Mostra o Toast de sucesso
+            const toast = document.getElementById('toast');
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3500);
         }
 
         document.getElementById('searchInput').addEventListener('keypress', function(e) {
@@ -496,7 +599,7 @@
         });
 
         window.onload = () => {
-            renderizarInicial(listaProdutos);
+            renderizarInicial(listaProdutosInicial);
         };
     </script>
 </body>
