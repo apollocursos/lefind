@@ -6,314 +6,145 @@
     <title>LE.FIND - Agregador Global de Ofertas & AI Intelligence</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --bg-dark: #0b0f19;
+        :root{
+            --bg-escuro: #0b0f19;
             --card-bg: #111827;
-            --card-border: #1f2937;
-            --accent-blue: #3b82f6;
+            --borda-do-cartão: #1f2937;
+            --azul-acentuado: #3b82f6;
             --accent-green: #10b981;
-            --accent-yellow: #f59e0b;
-            --accent-purple: #8b5cf6;
-            --accent-pink: #ec4899;
-            --text-main: #f9fafb;
-            --text-muted: #9ca3af;
+            --accent-amarelo: #f59e0b;
+            --accent-roxo: #8b5cf6;
+            --rosa-acentuado: #ec4899;
+            --texto-principal: #f9fafb;
+            --texto-silenciado: #9ca3af;
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
+        *{ box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        .main-wrapper {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-escuro);
+            color: var(--texto-principal);
+            padding: 20px;
         }
 
         header {
-            padding: 30px 20px 20px 20px;
-            background-color: transparent;
             display: flex;
-            flex-direction: column;
-            gap: 15px;
+            justify-content: space-between;
             align-items: center;
-            text-align: center;
+            background: var(--card-bg);
+            padding: 15px 25px;
+            border-radius: 12px;
+            border: 1px solid var(--borda-do-cartão);
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 15px;
         }
 
-        .brand-title {
-            font-size: 2.2rem;
-            font-weight: 800;
-            color: var(--accent-blue);
-            letter-spacing: -0.5px;
+        .logo-area {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--azul-acentuado);
         }
 
         .search-box {
             display: flex;
             gap: 10px;
-            justify-content: center;
-            width: 100%;
-            max-width: 650px;
+            flex: 1;
+            max-width: 500px;
         }
 
-        .search-input-wrapper {
-            position: relative;
-            flex-grow: 1;
-            display: flex;
-            align-items: center;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 12px 45px 12px 18px;
-            border-radius: 10px;
-            border: 1px solid var(--card-border);
-            background-color: var(--card-bg);
-            color: var(--text-main);
-            font-size: 1rem;
+        .search-box input {
+            flex: 1;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid var(--borda-do-cartão);
+            background: var(--bg-escuro);
+            color: var(--texto-principal);
             outline: none;
-            transition: border-color 0.2s;
         }
 
-        .search-input:focus {
-            border-color: var(--accent-blue);
-        }
-
-        .camera-btn {
-            position: absolute;
-            right: 12px;
-            background: none;
-            border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            font-size: 1.1rem;
-            transition: color 0.2s;
-        }
-
-        .camera-btn:hover {
-            color: var(--accent-blue);
-        }
-
-        .search-btn {
-            background-color: var(--accent-blue);
-            color: #FFFFFF;
-            border: none;
-            padding: 0 20px;
-            border-radius: 10px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .search-btn:hover {
-            background-color: #2563eb;
-        }
-
-        .trends-bar, .history-bar {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.9rem;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .trends-title, .history-title {
-            color: var(--text-muted);
-            font-weight: 600;
-        }
-
-        .trend-chips, .history-chips {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .chip {
-            background-color: var(--card-bg);
-            color: var(--text-main);
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: 1px solid var(--card-border);
-        }
-
-        .chip:hover {
-            background-color: var(--accent-blue);
-            border-color: var(--accent-blue);
-        }
-
-        /* PAINEL DE INOVAÇÃO EXPANDIDO (4 PILARES) */
-        .innovation-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 15px;
-            width: 100%;
-            max-width: 1160px;
-            margin: 10px auto 0 auto;
-            padding: 0 20px;
-        }
-
-        .innovation-card {
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(139, 92, 246, 0.08));
-            border: 1px solid rgba(139, 92, 246, 0.3);
-            border-radius: 12px;
-            padding: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            text-align: left;
-        }
-
-        .innovation-title {
-            font-size: 0.9rem;
-            font-weight: bold;
-            color: #c084fc;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .innovation-desc {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            line-height: 1.35;
-        }
-
-        .mesh-action-btn {
-            background-color: var(--accent-purple);
+        .search-box button {
+            background: var(--azul-acentuado);
             color: white;
             border: none;
-            padding: 5px 10px;
-            border-radius: 6px;
-            font-size: 0.75rem;
-            font-weight: 600;
+            padding: 10px 20px;
+            border-radius: 8px;
             cursor: pointer;
-            width: fit-content;
-            transition: opacity 0.2s;
+            font-weight: bold;
         }
 
-        .mesh-action-btn:hover { opacity: 0.9; }
+        .features-banner {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
 
-        .controls-row {
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid var(--borda-do-cartão);
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+        }
+
+        .feature-card h4 {
+            color: var(--azul-acentuado);
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .toolbar {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            width: 100%;
-            max-width: 1160px;
-            padding: 0 20px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
             gap: 15px;
-            margin-top: 20px;
-            margin-left: auto;
-            margin-right: auto;
         }
 
-        .filter-buttons {
+        .filters-group {
             display: flex;
             gap: 10px;
             flex-wrap: wrap;
         }
 
         .filter-btn {
-            background-color: var(--card-bg);
-            color: var(--text-main);
-            border: 1px solid var(--card-border);
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.2s;
-        }
-
-        .filter-btn:hover, .filter-btn.active {
-            border-color: var(--accent-blue);
-            background-color: rgba(59, 130, 246, 0.1);
-        }
-
-        .sort-select {
-            background-color: var(--card-bg);
-            color: var(--text-main);
-            border: 1px solid var(--card-border);
-            padding: 8px 14px;
-            border-radius: 8px;
-            outline: none;
-            cursor: pointer;
-            font-size: 0.85rem;
-        }
-
-        .stats-banner {
-            margin: 15px auto 10px auto;
-            max-width: 1160px;
-            background-color: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            padding: 12px 20px;
-            border-radius: 10px;
-            text-align: center;
-            font-size: 0.95rem;
-            color: #93c5fd;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .btn-my-alerts {
-            background-color: var(--accent-purple);
-            color: white;
-            border: none;
-            padding: 6px 12px;
+            background: var(--card-bg);
+            border: 1px solid var(--borda-do-cartão);
+            color: var(--texto-silenciado);
+            padding: 8px 15px;
             border-radius: 6px;
-            font-size: 0.8rem;
             cursor: pointer;
-            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        .filter-btn.active {
+            background: var(--azul-acentuado);
+            color: white;
+            border-color: var(--azul-acentuado);
         }
 
         .results-grid {
-            padding: 10px 20px 40px 20px;
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 20px;
-            max-width: 1200px;
-            margin: 0 auto;
-            width: 100%;
         }
 
         .offer-card {
-            background-color: var(--card-bg);
-            border: 1px solid var(--card-border);
+            background: var(--card-bg);
+            border: 1px solid var(--borda-do-cartão);
             border-radius: 12px;
             padding: 20px;
+            position: relative;
             display: flex;
             flex-direction: column;
             gap: 12px;
-            position: relative;
-            transition: transform 0.2s, border-color 0.2s;
-        }
-
-        .offer-card:hover {
-            border-color: var(--text-muted);
-            transform: translateY(-2px);
         }
 
         .offer-card.best-deal {
@@ -323,479 +154,234 @@
         .best-badge {
             position: absolute;
             top: -10px;
-            left: 20px;
-            background-color: var(--accent-green);
+            right: 15px;
+            background: var(--accent-green);
             color: #000;
             font-size: 0.75rem;
             font-weight: bold;
             padding: 3px 10px;
-            border-radius: 4px;
-            text-transform: uppercase;
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
+            border-radius: 20px;
         }
 
         .card-title {
             font-size: 1.05rem;
-            font-weight: 600;
-            color: var(--text-main);
+            font-weight: bold;
+            color: var(--texto-principal);
         }
 
         .price-tag {
-            font-size: 1.25rem;
+            font-size: 1.3rem;
             font-weight: bold;
-            color: var(--text-main);
+            color: var(--accent-green);
         }
 
-        .cra-box {
-            background-color: rgba(16, 185, 129, 0.05);
-            border: 1px dashed rgba(16, 185, 129, 0.3);
-            padding: 8px 10px;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            color: #6ee7b7;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .cra-box, .ai-deal-box {
+            background: rgba(59, 130, 246, 0.08);
+            border-left: 3px solid var(--azul-acentuado);
+            padding: 8px 12px;
+            border-radius: 0 6px 6px 0;
+            font-size: 0.85rem;
         }
 
         .ai-deal-box {
-            background-color: rgba(236, 72, 153, 0.05);
-            border: 1px dashed rgba(236, 72, 153, 0.3);
-            padding: 8px 10px;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            color: #f472b6;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            border-left-color: var(--accent-roxo);
+            background: rgba(139, 92, 246, 0.08);
         }
 
         .card-tags {
             display: flex;
-            gap: 8px;
-            font-size: 0.8rem;
+            gap: 6px;
             flex-wrap: wrap;
         }
 
-        .tag-frete {
-            background-color: rgba(16, 185, 129, 0.1);
-            color: var(--accent-green);
+        .card-tags span {
+            font-size: 0.75rem;
             padding: 3px 8px;
             border-radius: 4px;
-        }
-
-        .tag-rating {
-            background-color: rgba(245, 158, 11, 0.1);
-            color: var(--accent-yellow);
-            padding: 3px 8px;
-            border-radius: 4px;
-        }
-
-        .tag-cashback {
-            background-color: rgba(139, 92, 246, 0.1);
-            color: #c084fc;
-            padding: 3px 8px;
-            border-radius: 4px;
-        }
-
-        .platform-info {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        .history-box {
-            background-color: rgba(0, 0, 0, 0.2);
-            padding: 8px 10px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.82rem;
-        }
-
-        .trend-down {
-            color: var(--accent-green);
-            font-weight: 500;
+            background: var(--bg-escuro);
+            border: 1px solid var(--borda-do-cartão);
         }
 
         .card-actions {
             display: flex;
-            gap: 8px;
+            gap: 10px;
             margin-top: 5px;
         }
 
         .btn-offer {
-            flex-grow: 1;
-            background-color: var(--accent-blue);
+            flex: 1;
+            background: var(--azul-acentuado);
             color: white;
-            border: none;
-            padding: 10px 8px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
             text-align: center;
+            padding: 10px;
+            border-radius: 8px;
             text-decoration: none;
-            font-size: 0.85rem;
-            transition: background 0.2s;
+            font-weight: bold;
+            font-size: 0.9rem;
         }
-
-        .btn-offer:hover { background-color: #2563eb; }
 
         .btn-negotiate {
-            flex-grow: 1;
-            background-color: var(--accent-purple);
+            background: var(--accent-roxo);
             color: white;
             border: none;
-            padding: 10px 8px;
+            padding: 10px 15px;
             border-radius: 8px;
             cursor: pointer;
-            font-weight: 600;
-            font-size: 0.85rem;
-            transition: opacity 0.2s;
+            font-weight: bold;
         }
-
-        .btn-negotiate:hover { opacity: 0.9; }
 
         .btn-alert {
-            background-color: transparent;
-            color: var(--text-main);
-            border: 1px solid var(--card-border);
-            padding: 10px 12px;
+            background: var(--card-bg);
+            border: 1px solid var(--borda-do-cartão);
+            color: var(--accent-amarelo);
+            padding: 10px 15px;
             border-radius: 8px;
             cursor: pointer;
-            font-weight: 600;
-            transition: background 0.2s;
         }
 
-        .btn-alert:hover { background-color: var(--card-border); }
-
-        /* MODAIS */
-        .modal-overlay {
+        /* Modal Simples */
+        .modal {
+            display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            display: none;
+            background: rgba(0,0,0,0.7);
             justify-content: center;
             align-items: center;
             z-index: 1000;
         }
-
         .modal-content {
-            background-color: var(--card-bg);
-            border: 1px solid var(--card-border);
-            padding: 30px;
+            background: var(--card-bg);
+            border: 1px solid var(--borda-do-cartão);
+            padding: 25px;
             border-radius: 12px;
-            width: 100%;
-            max-width: 440px;
+            width: 90%; max-width: 400px;
             display: flex;
             flex-direction: column;
             gap: 15px;
         }
-
-        .modal-title {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .modal-input {
-            width: 100%;
-            padding: 10px 14px;
-            border-radius: 8px;
-            border: 1px solid var(--card-border);
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            outline: none;
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 10px;
-            justify-content: flex-end;
-            margin-top: 10px;
-        }
-
-        .btn-cancel {
-            background: transparent;
-            border: 1px solid var(--card-border);
-            color: var(--text-muted);
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        .btn-save {
-            background-color: var(--accent-blue);
-            border: none;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        .alert-item-row {
-            background: var(--bg-dark);
+        .modal-content input {
             padding: 10px;
             border-radius: 6px;
-            font-size: 0.85px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 6px;
-            color: var(--text-muted);
+            border: 1px solid var(--borda-do-cartão);
+            background: var(--bg-escuro);
+            color: white;
         }
     </style>
 </head>
 <body>
 
-    <div class="main-wrapper">
-        <header>
-            <div class="brand-title">
-                <i class="fa-solid fa-cube"></i> LE.FIND <span style="font-size:0.8rem; background:var(--accent-purple); padding:2px 8px; border-radius:4px; color:#fff;">AI Ultimate v3.1</span>
-            </div>
-            
-            <div class="search-box">
-                <div class="search-input-wrapper">
-                    <input type="text" id="searchInput" class="search-input" placeholder="O que deseja procurar ou tirar foto? (ex: Boné Lacoste)">
-                    <button class="camera-btn" onclick="ativarCamera()" title="Pesquisar por Foto"><i class="fa-solid fa-camera"></i></button>
-                </div>
-                <button class="search-btn" onclick="executarBusca()">Buscar</button>
-            </div>
-
-            <input type="file" id="fileInput" accept="image/*" capture="environment" style="display: none;" onchange="processarFoto(event)">
-
-            <div class="trends-bar">
-                <span class="trends-title">Tendências:</span>
-                <div class="trend-chips">
-                    <button class="chip" onclick="buscarTermo('Boné Lacoste')">Boné Lacoste</button>
-                    <button class="chip" onclick="buscarTermo('Air Fryer')">Air Fryer</button>
-                    <button class="chip" onclick="buscarTermo('Xbox Series X')">Xbox Series X</button>
-                    <button class="chip" onclick="buscarTermo('iPhone 15')">iPhone 15</button>
-                </div>
-            </div>
-
-            <div class="history-bar" id="historyBar" style="display: none;">
-                <span class="history-title">Suas Buscas:</span>
-                <div class="history-chips" id="historyChips"></div>
-            </div>
-        </header>
-
-        <!-- PAINEL DE INOVAÇÕES TOTAL (4 PILARES) -->
-        <div class="innovation-grid">
-            <div class="innovation-card">
-                <div class="innovation-title"><i class="fa-solid fa-people-arrows"></i> LE.Find Mesh</div>
-                <div class="innovation-desc">Racha de frete P2P ativo na sua vizinhança para frete grátis coletivo.</div>
-                <button class="mesh-action-btn" onclick="abrirModal('meshModal')">Ver Lote</button>
-            </div>
-            <div class="innovation-card">
-                <div class="innovation-title"><i class="fa-solid fa-percent"></i> Cashback Cruzado</div>
-                <div class="innovation-desc">Otimização automática de comissões abatida diretamente no preço final.</div>
-                <div style="font-size: 0.75rem; color: #10b981; font-weight: bold;">✔ Ativo (-4.5%)</div>
-            </div>
-            <div class="innovation-card">
-                <div class="innovation-title"><i class="fa-solid fa-shield-heart"></i> Anti-Arrependimento</div>
-                <div class="innovation-desc">IA valida histórico de 90 dias para bloquear falsas promoções de lojas.</div>
-                <div style="font-size: 0.75rem; color: #f472b6; font-weight: bold;">✔ Monitoramento 24/7</div>
-            </div>
-            <div class="innovation-card">
-                <div class="innovation-title"><i class="fa-solid fa-gavel"></i> Leilão Inverso P2P</div>
-                <div class="innovation-desc">Envie sua proposta de preço diretamente para a margem de comissão do lojista.</div>
-                <div style="font-size: 0.75rem; color: #c084fc; font-weight: bold;">✔ Negociação Cega</div>
-            </div>
+    <header>
+        <div class="logo-area">
+            <i class="fa-solid fa-globe"></i> LE.FIND <span style="font-size: 0.7rem; background: var(--accent-roxo); padding: 2px 6px; border-radius: 4px;">v3.0 API Real</span>
         </div>
-
-        <div class="controls-row">
-            <div class="filter-buttons">
-                <button class="filter-btn active" onclick="filtrar('todos', event)"><i class="fa-solid fa-globe"></i> Todos</button>
-                <button class="filter-btn" onclick="filtrar('oficiais', event)"><i class="fa-solid fa-shield-halved"></i> Lojas Oficiais</button>
-                <button class="filter-btn" onclick="filtrar('garimpo', event)"><i class="fa-solid fa-tags"></i> Garimpo (Usados)</button>
-            </div>
-            <select class="sort-select" id="sortSelect" onchange="mudarOrdenacao()">
-                <option value="relevancia">Ordenar por: Relevância</option>
-                <option value="menor-preco">Menor Preço Global</option>
-                <option value="maior-preco">Maior Preço Global</option>
-            </select>
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Pesquisar produto global (ex: Xbox, Air Fryer, iPhone)..." value="XBOX SERIES S">
+            <button onclick="executarBuscaAPI()">Buscar</button>
         </div>
-
-        <div class="stats-banner" id="stats-banner">
-            <span>Encontradas lojas. Comparativo ativo com motor Mesh, CRA e Alertas WhatsApp ilimitados.</span>
-            <button class="btn-my-alerts" onclick="abrirMeusAlertas()"><i class="fa-solid fa-bell"></i> Meus Alertas (<span id="alertCount">0</span>)</button>
+        <div>
+            <button class="filter-btn" onclick="abrirMeusAlertas()"><i class="fa-regular fa-bell"></i> Meus Alertas (<span id="contadorAlertas">0</span>)</button>
         </div>
+    </header>
 
-        <div class="results-grid" id="results-grid"></div>
+    <div class="features-banner">
+        <div class="feature-card">
+            <h4><i class="fa-solid fa-network-wired"></i> LE.Find Mesh</h4>
+            <p>Consolidação de frete geolocalizado entre pares.</p>
+        </div>
+        <div class="feature-card">
+            <h4><i class="fa-solid fa-calculator"></i> CRA Automático</h4>
+            <p>Custo Real de Aquisição (impostos inclusos).</p>
+        </div>
+        <div class="feature-card">
+            <h4><i class="fa-solid fa-shield-halved"></i> Anti-Arrependimento</h4>
+            <p>Validação histórica vs. ofertas atuais 24/7.</p>
+        </div>
+        <div class="feature-card">
+            <h4><i class="fa-solid fa-gavel"></i> Leilão Inverso</h4>
+            <p>Negociação automatizada direta com lojistas.</p>
+        </div>
     </div>
 
-    <!-- MODAL DE ALERTA DE PREÇO (WHATSAPP ILIMITADO) -->
-    <div class="modal-overlay" id="alertModal">
+    <div class="toolbar">
+        <div class="filters-group">
+            <button class="filter-btn active" onclick="mudarFiltro('todos', this)">Todos</button>
+            <button class="filter-btn" onclick="mudarFiltro('oficiais', this)">Lojas Oficiais</button>
+            <button class="filter-btn" onclick="mudarFiltro('garimpo', this)">Garimpo & Usados</button>
+        </div>
+        <div id="stats-banner" style="font-size: 0.85rem; color: var(--texto-silenciado);">
+            A carregar ofertas via API da Vercel...
+        </div>
+    </div>
+
+    <div class="results-grid" id="results-grid">
+        <!-- Injetado dinamicamente via API -->
+    </div>
+
+    <!-- Modal Alerta WhatsApp -->
+    <div class="modal" id="alertModal">
         <div class="modal-content">
-            <div class="modal-title"><i class="fa-regular fa-bell"></i> Alerta WhatsApp Ilimitado</div>
-            <p style="font-size: 0.9rem; color: var(--text-muted);" id="alertModalSubtitle">Defina o preço alvo para receber o aviso automático quando baixar:</p>
-            <div style="display:flex; flex-direction:column; gap:8px;">
-                <label style="font-size:0.8rem; color:#93c5fd;">Preço Alvo Desejado (R$):</label>
-                <input type="text" id="targetPriceAlert" class="modal-input" placeholder="Ex: 90,00">
-            </div>
-            <div style="display:flex; flex-direction:column; gap:8px;">
-                <label style="font-size:0.8rem; color:#93c5fd;">Seu WhatsApp (com DDD):</label>
-                <input type="text" id="alertWhatsApp" class="modal-input" placeholder="Ex: 11999999999">
-            </div>
-            <div class="modal-actions">
-                <button class="btn-cancel" onclick="fecharModal('alertModal')">Cancelar</button>
-                <button class="btn-save" onclick="salvarAlertaWhatsApp()">Salvar Alerta</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL DE LISTAGEM DE ALERTAS ATIVOS -->
-    <div class="modal-overlay" id="listAlertsModal">
-        <div class="modal-content" style="max-width: 500px;">
-            <div class="modal-title"><i class="fa-solid fa-list-check"></i> Meus Alertas Ativados (Sem Limite)</div>
-            <p style="font-size: 0.85rem; color: var(--text-muted);">Estes são os produtos que o seu robô LE.FIND está a vigiar em segundo plano:</p>
-            <div id="activeAlertsList" style="max-height: 250px; overflow-y: auto; display:flex; flex-direction:column; gap:8px; margin-top:5px;"></div>
-            <div class="modal-actions">
-                <button class="btn-save" onclick="fecharModal('listAlertsModal')">Fechar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL DE LEILÃO INVERSO / NEGOCIAÇÃO -->
-    <div class="modal-overlay" id="negotiateModal">
-        <div class="modal-content">
-            <div class="modal-title"><i class="fa-solid fa-gavel"></i> Leilão Inverso (Negociação IA)</div>
-            <p style="font-size: 0.9rem; color: var(--text-muted);">Quanto você gostaria de pagar por este produto? Vamos negociar usando a margem de afiliado em tempo real.</p>
-            <input type="text" id="targetPriceInput" class="modal-input" placeholder="Ex: R$ 3.200,00">
-            <div class="modal-actions">
-                <button class="btn-cancel" onclick="fecharModal('negotiateModal')">Cancelar</button>
-                <button class="btn-save" onclick="enviarPropostaLeilao()">Enviar Proposta ao Lojista</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL DO MESH / RACHA DE FRETE -->
-    <div class="modal-overlay" id="meshModal">
-        <div class="modal-content">
-            <div class="modal-title"><i class="fa-solid fa-people-arrows"></i> LE.Find Mesh - Racha Ativo</div>
-            <p style="font-size: 0.9rem; color: var(--text-muted);">Conectado com sucesso à rede P2P da região. O seu pedido foi agrupado com o lote de entregas da vizinhança.</p>
-            <div style="background:var(--bg-dark); padding:10px; border-radius:8px; font-size:0.85rem; color:#93c5fd;">
-                📦 <strong>Frete Grátis Desbloqueado!</strong> Economia média de R$ 38,00 no envio.
-            </div>
-            <div class="modal-actions">
-                <button class="btn-save" onclick="fecharModal('meshModal')">Entendido, Prosseguir</button>
+            <h3>🔔 Ativar Alerta de Preço WhatsApp</h3>
+            <p style="font-size: 0.85rem; color: var(--texto-silenciado);">Receba alertas ilimitados sem taxa quando o preço atingir o seu alvo.</p>
+            <input type="text" id="alertaProduto" placeholder="Nome do Produto" disabled>
+            <input type="number" id="alertaPrecoAlvo" placeholder="Preço Alvo Desejado (R$)">
+            <input type="text" id="alertaWhatsapp" placeholder="Seu WhatsApp (com DDD)">
+            <div style="display: flex; gap: 10px;">
+                <button onclick="salvarAlerta()" style="flex:1; background: var(--accent-green); color:black; border:none; padding:10px; border-radius:6px; font-weight:bold; cursor:pointer;">Salvar Alerta</button>
+                <button onclick="fecharModal('alertModal')" style="background: var(--borda-do-cartão); color:white; border:none; padding:10px; border-radius:6px; cursor:pointer;">Cancelar</button>
             </div>
         </div>
     </div>
 
     <script>
-        let termoAtual = "Xbox Series X";
-        let filtroAtual = "todos";
-        let produtoSelecionadoAlerta = "";
-        let historicoBuscas = JSON.parse(localStorage.getItem('lefind_history')) || [];
-        let meusAlertas = JSON.parse(localStorage.getItem('lefind_whatsapp_alerts')) || [];
+        let filtroAtual = 'todos';
+        let dadosOfertasAtuais = [];
+        let produtoSelecionadoAlerta = '';
 
-        function normalizarTexto(texto) {
-            return texto.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+        async function executarBuscaAPI() {
+            const termo = document.getElementById('searchInput').value.trim();
+            const grid = document.getElementById('results-grid');
+            grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--texto-silenciado); padding: 40px;"><i class="fa-solid fa-spinner fa-spin"></i> A consultar APIs globais de afiliados na Vercel...</div>';
+
+            try {
+                const response = await fetch(`/api/search?q=${encodeURIComponent(termo)}`);
+                const data = await response.json();
+
+                if (!data.success || !data.offers.length) {
+                    grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--texto-silenciado); padding: 40px;">Nenhuma oferta encontrada.</div>';
+                    return;
+                }
+
+                dadosOfertasAtuais = data.offers;
+                renderizarCards(dadosOfertasAtuais);
+                document.getElementById('stats-bannerinnerText', `Encontradas ${data.offers.length} ofertas reais para "${termo}" via API.`);
+            } catch (err) {
+                console.error(err);
+                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--rosa-acentuado); padding: 40px;">⚠️ Erro de conexão com a Serverless API.</div>';
+            }
         }
 
-        function gerarPrecosDinamicos(termo) {
-            const termoLower = normalizarTexto(termo);
-            let baseMin = 150;
-            let baseMax = 550;
-
-            if (termoLower.includes('xbox series x') || termoLower.includes('xbox')) {
-                baseMin = 3499.00; baseMax = 3899.00;
-            } else if (termoLower.includes('bone lacoste') || termoLower.includes('bone')) {
-                baseMin = 95.00; baseMax = 140.00;
-            } else if (termoLower.includes('chupeta')) {
-                baseMin = 7.99; baseMax = 19.99;
-            } else if (termoLower.includes('air fryer')) {
-                baseMin = 299.00; baseMax = 599.00;
-            } else if (termoLower.includes('iphone')) {
-                baseMin = 4500.00; baseMax = 7800.00;
-            } else {
-                baseMin = 120.00; baseMax = 650.00;
-            }
-
-            return [
-                { store: "Shopee / Lomadee", condition: "new", min: baseMin * 0.95, max: baseMax * 0.95, brand: "Ofertas Diretas", frete: "📦 Frete Grátis (Mesh)", rating: "⭐ 4.9 (4.1k)", cashback: "Cashback 3.5%", best: true, aiVerdict: "Preço Realmente Justo (-8% vs média 90d)" },
-                { store: "Amazon (Afiliados)", condition: "new", min: baseMin, max: baseMax, brand: "Lojas Oficiais", frete: "📦 Frete Prime", rating: "⭐ 4.8 (2.3k)", cashback: "Cashback 2.0%", best: false, aiVerdict: "Preço estável dentro da média histórica" },
-                { store: "Mercado Livre", condition: "new", min: baseMin * 1.02, max: baseMax * 1.05, brand: "Nacionais & Importadas", frete: "📦 Frete Full", rating: "⭐ 4.7 (1.8k)", cashback: "Cashback 4.0%", best: false, aiVerdict: "⚠️ Atenção: R$ 15 acima da mínima de 30 dias" },
-                { store: "AliExpress / Awin", condition: "new", min: baseMin * 0.90, max: baseMax * 0.90, brand: "Direto da Fábrica", frete: "✈ Envio Internacional", rating: "⭐ 4.6 (950)", cashback: "Cashback 5.0% (CRA Incluso)", best: false, aiVerdict: "Excelente Oportunidade Global" },
-                { store: "OLX / Enjoei", condition: "used", min: baseMin * 0.60, max: baseMax * 0.70, brand: "Garimpo e Seminovos", frete: "📍 Combinar com Vendedor", rating: "⭐ 4.5 (310)", cashback: "Direto c/ Dono", best: false, aiVerdict: "Usado em bom estado verificado" },
-                { store: "eBay / Impact", condition: "new", min: baseMin * 1.10, max: baseMax * 1.15, brand: "Importados Globais", frete: "📦 Envio Global", rating: "⭐ 4.8 (620)", cashback: "Cashback 1.5%", best: false, aiVerdict: "Preço alto em relação ao mercado" }
-            ];
-        }
-
-        function atualizarHistorico(termo) {
-            if (!historicoBuscas.includes(termo)) {
-                historicoBuscas.unshift(termo);
-                if (historicoBuscas.length > 5) historicoBuscas.pop();
-                localStorage.setItem('lefind_history', JSON.stringify(historicoBuscas));
-            }
-            renderizarHistoricoUI();
-        }
-
-        function renderizarHistoricoUI() {
-            const bar = document.getElementById('historyBar');
-            const chipsContainer = document.getElementById('historyChips');
-            chipsContainer.innerHTML = '';
-
-            if (historicoBuscas.length > 0) {
-                bar.style.display = 'flex';
-                historicoBuscas.forEach(t => {
-                    const btn = document.createElement('button');
-                    btn.className = 'chip';
-                    btn.innerText = t;
-                    btn.onclick = () => buscarTermo(t);
-                    chipsContainer.appendChild(btn);
-                });
-            } else {
-                bar.style.display = 'none';
-            }
-            document.getElementById('alertCount').innerText = meusAlertas.length;
-        }
-
-        function renderizarOfertas(termo, filtroTipo = 'todos') {
-            termoAtual = termo;
-            filtroTipo = filtroAtual;
-            let ofertas = gerarPrecosDinamicos(termo);
-
-            if (filtroTipo === 'oficiais') {
-                ofertas = ofertas.filter(o => o.brand === "Lojas Oficiais" || o.brand === "Ofertas Diretas");
-            } else if (filtroTipo === 'garimpo') {
-                ofertas = ofertas.filter(o => o.condition === "used");
-            }
-
-            const sortVal = document.getElementById('sortSelect').value;
-            if (sortVal === 'menor-preco') {
-                ofertas.sort((a, b) => a.min - b.min);
-            } else if (sortVal === 'maior-preco') {
-                ofertas.sort((a, b) => b.min - a.min);
-            }
-
+        function renderizarCards(ofertas) {
             const grid = document.getElementById('results-grid');
             grid.innerHTML = '';
 
-            ofertas.forEach(item => {
+            let filtradas = ofertas;
+            if (filtroAtual === 'oficiais') {
+                filtradas = ofertas.filter(o => o.brand === "Lojas Oficiais" || o.brand === "Ofertas Diretas");
+            } else if (filtroAtual === 'garimpo') {
+                filtradas = ofertas.filter(o => o.condition === "used");
+            }
+
+            filtradas.forEach(item => {
                 const card = document.createElement('div');
                 card.className = `offer-card ${item.best ? 'best-deal' : ''}`;
-                let badgeHtml = item.best ? `<div class="best-badge"><i class="fa-solid fa-star"></i> Menor Preço Global</div>` : '';
-                const precoFormatado = `R$ ${item.min.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})} - R$ ${item.max.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
                 
-                const craEstimado = `R$ ${(item.min * 1.045).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                let badgeHtml = item.best ? `<div class="best-badge"><i class="fa-solid fa-star"></i> Menor Preço Global</div>` : '';
+                const precoFormatado = `R$ ${item.minPrice.toLocaleString('pt-BR', {minimumFractionDigits: 2})} - R$ ${item.maxPrice.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+                const craEstimado = `R$ ${(item.minPrice * 1.045).toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
 
                 card.innerHTML = `
                     ${badgeHtml}
-                    <div class="card-header">
-                        <div class="card-title">${termo.toUpperCase()} (${item.brand})</div>
-                    </div>
+                    <div class="card-title">${item.title}</div>
                     <div class="price-tag">${precoFormatado}</div>
                     <div class="cra-box">
                         <span><i class="fa-solid fa-calculator"></i> CRA (Custo Real + Taxas):</span>
@@ -806,158 +392,80 @@
                         <strong>${item.aiVerdict}</strong>
                     </div>
                     <div class="card-tags">
-                        <span class="tag-frete">${item.frete}</span>
-                        <span class="tag-rating">${item.rating}</span>
-                        <span class="tag-cashback">${item.cashback}</span>
+                        <span>${item.frete}</span>
+                        <span>${item.rating}</span>
+                        <span>${item.cashback}</span>
                     </div>
-                    <div class="platform-info">Plataforma: ${item.store}</div>
-                    <div class="history-box">
-                        <span>Histórico (90d): Variação</span>
-                        <span class="trend-down"><i class="fa-solid fa-arrow-trend-down"></i> Monitorado IA</span>
-                    </div>
+                    <div style="font-size:0.8rem; color: var(--texto-silenciado);">Plataforma: ${item.store}</div>
                     <div class="card-actions">
-                        <a href="https://wa.me/?text=Comprei%20pelo%20LE.FIND" target="_blank" class="btn-offer">Ver Ofertas</a>
-                        <button class="btn-negotiate" onclick="abrirModal('negotiateModal')"><i class="fa-solid fa-gavel"></i> Negociar</button>
-                        <button class="btn-alert" title="Criar Alerta WhatsApp" onclick="abrirAlertaParaProduto('${termo} - ${item.brand}')"><i class="fa-regular fa-bell"></i></button>
+                        <a href="${item.affiliateUrl}" target="_blank" class="btn-offer">Ver Ofertas</a>
+                        <button class="btn-negotiate" onclick="alert('Leilão Inverso iniciado para ${item.title}!')"><i class="fa-solid fa-gavel"></i></button>
+                        <button class="btn-alert" onclick="abrirAlertaModal('${item.title}', ${item.minPrice})"><i class="fa-regular fa-bell"></i></button>
                     </div>
                 `;
                 grid.appendChild(card);
             });
-
-            document.getElementById('stats-banner').firstElementChild.innerText = `Encontradas ${ofertas.length} lojas para "${termo}". IA anti-arrependimento e Alertas WhatsApp ativos.`;
         }
 
-        function buscarTermo(termo) {
-            document.getElementById('searchInput').value = termo;
-            atualizarHistorico(termo);
-            renderizarOfertas(termo);
-        }
-
-        function executarBusca() {
-            const input = document.getElementById('searchInput').value.trim();
-            if (input) {
-                atualizarHistorico(input);
-                renderizarOfertas(input);
-            }
-        }
-
-        function ativarCamera() {
-            document.getElementById('fileInput').click();
-        }
-
-        function processarFoto(event) {
-            const file = event.target.files[0];
-            if (file) {
-                const termoFoto = "Boné Lacoste";
-                document.getElementById('searchInput').value = termoFoto;
-                atualizarHistorico(termoFoto);
-                renderizarOfertas(termoFoto);
-                document.getElementById('stats-banner').firstElementChild.innerText = `📸 Imagem reconhecida! Produto identificado: "${termoFoto}" com IA ativada.`;
-            }
-        }
-
-        function filtrar(tipo, e) {
+        function mudarFiltro(tipo, btn) {
             filtroAtual = tipo;
-            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-            if(e) e.currentTarget.classList.add('active');
-            renderizarOfertas(termoAtual);
+            document.querySelectorAll('.filters-group .filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderizarCards(dadosOfertasAtuais);
         }
 
-        function mudarOrdenacao() {
-            renderizarOfertas(termoAtual);
+        function abrirAlertaModal(produto, precoSugerido) {
+            produtoSelecionadoAlerta = produto;
+            document.getElementById('alertaProduto').value = produto;
+            document.getElementById('alertaPrecoAlvo').value = (precoSugerido * 0.9).toFixed(2);
+            document.getElementById('alertModal').style.display = 'flex';
         }
 
-        function abrirModal(modalId) {
-            document.getElementById(modalId).style.display = 'flex';
+        function fecharModal(id) {
+            document.getElementById(id).style.display = 'none';
         }
 
-        function fecharModal(modalId) {
-            document.getElementById(modalId).style.display = 'none';
-        }
+        function salvarAlerta() {
+            const preco = document.getElementById('alertaPrecoAlvo').value;
+            const wpp = document.getElementById('alertaWhatsapp').value;
 
-        function abrirAlertaParaProduto(nomeProduto) {
-            produtoSelecionadoAlerta = nomeProduto;
-            document.getElementById('alertModalSubtitle').innerText = `Defina o preço desejado para o item: "${nomeProduto}"`;
-            abrirModal('alertModal');
-        }
-
-        function salvarAlertaWhatsApp() {
-            const precoAlvo = document.getElementById('targetPriceAlert').value.trim();
-            const whatsapp = document.getElementById('alertWhatsApp').value.trim();
-
-            if (precoAlvo && whatsapp) {
-                const novoAlerta = {
-                    id: Date.now(),
-                    produto: produtoSelecionadoAlerta || termoAtual,
-                    precoAlvo: precoAlvo,
-                    whatsapp: whatsapp,
-                    data: new Date().toLocaleDateString('pt-BR')
-                };
-
-                meusAlertas.push(novoAlerta);
-                localStorage.setItem('lefind_whatsapp_alerts', JSON.stringify(meusAlertas));
-                renderizarHistoricoUI();
-
-                alert(`✅ Alerta criado com sucesso!\nO robô LE.FIND vigiará este item 24/7 e enviará aviso automático para o WhatsApp (${whatsapp}) assim que baixar para R$ ${precoAlvo}.`);
-                
-                document.getElementById('targetPriceAlert').value = '';
-                document.getElementById('alertWhatsApp').value = '';
-                fecharModal('alertModal');
-            } else {
-                alert('Por favor, preencha o preço alvo e o número do WhatsApp.');
+            if(!preco || !wpp) {
+                alert('Preencha todos os campos do alerta.');
+                return;
             }
+
+            let alertas = JSON.parse(localStorage.getItem('lefind_alertas') || '[]');
+            alertas.push({ produto: produtoSelecionadoAlerta, precoAlvo: preco, whatsapp: wpp, data: new Date().toLocaleDateString() });
+            localStorage.setItem('lefind_alertas', JSON.stringify(alertas));
+
+            atualizarContadorAlertas();
+            fecharModal('alertModal');
+            alert('Alerta configurado com sucesso! O robô vigiará 24/7.');
+        }
+
+        function atualizarContadorAlertas() {
+            let alertas = JSON.parse(localStorage.getItem('lefind_alertas') || '[]');
+            document.getElementById('contadorAlertas').innerText = alertas.length;
         }
 
         function abrirMeusAlertas() {
-            const container = document.getElementById('activeAlertsList');
-            container.innerHTML = '';
-
-            if (meusAlertas.length === 0) {
-                container.innerHTML = `<div style="text-align:center; color:var(--text-muted); padding:20px;">Nenhum alerta configurado ainda. Clique no ícone de sino 🔔 em qualquer produto para ativar.</div>`;
-            } else {
-                meusAlertas.forEach((alerta, index) => {
-                    const row = document.createElement('div');
-                    row.className = 'alert-item-row';
-                    row.innerHTML = `
-                        <div>
-                            <strong style="color:var(--text-main);">${alerta.produto}</strong><br>
-                            <span>Meta: <strong>R$ ${alerta.precoAlvo}</strong> | 📱 WhatsApp: ${alerta.whatsapp}</span>
-                        </div>
-                        <button onclick="removerAlerta(${index})" style="background:transparent; border:none; color:#ef4444; cursor:pointer; font-size:1rem;" title="Remover Alerta"><i class="fa-solid fa-trash"></i></button>
-                    `;
-                    container.appendChild(row);
-                });
+            let alertas = JSON.parse(localStorage.getItem('lefind_alertas') || '[]');
+            if(alertas.length === 0) {
+                alert('Nenhum alerta ativo no momento.');
+                return;
             }
-            abrirModal('listAlertsModal');
+            let texto = "Seus Alertas Ativos:\n\n";
+            alertas.forEach((a, i) => {
+                texto += `${i+1}. ${a.produto} - Alvo: R$ ${a.precoAlvo} (Wpp: ${a.whatsapp})\n`;
+            });
+            alert(texto);
         }
 
-        function removerAlerta(index) {
-            meusAlertas.splice(index, 1);
-            localStorage.setItem('lefind_whatsapp_alerts', JSON.stringify(meusAlertas));
-            renderizarHistoricoUI();
-            abrirMeusAlertas();
-        }
-
-        function enviarPropostaLeilao() {
-            const precoAlvo = document.getElementById('targetPriceInput').value;
-            if (precoAlvo) {
-                alert(`Proposta de "${precoAlvo}" enviada com sucesso para a rede de lojistas! Se aceita, receberá o link com desconto via WhatsApp.`);
-                document.getElementById('targetPriceInput').value = '';
-                fecharModal('negotiateModal');
-            } else {
-                alert('Por favor, digite o valor que deseja propor.');
-            }
-        }
-
-        document.getElementById('searchInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                executarBusca();
-            }
-        });
-
-        // Inicialização
-        renderizarHistoricoUI();
-        renderizarOfertas('Xbox Series X');
+        // Executar busca inicial ao carregar a página
+        window.onload = () => {
+            atualizarContadorAlertas();
+            executarBuscaAPI();
+        };
     </script>
 </body>
 </html>
