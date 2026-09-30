@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LE.FIND - Agregador Global de Ofertas</title>
+    <title>LE.FIND - Agregador Global de Ofertas & Mesh Intelligence</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -13,6 +13,7 @@
             --accent-blue: #3b82f6;
             --accent-green: #10b981;
             --accent-yellow: #f59e0b;
+            --accent-purple: #8b5cf6;
             --text-main: #f9fafb;
             --text-muted: #9ca3af;
         }
@@ -157,6 +158,62 @@
             border-color: var(--accent-blue);
         }
 
+        /* PAINEL DE INOVAÇÃO (MESH & CASHBACK) */
+        .innovation-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            width: 100%;
+            max-width: 1160px;
+            margin: 10px 20px 0 20px;
+            padding: 0 20px;
+        }
+
+        @media (max-width: 768px) {
+            .innovation-grid { grid-template-columns: 1fr; }
+        }
+
+        .innovation-card {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            border-radius: 12px;
+            padding: 15px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            text-align: left;
+        }
+
+        .innovation-title {
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: #c084fc;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .innovation-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        .mesh-action-btn {
+            background-color: var(--accent-purple);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: fit-content;
+            transition: opacity 0.2s;
+        }
+
+        .mesh-action-btn:hover { opacity: 0.9; }
+
         .controls-row {
             display: flex;
             justify-content: space-between;
@@ -166,7 +223,7 @@
             padding: 0 20px;
             flex-wrap: wrap;
             gap: 15px;
-            margin-top: 10px;
+            margin-top: 20px;
         }
 
         .filter-buttons {
@@ -230,7 +287,7 @@
             padding: 20px;
             display: flex;
             flex-direction: column;
-            gap: 15px;
+            gap: 12px;
             position: relative;
             transition: transform 0.2s, border-color 0.2s;
         }
@@ -275,10 +332,23 @@
             color: var(--text-main);
         }
 
+        .cra-box {
+            background-color: rgba(16, 185, 129, 0.05);
+            border: 1px dashed rgba(16, 185, 129, 0.3);
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            color: #6ee7b7;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
         .card-tags {
             display: flex;
             gap: 8px;
             font-size: 0.8rem;
+            flex-wrap: wrap;
         }
 
         .tag-frete {
@@ -295,6 +365,13 @@
             border-radius: 4px;
         }
 
+        .tag-cashback {
+            background-color: rgba(139, 92, 246, 0.1);
+            color: #c084fc;
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+
         .platform-info {
             font-size: 0.85rem;
             color: var(--text-muted);
@@ -302,12 +379,12 @@
 
         .history-box {
             background-color: rgba(0, 0, 0, 0.2);
-            padding: 10px;
+            padding: 8px 10px;
             border-radius: 8px;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
         }
 
         .trend-down {
@@ -355,7 +432,7 @@
             background-color: var(--card-border);
         }
 
-        /* MODAL DE ALERTA */
+        /* MODAIS */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -372,7 +449,7 @@
             padding: 30px;
             border-radius: 12px;
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
             display: flex;
             flex-direction: column;
             gap: 15px;
@@ -382,6 +459,9 @@
             font-size: 1.2rem;
             font-weight: bold;
             color: var(--text-main);
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .modal-input {
@@ -426,7 +506,7 @@
     <div class="main-wrapper">
         <header>
             <div class="brand-title">
-                <i class="fa-solid fa-cube"></i> LE.FIND
+                <i class="fa-solid fa-cube"></i> LE.FIND <span style="font-size:0.8rem; background:var(--accent-purple); padding:2px 8px; border-radius:4px; color:#fff;">Mesh v2.0</span>
             </div>
             
             <div class="search-box">
@@ -449,12 +529,25 @@
                 </div>
             </div>
 
-            <!-- HISTÓRICO DE PESQUISAS DO USUÁRIO -->
             <div class="history-bar" id="historyBar" style="display: none;">
                 <span class="history-title">Suas Buscas:</span>
                 <div class="history-chips" id="historyChips"></div>
             </div>
         </header>
+
+        <!-- PAINEL DE RECURSOS INOVADORES -->
+        <div class="innovation-grid">
+            <div class="innovation-card">
+                <div class="innovation-title"><i class="fa-solid fa-people-arrows"></i> LE.Find Mesh (Racha de Frete P2P)</div>
+                <div class="innovation-desc">Detectámos <strong>3 compradores</strong> num raio de 3km à procura de itens nesta loja. Junte o seu carrinho para garantir frete grátis coletivo imediato.</div>
+                <button class="mesh-action-btn" onclick="abrirMeshModal()"><i class="fa-solid fa-handshake"></i> Ativar Racha Coletivo</button>
+            </div>
+            <div class="innovation-card">
+                <div class="innovation-title"><i class="fa-solid fa-percent"></i> Radar de Cashback Cruzado</div>
+                <div class="innovation-desc">O algoritmo aplicou automaticamente a melhor rota de comissão ativa. O valor poupado está a ser abatido direto no preço final.</div>
+                <div style="font-size: 0.85rem; color: #10b981; font-weight: bold;"><i class="fa-solid fa-check-circle"></i> Otimização automática ativa (-4.5%)</div>
+            </div>
+        </div>
 
         <div class="controls-row">
             <div class="filter-buttons">
@@ -470,7 +563,7 @@
         </div>
 
         <div class="stats-banner" id="stats-banner">
-            Encontradas 6 lojas. Comparando as melhores ofertas em tempo real.
+            Encontradas 6 lojas. Comparando as melhores ofertas em tempo real com cálculo CRA (Custo Real de Aquisição).
         </div>
 
         <div class="results-grid" id="results-grid"></div>
@@ -483,8 +576,22 @@
             <p style="font-size: 0.9rem; color: var(--text-muted);">Avise-me quando o preço baixar para este item:</p>
             <input type="email" id="alertEmail" class="modal-input" placeholder="Seu e-mail ou WhatsApp">
             <div class="modal-actions">
-                <button class="btn-cancel" onclick="fecharModal()">Cancelar</button>
+                <button class="btn-cancel" onclick="fecharModal('alertModal')">Cancelar</button>
                 <button class="btn-save" onclick="salvarAlerta()">Ativar Alerta</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DO MESH / RACHA DE FRETE -->
+    <div class="modal-overlay" id="meshModal">
+        <div class="modal-content">
+            <div class="modal-title"><i class="fa-solid fa-people-arrows"></i> LE.Find Mesh - Racha Ativo</div>
+            <p style="font-size: 0.9rem; color: var(--text-muted);">Conectado com sucesso à rede P2P da região. O seu pedido foi agrupado com o lote de entregas da vizinhança.</p>
+            <div style="background:var(--bg-dark); padding:10px; border-radius:8px; font-size:0.85rem; color:#93c5fd;">
+                📦 <strong>Frete Grátis Desbloqueado!</strong> Economia média de R$ 38,00 no envio.
+            </div>
+            <div class="modal-actions">
+                <button class="btn-save" onclick="fecharModal('meshModal')">Entendido, Prosseguir</button>
             </div>
         </div>
     </div>
@@ -516,12 +623,12 @@
             }
 
             return [
-                { store: "Shopee / Lomadee", condition: "new", min: baseMin * 0.95, max: baseMax * 0.95, brand: "Ofertas Diretas", frete: "📦 Frete Grátis", rating: "⭐ 4.9 (4.1k)", best: true },
-                { store: "Amazon (Afiliados)", condition: "new", min: baseMin, max: baseMax, brand: "Lojas Oficiais", frete: "📦 Frete Prime", rating: "⭐ 4.8 (2.3k)", best: false },
-                { store: "Mercado Livre", condition: "new", min: baseMin * 1.02, max: baseMax * 1.05, brand: "Nacionais & Importadas", frete: "📦 Frete Full", rating: "⭐ 4.7 (1.8k)", best: false },
-                { store: "AliExpress / Awin", condition: "new", min: baseMin * 0.90, max: baseMax * 0.90, brand: "Direto da Fábrica", frete: "✈ Envio Internacional", rating: "⭐ 4.6 (950)", best: false },
-                { store: "OLX / Enjoei", condition: "used", min: baseMin * 0.60, max: baseMax * 0.70, brand: "Garimpo e Seminovos", frete: "📍 Combinar com Vendedor", rating: "⭐ 4.5 (310)", best: false },
-                { store: "eBay / Impact", condition: "new", min: baseMin * 1.10, max: baseMax * 1.15, brand: "Importados Globais", frete: "📦 Envio Global", rating: "⭐ 4.8 (620)", best: false }
+                { store: "Shopee / Lomadee", condition: "new", min: baseMin * 0.95, max: baseMax * 0.95, brand: "Ofertas Diretas", frete: "📦 Frete Grátis (Mesh)", rating: "⭐ 4.9 (4.1k)", cashback: "Cashback 3.5%", best: true },
+                { store: "Amazon (Afiliados)", condition: "new", min: baseMin, max: baseMax, brand: "Lojas Oficiais", frete: "📦 Frete Prime", rating: "⭐ 4.8 (2.3k)", cashback: "Cashback 2.0%", best: false },
+                { store: "Mercado Livre", condition: "new", min: baseMin * 1.02, max: baseMax * 1.05, brand: "Nacionais & Importadas", frete: "📦 Frete Full", rating: "⭐ 4.7 (1.8k)", cashback: "Cashback 4.0%", best: false },
+                { store: "AliExpress / Awin", condition: "new", min: baseMin * 0.90, max: baseMax * 0.90, brand: "Direto da Fábrica", frete: "✈ Envio Internacional", rating: "⭐ 4.6 (950)", cashback: "Cashback 5.0% (CRA Incluso)", best: false },
+                { store: "OLX / Enjoei", condition: "used", min: baseMin * 0.60, max: baseMax * 0.70, brand: "Garimpo e Seminovos", frete: "📍 Combinar com Vendedor", rating: "⭐ 4.5 (310)", cashback: "Direto c/ Dono", best: false },
+                { store: "eBay / Impact", condition: "new", min: baseMin * 1.10, max: baseMax * 1.15, brand: "Importados Globais", frete: "📦 Envio Global", rating: "⭐ 4.8 (620)", cashback: "Cashback 1.5%", best: false }
             ];
         }
 
@@ -579,6 +686,9 @@
                 card.className = `offer-card ${item.best ? 'best-deal' : ''}`;
                 let badgeHtml = item.best ? `<div class="best-badge"><i class="fa-solid fa-star"></i> Menor Preço Global</div>` : '';
                 const precoFormatado = `R$ ${item.min.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})} - R$ ${item.max.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+                
+                // Cálculo CRA Simulado (Custo Real com Impostos/IOF estimados)
+                const craEstimado = `R$ ${(item.min * 1.045).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
 
                 card.innerHTML = `
                     ${badgeHtml}
@@ -586,9 +696,14 @@
                         <div class="card-title">${termo.toUpperCase()} (${item.brand})</div>
                     </div>
                     <div class="price-tag">${precoFormatado}</div>
+                    <div class="cra-box">
+                        <span><i class="fa-solid fa-calculator"></i> CRA (Custo Real Total com Taxas):</span>
+                        <strong>${craEstimado}</strong>
+                    </div>
                     <div class="card-tags">
                         <span class="tag-frete">${item.frete}</span>
                         <span class="tag-rating">${item.rating}</span>
+                        <span class="tag-cashback">${item.cashback}</span>
                     </div>
                     <div class="platform-info">Plataforma: ${item.store}</div>
                     <div class="history-box">
@@ -597,13 +712,13 @@
                     </div>
                     <div class="card-actions">
                         <a href="#" class="btn-offer">Ver Ofertas</a>
-                        <button class="btn-alert" onclick="abrirModal()"><i class="fa-regular fa-bell"></i> Alerta</button>
+                        <button class="btn-alert" onclick="abrirModal('alertModal')"><i class="fa-regular fa-bell"></i> Alerta</button>
                     </div>
                 `;
                 grid.appendChild(card);
             });
 
-            document.getElementById('stats-banner').innerText = `Encontradas ${ofertas.length} lojas para "${termo}". Comparando as melhores ofertas em tempo real.`;
+            document.getElementById('stats-banner').innerText = `Encontradas ${ofertas.length} lojas para "${termo}". Comparativo ativo com motor Mesh P2P e CRA.`;
         }
 
         function buscarTermo(termo) {
@@ -631,7 +746,7 @@
                 document.getElementById('searchInput').value = termoFoto;
                 atualizarHistorico(termoFoto);
                 renderizarOfertas(termoFoto);
-                document.getElementById('stats-banner').innerText = `📸 Imagem reconhecida com sucesso! Produto identificado: "${termoFoto}". Mostrando ofertas globais.`;
+                document.getElementById('stats-banner').innerText = `📸 Imagem reconhecida! Produto identificado: "${termoFoto}" com cruzamento Mesh.`;
             }
         }
 
@@ -646,20 +761,24 @@
             renderizarOfertas(termoAtual);
         }
 
-        function abrirModal() {
-            document.getElementById('alertModal').style.display = 'flex';
+        function abrirModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
         }
 
-        function fecharModal() {
-            document.getElementById('alertModal').style.display = 'none';
+        function abrirMeshModal() {
+            document.getElementById('meshModal').style.display = 'flex';
+        }
+
+        function fecharModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
         }
 
         function salvarAlerta() {
             const email = document.getElementById('alertEmail').value;
             if (email) {
-                alert('Alerta configurado com sucesso! Avisaremos em breve.');
+                alert('Alerta configurado com sucesso! Avisaremos via Mesh/WhatsApp.');
                 document.getElementById('alertEmail').value = '';
-                fecharModal();
+                fecharModal('alertModal');
             } else {
                 alert('Por favor, digite um e-mail ou WhatsApp válido.');
             }
