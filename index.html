@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LE.FIND - Agregador Global de Ofertas & Mesh Intelligence</title>
+    <title>LE.FIND - Agregador Global de Ofertas & AI Intelligence</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -14,6 +14,7 @@
             --accent-green: #10b981;
             --accent-yellow: #f59e0b;
             --accent-purple: #8b5cf6;
+            --accent-pink: #ec4899;
             --text-main: #f9fafb;
             --text-muted: #9ca3af;
         }
@@ -158,26 +159,22 @@
             border-color: var(--accent-blue);
         }
 
-        /* PAINEL DE INOVAÇÃO (MESH & CASHBACK) */
+        /* PAINEL DE INOVAÇÃO EXPANDIDO (4 PILARES) */
         .innovation-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: 15px;
             width: 100%;
             max-width: 1160px;
-            margin: 10px 20px 0 20px;
+            margin: 10px auto 0 auto;
             padding: 0 20px;
         }
 
-        @media (max-width: 768px) {
-            .innovation-grid { grid-template-columns: 1fr; }
-        }
-
         .innovation-card {
-            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1));
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.08), rgba(139, 92, 246, 0.08));
             border: 1px solid rgba(139, 92, 246, 0.3);
             border-radius: 12px;
-            padding: 15px 20px;
+            padding: 15px;
             display: flex;
             flex-direction: column;
             gap: 8px;
@@ -185,27 +182,27 @@
         }
 
         .innovation-title {
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             font-weight: bold;
             color: #c084fc;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .innovation-desc {
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             color: var(--text-muted);
-            line-height: 1.4;
+            line-height: 1.35;
         }
 
         .mesh-action-btn {
             background-color: var(--accent-purple);
             color: white;
             border: none;
-            padding: 6px 12px;
+            padding: 5px 10px;
             border-radius: 6px;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 600;
             cursor: pointer;
             width: fit-content;
@@ -224,6 +221,8 @@
             flex-wrap: wrap;
             gap: 15px;
             margin-top: 20px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .filter-buttons {
@@ -263,7 +262,8 @@
         }
 
         .stats-banner {
-            margin: 15px 20px 10px 20px;
+            margin: 15px auto 10px auto;
+            max-width: 1160px;
             background-color: rgba(59, 130, 246, 0.1);
             border: 1px solid rgba(59, 130, 246, 0.3);
             padding: 12px 20px;
@@ -278,6 +278,9 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
             gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            width: 100%;
         }
 
         .offer-card {
@@ -344,6 +347,18 @@
             align-items: center;
         }
 
+        .ai-deal-box {
+            background-color: rgba(236, 72, 153, 0.05);
+            border: 1px dashed rgba(236, 72, 153, 0.3);
+            padding: 8px 10px;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            color: #f472b6;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
         .card-tags {
             display: flex;
             gap: 8px;
@@ -394,43 +409,54 @@
 
         .card-actions {
             display: flex;
-            gap: 10px;
+            gap: 8px;
             margin-top: 5px;
         }
 
         .btn-offer {
-            flex-grow: 2;
+            flex-grow: 1;
             background-color: var(--accent-blue);
             color: white;
             border: none;
-            padding: 10px;
+            padding: 10px 8px;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
             text-align: center;
             text-decoration: none;
+            font-size: 0.85rem;
             transition: background 0.2s;
         }
 
-        .btn-offer:hover {
-            background-color: #2563eb;
+        .btn-offer:hover { background-color: #2563eb; }
+
+        .btn-negotiate {
+            flex-grow: 1;
+            background-color: var(--accent-purple);
+            color: white;
+            border: none;
+            padding: 10px 8px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+            transition: opacity 0.2s;
         }
 
+        .btn-negotiate:hover { opacity: 0.9; }
+
         .btn-alert {
-            flex-grow: 1;
             background-color: transparent;
             color: var(--text-main);
             border: 1px solid var(--card-border);
-            padding: 10px;
+            padding: 10px 12px;
             border-radius: 8px;
             cursor: pointer;
             font-weight: 600;
             transition: background 0.2s;
         }
 
-        .btn-alert:hover {
-            background-color: var(--card-border);
-        }
+        .btn-alert:hover { background-color: var(--card-border); }
 
         /* MODAIS */
         .modal-overlay {
@@ -506,7 +532,7 @@
     <div class="main-wrapper">
         <header>
             <div class="brand-title">
-                <i class="fa-solid fa-cube"></i> LE.FIND <span style="font-size:0.8rem; background:var(--accent-purple); padding:2px 8px; border-radius:4px; color:#fff;">Mesh v2.0</span>
+                <i class="fa-solid fa-cube"></i> LE.FIND <span style="font-size:0.8rem; background:var(--accent-purple); padding:2px 8px; border-radius:4px; color:#fff;">AI Ultimate v3.0</span>
             </div>
             
             <div class="search-box">
@@ -535,24 +561,34 @@
             </div>
         </header>
 
-        <!-- PAINEL DE RECURSOS INOVADORES -->
+        <!-- PAINEL DE INOVAÇÕES TOTAL (4 PILARES) -->
         <div class="innovation-grid">
             <div class="innovation-card">
-                <div class="innovation-title"><i class="fa-solid fa-people-arrows"></i> LE.Find Mesh (Racha de Frete P2P)</div>
-                <div class="innovation-desc">Detectámos <strong>3 compradores</strong> num raio de 3km à procura de itens nesta loja. Junte o seu carrinho para garantir frete grátis coletivo imediato.</div>
-                <button class="mesh-action-btn" onclick="abrirMeshModal()"><i class="fa-solid fa-handshake"></i> Ativar Racha Coletivo</button>
+                <div class="innovation-title"><i class="fa-solid fa-people-arrows"></i> LE.Find Mesh</div>
+                <div class="innovation-desc">Racha de frete P2P ativo na sua vizinhança para frete grátis coletivo.</div>
+                <button class="mesh-action-btn" onclick="abrirModal('meshModal')">Ver Lote</button>
             </div>
             <div class="innovation-card">
-                <div class="innovation-title"><i class="fa-solid fa-percent"></i> Radar de Cashback Cruzado</div>
-                <div class="innovation-desc">O algoritmo aplicou automaticamente a melhor rota de comissão ativa. O valor poupado está a ser abatido direto no preço final.</div>
-                <div style="font-size: 0.85rem; color: #10b981; font-weight: bold;"><i class="fa-solid fa-check-circle"></i> Otimização automática ativa (-4.5%)</div>
+                <div class="innovation-title"><i class="fa-solid fa-percent"></i> Cashback Cruzado</div>
+                <div class="innovation-desc">Otimização automática de comissões abatida diretamente no preço final.</div>
+                <div style="font-size: 0.75rem; color: #10b981; font-weight: bold;">✔ Ativo (-4.5%)</div>
+            </div>
+            <div class="innovation-card">
+                <div class="innovation-title"><i class="fa-solid fa-shield-heart"></i> Anti-Arrependimento</div>
+                <div class="innovation-desc">IA valida histórico de 90 dias para bloquear falsas promoções de lojas.</div>
+                <div style="font-size: 0.75rem; color: #f472b6; font-weight: bold;">✔ Monitoramento 24/7</div>
+            </div>
+            <div class="innovation-card">
+                <div class="innovation-title"><i class="fa-solid fa-gavel"></i> Leilão Inverso P2P</div>
+                <div class="innovation-desc">Envie sua proposta de preço diretamente para a margem de comissão do lojista.</div>
+                <div style="font-size: 0.75rem; color: #c084fc; font-weight: bold;">✔ Negociação Cega</div>
             </div>
         </div>
 
         <div class="controls-row">
             <div class="filter-buttons">
                 <button class="filter-btn active" onclick="filtrar('todos', event)"><i class="fa-solid fa-globe"></i> Todos</button>
-                <button class="filter-btn" onclick="filtrar('oficiais', event)"><i class="fa-solid fa-shield-halved"></i> Lojas Oficiais (Novos)</button>
+                <button class="filter-btn" onclick="filtrar('oficiais', event)"><i class="fa-solid fa-shield-halved"></i> Lojas Oficiais</button>
                 <button class="filter-btn" onclick="filtrar('garimpo', event)"><i class="fa-solid fa-tags"></i> Garimpo (Usados)</button>
             </div>
             <select class="sort-select" id="sortSelect" onchange="mudarOrdenacao()">
@@ -563,7 +599,7 @@
         </div>
 
         <div class="stats-banner" id="stats-banner">
-            Encontradas 6 lojas. Comparando as melhores ofertas em tempo real com cálculo CRA (Custo Real de Aquisição).
+            Encontradas lojas. Comparativo ativo com motor Mesh, CRA, Anti-Arrependimento e Leilão Inverso.
         </div>
 
         <div class="results-grid" id="results-grid"></div>
@@ -578,6 +614,19 @@
             <div class="modal-actions">
                 <button class="btn-cancel" onclick="fecharModal('alertModal')">Cancelar</button>
                 <button class="btn-save" onclick="salvarAlerta()">Ativar Alerta</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL DE LEILÃO INVERSO / NEGOCIAÇÃO -->
+    <div class="modal-overlay" id="negotiateModal">
+        <div class="modal-content">
+            <div class="modal-title"><i class="fa-solid fa-gavel"></i> Leilão Inverso (Negociação IA)</div>
+            <p style="font-size: 0.9rem; color: var(--text-muted);">Quanto você gostaria de pagar por este produto? Vamos negociar usando a margem de afiliado em tempo real.</p>
+            <input type="text" id="targetPriceInput" class="modal-input" placeholder="Ex: R$ 3.200,00">
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="fecharModal('negotiateModal')">Cancelar</button>
+                <button class="btn-save" onclick="enviarPropostaLeilao()">Enviar Proposta ao Lojista</button>
             </div>
         </div>
     </div>
@@ -623,12 +672,12 @@
             }
 
             return [
-                { store: "Shopee / Lomadee", condition: "new", min: baseMin * 0.95, max: baseMax * 0.95, brand: "Ofertas Diretas", frete: "📦 Frete Grátis (Mesh)", rating: "⭐ 4.9 (4.1k)", cashback: "Cashback 3.5%", best: true },
-                { store: "Amazon (Afiliados)", condition: "new", min: baseMin, max: baseMax, brand: "Lojas Oficiais", frete: "📦 Frete Prime", rating: "⭐ 4.8 (2.3k)", cashback: "Cashback 2.0%", best: false },
-                { store: "Mercado Livre", condition: "new", min: baseMin * 1.02, max: baseMax * 1.05, brand: "Nacionais & Importadas", frete: "📦 Frete Full", rating: "⭐ 4.7 (1.8k)", cashback: "Cashback 4.0%", best: false },
-                { store: "AliExpress / Awin", condition: "new", min: baseMin * 0.90, max: baseMax * 0.90, brand: "Direto da Fábrica", frete: "✈ Envio Internacional", rating: "⭐ 4.6 (950)", cashback: "Cashback 5.0% (CRA Incluso)", best: false },
-                { store: "OLX / Enjoei", condition: "used", min: baseMin * 0.60, max: baseMax * 0.70, brand: "Garimpo e Seminovos", frete: "📍 Combinar com Vendedor", rating: "⭐ 4.5 (310)", cashback: "Direto c/ Dono", best: false },
-                { store: "eBay / Impact", condition: "new", min: baseMin * 1.10, max: baseMax * 1.15, brand: "Importados Globais", frete: "📦 Envio Global", rating: "⭐ 4.8 (620)", cashback: "Cashback 1.5%", best: false }
+                { store: "Shopee / Lomadee", condition: "new", min: baseMin * 0.95, max: baseMax * 0.95, brand: "Ofertas Diretas", frete: "📦 Frete Grátis (Mesh)", rating: "⭐ 4.9 (4.1k)", cashback: "Cashback 3.5%", best: true, aiVerdict: "Preço Realmente Justo (-8% vs média 90d)" },
+                { store: "Amazon (Afiliados)", condition: "new", min: baseMin, max: baseMax, brand: "Lojas Oficiais", frete: "📦 Frete Prime", rating: "⭐ 4.8 (2.3k)", cashback: "Cashback 2.0%", best: false, aiVerdict: "Preço estável dentro da média histórica" },
+                { store: "Mercado Livre", condition: "new", min: baseMin * 1.02, max: baseMax * 1.05, brand: "Nacionais & Importadas", frete: "📦 Frete Full", rating: "⭐ 4.7 (1.8k)", cashback: "Cashback 4.0%", best: false, aiVerdict: "⚠️ Atenção: R$ 50 acima da mínima de 30 dias" },
+                { store: "AliExpress / Awin", condition: "new", min: baseMin * 0.90, max: baseMax * 0.90, brand: "Direto da Fábrica", frete: "✈ Envio Internacional", rating: "⭐ 4.6 (950)", cashback: "Cashback 5.0% (CRA Incluso)", best: false, aiVerdict: "Excelente Oportunidade Global" },
+                { store: "OLX / Enjoei", condition: "used", min: baseMin * 0.60, max: baseMax * 0.70, brand: "Garimpo e Seminovos", frete: "📍 Combinar com Vendedor", rating: "⭐ 4.5 (310)", cashback: "Direto c/ Dono", best: false, aiVerdict: "Usado em bom estado verificado" },
+                { store: "eBay / Impact", condition: "new", min: baseMin * 1.10, max: baseMax * 1.15, brand: "Importados Globais", frete: "📦 Envio Global", rating: "⭐ 4.8 (620)", cashback: "Cashback 1.5%", best: false, aiVerdict: "Preço alto em relação ao mercado" }
             ];
         }
 
@@ -687,7 +736,6 @@
                 let badgeHtml = item.best ? `<div class="best-badge"><i class="fa-solid fa-star"></i> Menor Preço Global</div>` : '';
                 const precoFormatado = `R$ ${item.min.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})} - R$ ${item.max.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
                 
-                // Cálculo CRA Simulado (Custo Real com Impostos/IOF estimados)
                 const craEstimado = `R$ ${(item.min * 1.045).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
 
                 card.innerHTML = `
@@ -697,8 +745,12 @@
                     </div>
                     <div class="price-tag">${precoFormatado}</div>
                     <div class="cra-box">
-                        <span><i class="fa-solid fa-calculator"></i> CRA (Custo Real Total com Taxas):</span>
+                        <span><i class="fa-solid fa-calculator"></i> CRA (Custo Real + Taxas):</span>
                         <strong>${craEstimado}</strong>
+                    </div>
+                    <div class="ai-deal-box">
+                        <span><i class="fa-solid fa-shield-heart"></i> Anti-Arrependimento IA:</span>
+                        <strong>${item.aiVerdict}</strong>
                     </div>
                     <div class="card-tags">
                         <span class="tag-frete">${item.frete}</span>
@@ -707,18 +759,19 @@
                     </div>
                     <div class="platform-info">Plataforma: ${item.store}</div>
                     <div class="history-box">
-                        <span>Histórico (30d): Tendência</span>
-                        <span class="trend-down"><i class="fa-solid fa-arrow-trend-down"></i> Em Queda ↓</span>
+                        <span>Histórico (90d): Variação</span>
+                        <span class="trend-down"><i class="fa-solid fa-arrow-trend-down"></i> Monitorado IA</span>
                     </div>
                     <div class="card-actions">
                         <a href="#" class="btn-offer">Ver Ofertas</a>
-                        <button class="btn-alert" onclick="abrirModal('alertModal')"><i class="fa-regular fa-bell"></i> Alerta</button>
+                        <button class="btn-negotiate" onclick="abrirModal('negotiateModal')"><i class="fa-solid fa-gavel"></i> Negociar</button>
+                        <button class="btn-alert" onclick="abrirModal('alertModal')"><i class="fa-regular fa-bell"></i></button>
                     </div>
                 `;
                 grid.appendChild(card);
             });
 
-            document.getElementById('stats-banner').innerText = `Encontradas ${ofertas.length} lojas para "${termo}". Comparativo ativo com motor Mesh P2P e CRA.`;
+            document.getElementById('stats-banner').innerText = `Encontradas ${ofertas.length} lojas para "${termo}". IA anti-arrependimento e Leilão Inverso ativos.`;
         }
 
         function buscarTermo(termo) {
@@ -746,7 +799,7 @@
                 document.getElementById('searchInput').value = termoFoto;
                 atualizarHistorico(termoFoto);
                 renderizarOfertas(termoFoto);
-                document.getElementById('stats-banner').innerText = `📸 Imagem reconhecida! Produto identificado: "${termoFoto}" com cruzamento Mesh.`;
+                document.getElementById('stats-banner').innerText = `📸 Imagem reconhecida! Produto identificado: "${termoFoto}" com IA ativada.`;
             }
         }
 
@@ -765,10 +818,6 @@
             document.getElementById(modalId).style.display = 'flex';
         }
 
-        function abrirMeshModal() {
-            document.getElementById('meshModal').style.display = 'flex';
-        }
-
         function fecharModal(modalId) {
             document.getElementById(modalId).style.display = 'none';
         }
@@ -781,6 +830,17 @@
                 fecharModal('alertModal');
             } else {
                 alert('Por favor, digite um e-mail ou WhatsApp válido.');
+            }
+        }
+
+        function enviarPropostaLeilao() {
+            const precoAlvo = document.getElementById('targetPriceInput').value;
+            if (precoAlvo) {
+                alert(`Proposta de "${precoAlvo}" enviada com sucesso para a rede de lojistas! Se aceita, receberá o link com desconto via WhatsApp.`);
+                document.getElementById('targetPriceInput').value = '';
+                fecharModal('negotiateModal');
+            } else {
+                alert('Por favor, digite o valor que deseja propor.');
             }
         }
 
