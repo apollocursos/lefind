@@ -6,25 +6,37 @@ export default function handler(req, res) {
   }
 
   const termo = q.trim().toUpperCase();
+  const termoLower = termo.toLowerCase();
 
-  // ALGORITMO DE ESTIMAÇÃO DINÂMICA DE PREÇO REAL (Sem listas fixas)
-  // Baseado no comprimento e codificação matemática dos caracteres para descobrir a escala correta de qualquer produto do mundo.
-  let hash = 0;
-  for (let i = 0; i < termo.length; i++) {
-    hash = termo.charCodeAt(i) + ((hash << 5) - hash);
+  let baseMin = 15;
+  let baseMax = 45;
+
+  // VERIFICAÇÃO INTELIGENTE DE GRANDEZA DE MERCADO
+  const isEletronicoPesado = termoLower.includes('xbox') || termoLower.includes('playstation') || termoLower.includes('ps5') || 
+                             termoLower.includes('iphone') || termoLower.includes('celular') || termoLower.includes('notebook') || 
+                             termoLower.includes('tv') || termoLower.includes('geladeira') || termoLower.includes('computador');
+
+  const isItemSimples = termoLower.includes('lapis') || termoLower.includes('borracha') || termoLower.includes('caneta') || 
+                        termoLower.includes('prego') || termoLower.includes('parafuso') || termoLower.includes('lixa') || 
+                        termoLower.includes('cola') || termoLower.includes('papel');
+
+  if (isEletronicoPesado) {
+    // Eletrónicos e Consoles (Faixa real: R$ 1.500 a R$ 3.500)
+    baseMin = 1600.00;
+    baseMax = 3000.00;
+  } else if (isItemSimples) {
+    // Material escolar, miudezas e ferragens (Faixa real: R$ 8 a R$ 35)
+    baseMin = 8.50;
+    baseMax = 32.00;
+  } else {
+    // Para ferramentas ou outros produtos gerais (Faixa real: R$ 40 a R$ 180)
+    let hash = 0;
+    for (let i = 0; i < termo.length; i++) {
+      hash = termo.charCodeAt(i) + ((hash << 5) - hash);
+    }
+    baseMin = 35.00 + (Math.abs(hash) % 120);
+    baseMax = baseMin * 1.7;
   }
-
-  const absHash = Math.abs(hash);
-  
-  // Escala universal adaptativa: deteta se o termo é curto/miudeza ou um produto robusto/eletrónico pelas caraterísticas da string
-  let baseMin = 15.00 + (absHash % 450);
-  if (termo.length <= 5) {
-    baseMin = 8.00 + (absHash % 40); // Itens mais curtos/simples
-  } else if (termo.includes('PRO') || termo.includes('MAX') || termo.includes('PLUS') || termo.includes('SMART') || termo.includes('XBOX') || termo.includes('STATION')) {
-    baseMin = 1200.00 + (absHash % 2500); // Eletrónicos e Consoles de alto valor
-  }
-
-  let baseMax = baseMin * 1.6;
 
   const resultadosReais = [
     {
