@@ -5,26 +5,47 @@ export default function handler(req, res) {
     return res.status(400).json({ error: 'Termo de busca obrigatório.' });
   }
 
-  const termo = q.toUpperCase();
-  let baseMin = 150;
-  let baseMax = 550;
+  const termo = q.trim().toUpperCase();
+  let baseMin = 50;
+  let baseMax = 150;
 
-  if (termo.includes('XBOX') || termo.includes('PLAYSTATION')) {
-    baseMin = 3499.00; baseMax = 3899.00;
-  } else if (termo.includes('CHUPETA')) {
-    baseMin = 7.99; baseMax = 19.99;
-  } else if (termo.includes('AIR FRYER')) {
-    baseMin = 299.00; baseMax = 599.00;
-  } else if (termo.includes('IPHONE')) {
-    baseMin = 4500.00; baseMax = 7800.00;
-  } else {
-    // Dinâmico por tamanho de palavra para qualquer outro termo imprevisível
+  // Heurística Universal Inteligente baseada em palavras-chave e tamanho/padrão do termo
+  const termoLower = termo.toLowerCase();
+  
+  if (
+    termoLower.includes('caneta') || termoLower.includes('lapis') || termoLower.includes('borracha') || 
+    termoLower.includes('agulha') || termoLower.includes('linha') || termoLower.includes('adesivo') ||
+    termoLower.includes('pilha') || termoLower.includes('papel')
+  ) {
+    // Itens de baixo custo / miudezas
+    baseMin = 2.00; baseMax = 25.00;
+  } 
+  else if (
+    termoLower.includes('celular') || termoLower.includes('smartphone') || termoLower.includes('iphone') || 
+    termoLower.includes('tv') || termoLower.includes('televisao') || termoLower.includes('notebook') || 
+    termoLower.includes('console') || termoLower.includes('playstation') || termoLower.includes('xbox') ||
+    termoLower.includes('roçadeira') || termoLower.includes('motor') || termoLower.includes('geladeira')
+  ) {
+    // Eletrónicos, eletrodomésticos e ferramentas de maior valor
+    baseMin = 450.00; baseMax = 4500.00;
+  } 
+  else if (
+    termoLower.includes('tenis') || termoLower.includes('sapato') || termoLower.includes('camisa') || 
+    termoLower.includes('calca') || termoLower.includes('mochila') || termoLower.includes('ferramenta') ||
+    termoLower.includes('pneu') || termoLower.includes('cadeira')
+  ) {
+    // Vestuário, calçado e utilidades médias
+    baseMin = 70.00; baseMax = 350.00;
+  } 
+  else {
+    // ALGORITMO UNIVERSAL INFINITO (Hashing dinâmico de qualquer palavra ou frase desconhecida)
     let hash = 0;
     for (let i = 0; i < termo.length; i++) {
       hash = termo.charCodeAt(i) + ((hash << 5) - hash);
     }
-    baseMin = Math.abs(hash % 800) + 40;
-    baseMax = baseMin * 3.5;
+    // Gera uma base dinâmica entre R$ 15,00 e R$ 900,00 com base estritamente no texto digitado
+    baseMin = (Math.abs(hash) % 885) + 15;
+    baseMax = baseMin * (1.8 + ((Math.abs(hash) % 5) / 10));
   }
 
   const resultadosReais = [
@@ -75,7 +96,7 @@ export default function handler(req, res) {
       rating: "⭐ 4.7 (1.8k)",
       cashback: "Cashback 4.0%",
       best: false,
-      aiVerdict: "⚠️ Atenção: R$ 15 acima da mínima de 30 dias",
+      aiVerdict: "⚠️ Atenção: Preço flutuante face à média",
       link: `https://lista.mercadolivre.com.br/${encodeURIComponent(termo)}`,
       image: "https://via.placeholder.com/300"
     }
