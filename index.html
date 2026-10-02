@@ -1,43 +1,362 @@
-export default async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LE.FIND - Agregador Global Inteligente</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+    body { background-color: #0b0f19; color: #f3f4f6; min-height: 100vh; }
+    
+    .header {
+      background: #111827;
+      border-bottom: 1px solid #1f2937;
+      padding: 0.75rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .logo {
+      font-weight: 700;
+      font-size: 1.2rem;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: #1e293b;
+      padding: 0.3rem 0.75rem;
+      border-radius: 6px;
+      border: 1px solid #334155;
+    }
+    .logo span { background: #2563eb; color: #fff; padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.75rem; }
+    
+    .search-bar-wrapper {
+      background: #111827;
+      border-bottom: 1px solid #1f2937;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: center;
+    }
+    .search-container {
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      gap: 0.75rem;
+    }
+    .search-input {
+      flex: 1;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 0.65rem 1rem;
+      color: #fff;
+      font-size: 0.95rem;
+    }
+    .search-input:focus { outline: none; border-color: #3b82f6; }
+    .search-btn {
+      background: #3b82f6;
+      color: white;
+      border: none;
+      padding: 0 1.5rem;
+      border-radius: 6px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .search-btn:hover { background: #2563eb; }
 
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
+    .main-layout {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 1.5rem 2rem;
+    }
 
-  const query = req.query.q || req.query.consulta;
+    /* Painéis Superiores */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .feature-card {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 8px;
+      padding: 1rem;
+    }
+    .feature-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #60a5fa;
+      margin-bottom: 0.3rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .feature-desc {
+      font-size: 0.78rem;
+      color: #9ca3af;
+      line-height: 1.3;
+    }
 
-  if (!query || query.trim() === '') {
-    return res.status(400).json({ sucesso: false, error: 'Termo obrigatório.' });
-  }
+    /* Abas de Filtro */
+    .tabs-row {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      align-items: center;
+      border-bottom: 1px solid #1f2937;
+      padding-bottom: 0.75rem;
+    }
+    .tab {
+      background: #1f2937;
+      border: none;
+      color: #d1d5db;
+      padding: 0.4rem 1rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .tab.active { background: #2563eb; color: white; font-weight: 600; }
+    .status-text { margin-left: auto; font-size: 0.8rem; color: #6b7280; }
 
-  const searchTerm = query.trim();
+    .loading { text-align: center; padding: 3rem; color: #9ca3af; font-size: 1rem; }
 
-  try {
-    const ofertas = [
-      {
-        loja: 'Google Shopping (Espelhado)',
-        titulo: `${searchTerm} - Melhor Oferta Encontrada`,
-        preco: 0.00,
-        imagem: '',
-        link: `https://www.google.com/search?q=${encodeURIComponent(searchTerm)}&tbm=shop`,
-        disponivel: true
+    /* Grid de Ofertas */
+    .offers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .card {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 8px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+    }
+    .card.best-offer { border-color: #059669; }
+
+    .badge-best {
+      position: absolute;
+      top: -10px;
+      right: 15px;
+      background: #059669;
+      color: #ecfdf5;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 0.15rem 0.5rem;
+      border-radius: 12px;
+      text-transform: uppercase;
+    }
+
+    .product-img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 6px;
+      margin-bottom: 0.75rem;
+      background: #1e293b;
+    }
+
+    .store-name { font-size: 0.78rem; color: #9ca3af; margin-bottom: 0.2rem; }
+    .product-title { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.6rem; color: #f9fafb; }
+
+    .price-box { margin-bottom: 0.75rem; }
+    .main-price { font-size: 1.25rem; font-weight: 700; color: #34d399; }
+    .price-range { font-size: 0.75rem; color: #9ca3af; }
+
+    .cra-box {
+      background: #0f172a;
+      padding: 0.4rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      margin-bottom: 0.6rem;
+      color: #93c5fd;
+      border: 1px solid #1e293b;
+    }
+
+    .ai-verdict {
+      background: #1e1b4b;
+      border: 1px solid #312e81;
+      padding: 0.4rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      color: #c7d2fe;
+      margin-bottom: 0.75rem;
+    }
+
+    .tags-row { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.75rem; font-size: 0.7rem; }
+    .tag { background: #1f2937; padding: 0.15rem 0.4rem; border-radius: 3px; color: #d1d5db; }
+
+    .btn-oferta {
+      display: block;
+      text-align: center;
+      background: #2563eb;
+      color: white;
+      text-decoration: none;
+      padding: 0.6rem;
+      border-radius: 6px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      transition: background 0.2s;
+    }
+    .btn-oferta:hover { background: #1d4ed8; }
+
+    .initial-state { text-align: center; padding: 3rem; color: #4b5563; font-size: 0.9rem; }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <header class="header">
+      <div class="logo-area">
+        <div class="logo">
+          🌐 LE.FIND <span>v3.0 API Real</span>
+        </div>
+      </div>
+      <div style="font-size: 0.8rem; color: #9ca3af;">Meus Alertas (0)</div>
+    </header>
+
+    <div class="search-bar-wrapper">
+      <div class="search-container">
+        <input 
+          type="text" 
+          class="search-input" 
+          v-model="termoBusca" 
+          @keyup.enter="buscarProdutos" 
+          placeholder="O que procuras hoje? (Ex: Caneta Bic, Mouse, Celular Xiaomi...)"
+        >
+        <button class="search-btn" @click="buscarProdutos">Buscar</button>
+      </div>
+    </div>
+
+    <div class="main-layout">
+      <!-- Painéis Superiores originais -->
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-title">📦 Le.Find Mesh</div>
+          <div class="feature-desc">Consolidação de frete geolocalizado entre pares.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-title">🧮 CRA Automático</div>
+          <div class="feature-desc">Custo Real de Aquisição (impostos inclusos).</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-title">🛡️ Anti-Arrependimento</div>
+          <div class="feature-desc">Validação histórica vs. ofertas atuais 24/7.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-title">🔨 Leilão Inverso</div>
+          <div class="feature-desc">Negociação automatizada direta com lojistas.</div>
+        </div>
+      </div>
+
+      <!-- Abas -->
+      <div class="tabs-row">
+        <button class="tab active">Todos</button>
+        <button class="tab">Lojas Oficiais</button>
+        <button class="tab">Garimpo & Usados</button>
+        <div class="status-text">A carregar ofertas via API da Vercel...</div>
+      </div>
+
+      <!-- Conteúdo Principal -->
+      <div v-if="loading" class="loading">
+        A consultar motores de busca e redes mesh...
+      </div>
+
+      <div v-if="!loading && offers.length === 0" class="initial-state">
+        <p>Digite um termo acima para iniciar a varredura inteligente de preços.</p>
+      </div>
+
+      <div v-if="!loading && offers.length > 0" class="offers-grid">
+        <div 
+          v-for="(offer, index) in offers" 
+          :key="index" 
+          class="card"
+          :class="{ 'best-offer': offer.best }"
+        >
+          <div v-if="offer.best" class="badge-best">Menor Preço Global</div>
+          
+          <div>
+            <img :src="offer.image" :alt="offer.title" class="product-img">
+            <div class="store-name">{{ offer.store }}</div>
+            <div class="product-title">{{ offer.title }}</div>
+            
+            <div class="price-box">
+              <div class="main-price">R$ {{ offer.price.toFixed(2).replace('.', ',') }}</div>
+              <div class="price-range">Mín: R$ {{ offer.minPrice.toFixed(2).replace('.', ',') }} - Máx: R$ {{ offer.maxPrice.toFixed(2).replace('.', ',') }}</div>
+            </div>
+
+            <div class="cra-box">
+              🧮 CRA (Custo Real + Taxas): <strong>R$ {{ (offer.price * 1.04).toFixed(2).replace('.', ',') }}</strong>
+            </div>
+
+            <div class="ai-verdict">
+              🛡️ Anti-Arrependimento IA: <strong>{{ offer.aiVerdict }}</strong>
+            </div>
+
+            <div class="tags-row">
+              <span class="tag">{{ offer.frete }}</span>
+              <span class="tag">{{ offer.rating }}</span>
+              <span class="tag">{{ offer.cashback }}</span>
+            </div>
+          </div>
+
+          <a :href="offer.link" target="_blank" class="btn-oferta">Ver Oferta</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const { createApp, ref } = Vue;
+
+    createApp({
+      setup() {
+        const termoBusca = ref('');
+        const offers = ref([]);
+        const loading = ref(false);
+
+        const buscarProdutos = async () => {
+          if (!termoBusca.value.trim()) return;
+          
+          loading.value = true;
+          offers.value = [];
+
+          try {
+            const response = await fetch(`/api/search?q=${encodeURIComponent(termoBusca.value)}`);
+            const data = await response.json();
+
+            if (data.success && data.offers) {
+              offers.value = data.offers;
+            }
+          } catch (error) {
+            console.error("Erro ao buscar ofertas:", error);
+            alert("Erro ao conectar à API de busca.");
+          } finally {
+            loading.value = false;
+          }
+        };
+
+        return {
+          termoBusca,
+          offers,
+          loading,
+          buscarProdutos
+        };
       }
-    ];
-
-    return res.status(200).json({
-      query: searchTerm,
-      sucesso: true,
-      ofertas: ofertas
-    });
-
-  } catch (error) {
-    console.error('Erro no espelhamento:', error);
-    return res.status(500).json({ 
-      sucesso: false, 
-      error: 'Erro ao processar o espelhamento gratuito.' 
-    });
-  }
-}
+    }).mount('#app');
+  </script>
+</body>
+</html>
