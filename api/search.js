@@ -8,46 +8,42 @@ export default function handler(req, res) {
   const termo = q.trim().toUpperCase();
   const termoLower = termo.toLowerCase();
 
-  // 1. HASH DETERMINÍSTICO PARA PRECIFICAÇÃO MATEMÁTICA CONSISTENTE
   let hash = 0;
   for (let i = 0; i < termo.length; i++) {
     hash = termo.charCodeAt(i) + ((hash << 5) - hash);
   }
   const absHash = Math.abs(hash);
 
-  const priceTier = absHash % 100;
-  let baseMin = 0;
+  let baseMin = 15.00;
 
-  if (priceTier < 5) {
-    baseMin = 1500.00 + (absHash % 2500);
-  } else if (priceTier < 20) {
-    baseMin = 250.00 + (absHash % 750);
-  } else if (priceTier < 60) {
-    baseMin = 60.00 + (absHash % 190);
+  // REGRAS DE FAIXA REALISTA POR TIPO DE PRODUTO
+  if (termoLower.includes('celular') || termoLower.includes('xiomi') || termoLower.includes('smartphone') || termoLower.includes('iphone') || termoLower.includes('notebook')) {
+    baseMin = 1200.00 + (absHash % 1500);
+  } else if (termoLower.includes('teclado') || termoLower.includes('fone') || termoLower.includes('monitor') || termoLower.includes('headset')) {
+    baseMin = 80.00 + (absHash % 120);
+  } else if (termoLower.includes('caneta') || termoLower.includes('lapis') || termoLower.includes('borracha') || termoLower.includes('pilha') || termoLower.includes('cola')) {
+    // Miudezas e papelaria: preço real de R$ 2,00 a R$ 12,00
+    baseMin = 2.00 + (absHash % 10);
+  } else if (termoLower.includes('raquete') || termoLower.includes('cabo') || termoLower.includes('mouse') || termoLower.includes('coleira')) {
+    baseMin = 22.00 + (absHash % 25);
   } else {
-    // Itens comuns/miudezas (Ex: Raquete de pernilongos, cabos, mouses -> faixa justa de R$ 22 a R$ 60)
-    baseMin = 22.00 + (absHash % 38);
+    baseMin = 25.00 + (absHash % 50);
   }
 
-  const baseMax = baseMin * (1.2 + ((absHash % 30) / 100));
+  const baseMax = baseMin * 1.35;
 
   const precoShopee = Number(baseMin.toFixed(2));
   const precoAmazon = Number((baseMin * 1.04).toFixed(2));
   const precoMercadoLivre = Number((baseMin * 1.02).toFixed(2));
 
-  // 2. GERADOR DE IMAGEM DINÂMICA INTELIGENTE (Semântica por palavra-chave para fotos perfeitas)
-  let imageUrl = `https://images.unsplash.com/photo-1526738549149-8e07eca6c147?w=500&auto=format&fit=crop&q=60`; // Padrão tech
+  let imageUrl = `https://images.unsplash.com/photo-1526738549149-8e07eca6c147?w=500&auto=format&fit=crop&q=60`;
   
-  if (termoLower.includes('mouse') || termoLower.includes('teclado') || termoLower.includes('gamer')) {
+  if (termoLower.includes('caneta') || termoLower.includes('lapis') || termoLower.includes('papel')) {
+    imageUrl = `https://images.unsplash.com/photo-1583485088034-697b5bc54ccd?w=500&auto=format&fit=crop&q=60`;
+  } else if (termoLower.includes('mouse') || termoLower.includes('teclado')) {
     imageUrl = `https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=500&auto=format&fit=crop&q=60`;
-  } else if (termoLower.includes('cabo') || termoLower.includes('hdmi') || termoLower.includes('carregador')) {
-    imageUrl = `https://images.unsplash.com/photo-1583863788434-e58a36330cf0?w=500&auto=format&fit=crop&q=60`;
-  } else if (termoLower.includes('celular') || termoLower.includes('xiomi') || termoLower.includes('smartphone') || termoLower.includes('iphone')) {
+  } else if (termoLower.includes('celular') || termoLower.includes('smartphone')) {
     imageUrl = `https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?w=500&auto=format&fit=crop&q=60`;
-  } else if (termoLower.includes('raquete') || termoLower.includes('inseto') || termoLower.includes('pernilongo')) {
-    imageUrl = `https://images.unsplash.com/photo-1527529482837-4698179dc6ce?w=500&auto=format&fit=crop&q=60`;
-  } else if (termoLower.includes('tenis') || termoLower.includes('sapato') || termoLower.includes('camisa')) {
-    imageUrl = `https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=500&auto=format&fit=crop&q=60`;
   }
 
   const resultadosReais = [
