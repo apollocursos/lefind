@@ -10,28 +10,22 @@ export default async function handler(req, res) {
   const query = req.query.q || req.query.consulta;
 
   if (!query || query.trim() === '') {
-    return res.status(400).json({ sucesso: false, error: 'Termo de busca obrigatório.' });
+    return res.status(400).json({ sucesso: false, error: 'Termo obrigatório.' });
   }
 
   const searchTerm = query.trim();
 
   try {
-    const mlUrl = `https://api.mercadolibre.com/sites/MLB/search?q=${encodeURIComponent(searchTerm)}&limit=8`;
-    const response = await fetch(mlUrl);
-    const data = await response.json();
-
-    let ofertas = [];
-
-    if (data && data.results && data.results.length > 0) {
-      ofertas = data.results.map(item => ({
-        loja: 'Mercado Livre',
-        titulo: item.title,
-        preco: item.price,
-        imagem: item.thumbnail ? item.thumbnail.replace('http://', 'https://').replace('-I.jpg', '-O.jpg') : '',
-        link: item.permalink,
+    const ofertas = [
+      {
+        loja: 'Google Shopping (Espelhado)',
+        titulo: `${searchTerm} - Melhor Oferta Encontrada`,
+        preco: 0.00,
+        imagem: '',
+        link: `https://www.google.com/search?q=${encodeURIComponent(searchTerm)}&tbm=shop`,
         disponivel: true
-      }));
-    }
+      }
+    ];
 
     return res.status(200).json({
       query: searchTerm,
@@ -40,11 +34,10 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('Erro na API:', error);
+    console.error('Erro no espelhamento:', error);
     return res.status(500).json({ 
-      sucesso: false,
-      error: 'Falha ao buscar dados nas APIs.',
-      detalhes: error.message 
+      sucesso: false, 
+      error: 'Erro ao processar o espelhamento gratuito.' 
     });
   }
 }
