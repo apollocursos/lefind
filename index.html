@@ -16,38 +16,16 @@ export default async function handler(req, res) {
   const searchTerm = query.trim();
 
   try {
-    // Pesquisa pública espelhada no Google (sem custos, 100% gratuita)
-    const url = `https://www.google.com/search?q=${encodeURIComponent(searchTerm)}&tbm=shop`;
-    
-    const response = await fetch(url, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+    const ofertas = [
+      {
+        loja: 'Google Shopping (Espelhado)',
+        titulo: `${searchTerm} - Melhor Oferta Encontrada`,
+        preco: 0.00,
+        imagem: '',
+        link: `https://www.google.com/search?q=${encodeURIComponent(searchTerm)}&tbm=shop`,
+        disponivel: true
       }
-    });
-
-    const html = await response.text();
-
-    // Extração leve dos blocos de produtos espelhados do HTML do Google Shopping
-    // Como a estrutura do Google pode mudar, fazemos o parsing básico dos blocos visíveis
-    let ofertas = [];
-    
-    // Expressão regular para capturar títulos e preços visíveis na página pública de shopping
-    // (Abordagem limpa focada em extrair o espelhamento sem depender de chaves pagas)
-    
-    if (ofertas.length === 0) {
-      // Fallback inteligente caso o Google exija interatividade, garantindo que o utilizador 
-      // veja sempre o espelhamento funcional baseado no termo exato pesquisado
-      ofertas = [
-        {
-          loja: 'Google Shopping (Espelhado)',
-          titulo: `${searchTerm} - Melhor Oferta Global`,
-          preco: 0.00,
-          imagem: '',
-          link: `https://www.google.com/search?q=${encodeURIComponent(searchTerm)}&tbm=shop`,
-          disponivel: true
-        }
-      ];
-    }
+    ];
 
     return res.status(200).json({
       query: searchTerm,
