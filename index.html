@@ -1,471 +1,315 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LE.FIND - Agregador Global de Ofertas & AI Intelligence</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root{
-            --bg-escuro: #0b0f19;
-            --card-bg: #111827;
-            --borda-do-cartão: #1f2937;
-            --azul-acentuado: #3b82f6;
-            --accent-green: #10b981;
-            --accent-amarelo: #f59e0b;
-            --accent-roxo: #8b5cf6;
-            --rosa-acentuado: #ec4899;
-            --texto-principal: #f9fafb;
-            --texto-silenciado: #9ca3af;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LE.FIND - Agregador Global Inteligente</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
+    body { background-color: #0b0f19; color: #f3f4f6; min-height: 100vh; }
+    
+    .header {
+      background: #111827;
+      border-bottom: 1px solid #1f2937;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .logo {
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: #3b82f6;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .logo span { background: #2563eb; color: #fff; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; }
+    
+    .search-container {
+      max-width: 800px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+      display: flex;
+      gap: 0.5rem;
+    }
+    .search-input {
+      flex: 1;
+      background: #1f2937;
+      border: 1px solid #374151;
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      color: #fff;
+      font-size: 1rem;
+    }
+    .search-input:focus { outline: none; border-color: #3b82f6; }
+    .search-btn {
+      background: #2563eb;
+      color: white;
+      border: none;
+      padding: 0 1.5rem;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .search-btn:hover { background: #1d4ed8; }
 
-        *{ box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-escuro);
-            color: var(--texto-principal);
-            padding: 20px;
-        }
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 1rem 3rem 1rem;
+    }
 
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--card-bg);
-            padding: 15px 25px;
-            border-radius: 12px;
-            border: 1px solid var(--borda-do-cartão);
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
+    .loading {
+      text-align: center;
+      padding: 3rem;
+      color: #9ca3af;
+      font-size: 1.1rem;
+    }
 
-        .logo-area {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 1.4rem;
-            font-weight: bold;
-            color: var(--azul-acentuado);
-        }
+    .offers-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1.5rem;
+    }
 
-        .search-box {
-            display: flex;
-            gap: 10px;
-            flex: 1;
-            max-width: 500px;
-        }
+    .card {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .card:hover {
+      transform: translateY(-2px);
+      border-color: #374151;
+    }
+    .card.best-offer {
+      border-color: #10b981;
+    }
 
-        .search-box input {
-            flex: 1;
-            padding: 10px 15px;
-            border-radius: 8px;
-            border: 1px solid var(--borda-do-cartão);
-            background: var(--bg-escuro);
-            color: var(--texto-principal);
-            outline: none;
-        }
+    .badge-best {
+      position: absolute;
+      top: -10px;
+      right: 15px;
+      background: #10b981;
+      color: #064e3b;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 0.2rem 0.6rem;
+      border-radius: 20px;
+      text-transform: uppercase;
+    }
 
-        .search-box button {
-            background: var(--azul-acentuado);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-        }
+    .product-img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      background: #1f2937;
+    }
 
-        .features-banner {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 15px;
-            margin-bottom: 25px;
-        }
+    .store-name {
+      font-size: 0.85rem;
+      color: #9ca3af;
+      margin-bottom: 0.25rem;
+    }
 
-        .feature-card {
-            background: var(--card-bg);
-            border: 1px solid var(--borda-do-cartão);
-            padding: 15px;
-            border-radius: 10px;
-            font-size: 0.9rem;
-        }
+    .product-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+      color: #f9fafb;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
 
-        .feature-card h4 {
-            color: var(--azul-acentuado);
-            margin-bottom: 5px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+    .price-box {
+      margin-bottom: 1rem;
+    }
+    .main-price {
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #34d399;
+    }
+    .price-range {
+      font-size: 0.8rem;
+      color: #9ca3af;
+    }
 
-        .toolbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
+    .cra-box {
+      background: #1f2937;
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      margin-bottom: 0.75rem;
+      color: #93c5fd;
+    }
 
-        .filters-group {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
+    .ai-verdict {
+      background: #1e1b4b;
+      border: 1px solid #312e81;
+      padding: 0.5rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      color: #c7d2fe;
+      margin-bottom: 1rem;
+    }
 
-        .filter-btn {
-            background: var(--card-bg);
-            border: 1px solid var(--borda-do-cartão);
-            color: var(--texto-silenciado);
-            padding: 8px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.85rem;
-        }
+    .tags-row {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+      margin-bottom: 1rem;
+      font-size: 0.75rem;
+    }
+    .tag {
+      background: #1f2937;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      color: #d1d5db;
+    }
 
-        .filter-btn.active {
-            background: var(--azul-acentuado);
-            color: white;
-            border-color: var(--azul-acentuado);
-        }
+    .btn-oferta {
+      display: block;
+      text-align: center;
+      background: #2563eb;
+      color: white;
+      text-decoration: none;
+      padding: 0.75rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: background 0.2s;
+    }
+    .btn-oferta:hover { background: #1d4ed8; }
 
-        .results-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 20px;
-        }
-
-        .offer-card {
-            background: var(--card-bg);
-            border: 1px solid var(--borda-do-cartão);
-            border-radius: 12px;
-            padding: 20px;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .offer-card.best-deal {
-            border-color: var(--accent-green);
-        }
-
-        .best-badge {
-            position: absolute;
-            top: -10px;
-            right: 15px;
-            background: var(--accent-green);
-            color: #000;
-            font-size: 0.75rem;
-            font-weight: bold;
-            padding: 3px 10px;
-            border-radius: 20px;
-        }
-
-        .card-title {
-            font-size: 1.05rem;
-            font-weight: bold;
-            color: var(--texto-principal);
-        }
-
-        .price-tag {
-            font-size: 1.3rem;
-            font-weight: bold;
-            color: var(--accent-green);
-        }
-
-        .cra-box, .ai-deal-box {
-            background: rgba(59, 130, 246, 0.08);
-            border-left: 3px solid var(--azul-acentuado);
-            padding: 8px 12px;
-            border-radius: 0 6px 6px 0;
-            font-size: 0.85rem;
-        }
-
-        .ai-deal-box {
-            border-left-color: var(--accent-roxo);
-            background: rgba(139, 92, 246, 0.08);
-        }
-
-        .card-tags {
-            display: flex;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
-
-        .card-tags span {
-            font-size: 0.75rem;
-            padding: 3px 8px;
-            border-radius: 4px;
-            background: var(--bg-escuro);
-            border: 1px solid var(--borda-do-cartão);
-        }
-
-        .card-actions {
-            display: flex;
-            gap: 10px;
-            margin-top: 5px;
-        }
-
-        .btn-offer {
-            flex: 1;
-            background: var(--azul-acentuado);
-            color: white;
-            text-align: center;
-            padding: 10px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 0.9rem;
-        }
-
-        .btn-negotiate {
-            background: var(--accent-roxo);
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .btn-alert {
-            background: var(--card-bg);
-            border: 1px solid var(--borda-do-cartão);
-            color: var(--accent-amarelo);
-            padding: 10px 15px;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-
-        /* Modal Simples */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.7);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .modal-content {
-            background: var(--card-bg);
-            border: 1px solid var(--borda-do-cartão);
-            padding: 25px;
-            border-radius: 12px;
-            width: 90%; max-width: 400px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-        .modal-content input {
-            padding: 10px;
-            border-radius: 6px;
-            border: 1px solid var(--borda-do-cartão);
-            background: var(--bg-escuro);
-            color: white;
-        }
-    </style>
+    .initial-state {
+      text-align: center;
+      padding: 4rem 1rem;
+      color: #6b7280;
+    }
+  </style>
 </head>
 <body>
-
-    <header>
-        <div class="logo-area">
-            <i class="fa-solid fa-globe"></i> LE.FIND <span style="font-size: 0.7rem; background: var(--accent-roxo); padding: 2px 6px; border-radius: 4px;">v3.0 API Real</span>
-        </div>
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Pesquisar produto global (ex: Xbox, Air Fryer, iPhone)..." value="XBOX SERIES S">
-            <button onclick="executarBuscaAPI()">Buscar</button>
-        </div>
-        <div>
-            <button class="filter-btn" onclick="abrirMeusAlertas()"><i class="fa-regular fa-bell"></i> Meus Alertas (<span id="contadorAlertas">0</span>)</button>
-        </div>
+  <div id="app">
+    <header class="header">
+      <div class="logo">
+        LE.FIND <span>v3.0 API Real</span>
+      </div>
+      <div style="font-size: 0.85rem; color: #9ca3af;">Buscador Global Inteligente</div>
     </header>
 
-    <div class="features-banner">
-        <div class="feature-card">
-            <h4><i class="fa-solid fa-network-wired"></i> LE.Find Mesh</h4>
-            <p>Consolidação de frete geolocalizado entre pares.</p>
-        </div>
-        <div class="feature-card">
-            <h4><i class="fa-solid fa-calculator"></i> CRA Automático</h4>
-            <p>Custo Real de Aquisição (impostos inclusos).</p>
-        </div>
-        <div class="feature-card">
-            <h4><i class="fa-solid fa-shield-halved"></i> Anti-Arrependimento</h4>
-            <p>Validação histórica vs. ofertas atuais 24/7.</p>
-        </div>
-        <div class="feature-card">
-            <h4><i class="fa-solid fa-gavel"></i> Leilão Inverso</h4>
-            <p>Negociação automatizada direta com lojistas.</p>
-        </div>
+    <div class="search-container">
+      <input 
+        type="text" 
+        class="search-input" 
+        v-model="termoBusca" 
+        @keyup.enter="buscarProdutos" 
+        placeholder="O que procuras hoje? (Ex: Mouse, Raquete de Pernilongos, Cabo HDMI...)"
+      >
+      <button class="search-btn" @click="buscarProdutos">Buscar</button>
     </div>
 
-    <div class="toolbar">
-        <div class="filters-group">
-            <button class="filter-btn active" onclick="mudarFiltro('todos', this)">Todos</button>
-            <button class="filter-btn" onclick="mudarFiltro('oficiais', this)">Lojas Oficiais</button>
-            <button class="filter-btn" onclick="mudarFiltro('garimpo', this)">Garimpo & Usados</button>
-        </div>
-        <div id="stats-banner" style="font-size: 0.85rem; color: var(--texto-silenciado);">
-            A carregar ofertas via API da Vercel...
-        </div>
-    </div>
+    <main class="main-content">
+      <div v-if="loading" class="loading">
+        A consultar APIs e redes mesh em tempo real...
+      </div>
 
-    <div class="results-grid" id="results-grid">
-        <!-- Injetado dinamicamente via API -->
-    </div>
+      <div v-if="!loading && offers.length === 0" class="initial-state">
+        <h2>Digite um produto acima para comparar preços em tempo real.</h2>
+      </div>
 
-    <!-- Modal Alerta WhatsApp -->
-    <div class="modal" id="alertModal">
-        <div class="modal-content">
-            <h3>🔔 Ativar Alerta de Preço WhatsApp</h3>
-            <p style="font-size: 0.85rem; color: var(--texto-silenciado);">Receba alertas ilimitados sem taxa quando o preço atingir o seu alvo.</p>
-            <input type="text" id="alertaProduto" placeholder="Nome do Produto" disabled>
-            <input type="number" id="alertaPrecoAlvo" placeholder="Preço Alvo Desejado (R$)">
-            <input type="text" id="alertaWhatsapp" placeholder="Seu WhatsApp (com DDD)">
-            <div style="display: flex; gap: 10px;">
-                <button onclick="salvarAlerta()" style="flex:1; background: var(--accent-green); color:black; border:none; padding:10px; border-radius:6px; font-weight:bold; cursor:pointer;">Salvar Alerta</button>
-                <button onclick="fecharModal('alertModal')" style="background: var(--borda-do-cartão); color:white; border:none; padding:10px; border-radius:6px; cursor:pointer;">Cancelar</button>
+      <div v-if="!loading && offers.length > 0" class="offers-grid">
+        <div 
+          v-for="(offer, index) in offers" 
+          :key="index" 
+          class="card"
+          :class="{ 'best-offer': offer.best }"
+        >
+          <div v-if="offer.best" class="badge-best">Menor Preço Global</div>
+          
+          <div>
+            <img :src="offer.image" :alt="offer.title" class="product-img">
+            <div class="store-name">{{ offer.store }}</div>
+            <div class="product-title">{{ offer.title }}</div>
+            
+            <div class="price-box">
+              <div class="main-price">R$ {{ offer.price.toFixed(2).replace('.', ',') }}</div>
+              <div class="price-range">Mín: R$ {{ offer.minPrice.toFixed(2).replace('.', ',') }} - Máx: R$ {{ offer.maxPrice.toFixed(2).replace('.', ',') }}</div>
             </div>
+
+            <div class="cra-box">
+              🧮 CRA (Custo Real + Taxas): <strong>R$ {{ (offer.price * 1.04).toFixed(2).replace('.', ',') }}</strong>
+            </div>
+
+            <div class="ai-verdict">
+              🛡️ Anti-Arrependimento IA: <strong>{{ offer.aiVerdict }}</strong>
+            </div>
+
+            <div class="tags-row">
+              <span class="tag">{{ offer.frete }}</span>
+              <span class="tag">{{ offer.rating }}</span>
+              <span class="tag">{{ offer.cashback }}</span>
+            </div>
+          </div>
+
+          <a :href="offer.link" target="_blank" class="btn-oferta">Ver Oferta</a>
         </div>
-    </div>
+      </div>
+    </main>
+  </div>
 
-    <script>
-        let filtroAtual = 'todos';
-        let dadosOfertasAtuais = [];
-        let produtoSelecionadoAlerta = '';
+  <script>
+    const { createApp, ref } = Vue;
 
-        async function executarBuscaAPI() {
-            const termo = document.getElementById('searchInput').value.trim();
-            const grid = document.getElementById('results-grid');
-            grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--texto-silenciado); padding: 40px;"><i class="fa-solid fa-spinner fa-spin"></i> A consultar APIs globais de afiliados na Vercel...</div>';
+    createApp({
+      setup() {
+        const termoBusca = ref('');
+        const offers = ref([]);
+        const loading = ref(false);
 
-            try {
-                const response = await fetch(`/api/search?q=${encodeURIComponent(termo)}`);
-                const data = await response.json();
+        const buscarProdutos = async () => {
+          if (!termoBusca.value.trim()) return;
+          
+          loading.value = true;
+          offers.value = [];
 
-                if (!data.success || !data.offers.length) {
-                    grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--texto-silenciado); padding: 40px;">Nenhuma oferta encontrada.</div>';
-                    return;
-                }
+          try {
+            // Aponta para a tua API serverless na Vercel (/api/search)
+            const response = await fetch(`/api/search?q=${encodeURIComponent(termoBusca.value)}`);
+            const data = await response.json();
 
-                dadosOfertasAtuais = data.offers;
-                renderizarCards(dadosOfertasAtuais);
-                document.getElementById('stats-bannerinnerText', `Encontradas ${data.offers.length} ofertas reais para "${termo}" via API.`);
-            } catch (err) {
-                console.error(err);
-                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--rosa-acentuado); padding: 40px;">⚠️ Erro de conexão com a Serverless API.</div>';
+            if (data.success && data.offers) {
+              offers.value = data.offers;
             }
-        }
-
-        function renderizarCards(ofertas) {
-            const grid = document.getElementById('results-grid');
-            grid.innerHTML = '';
-
-            let filtradas = ofertas;
-            if (filtroAtual === 'oficiais') {
-                filtradas = ofertas.filter(o => o.brand === "Lojas Oficiais" || o.brand === "Ofertas Diretas");
-            } else if (filtroAtual === 'garimpo') {
-                filtradas = ofertas.filter(o => o.condition === "used");
-            }
-
-            filtradas.forEach(item => {
-                const card = document.createElement('div');
-                card.className = `offer-card ${item.best ? 'best-deal' : ''}`;
-                
-                let badgeHtml = item.best ? `<div class="best-badge"><i class="fa-solid fa-star"></i> Menor Preço Global</div>` : '';
-                const precoFormatado = `R$ ${item.minPrice.toLocaleString('pt-BR', {minimumFractionDigits: 2})} - R$ ${item.maxPrice.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
-                const craEstimado = `R$ ${(item.minPrice * 1.045).toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
-
-                card.innerHTML = `
-                    ${badgeHtml}
-                    <div class="card-title">${item.title}</div>
-                    <div class="price-tag">${precoFormatado}</div>
-                    <div class="cra-box">
-                        <span><i class="fa-solid fa-calculator"></i> CRA (Custo Real + Taxas):</span>
-                        <strong>${craEstimado}</strong>
-                    </div>
-                    <div class="ai-deal-box">
-                        <span><i class="fa-solid fa-shield-heart"></i> Anti-Arrependimento IA:</span>
-                        <strong>${item.aiVerdict}</strong>
-                    </div>
-                    <div class="card-tags">
-                        <span>${item.frete}</span>
-                        <span>${item.rating}</span>
-                        <span>${item.cashback}</span>
-                    </div>
-                    <div style="font-size:0.8rem; color: var(--texto-silenciado);">Plataforma: ${item.store}</div>
-                    <div class="card-actions">
-                        <a href="${item.affiliateUrl}" target="_blank" class="btn-offer">Ver Ofertas</a>
-                        <button class="btn-negotiate" onclick="alert('Leilão Inverso iniciado para ${item.title}!')"><i class="fa-solid fa-gavel"></i></button>
-                        <button class="btn-alert" onclick="abrirAlertaModal('${item.title}', ${item.minPrice})"><i class="fa-regular fa-bell"></i></button>
-                    </div>
-                `;
-                grid.appendChild(card);
-            });
-        }
-
-        function mudarFiltro(tipo, btn) {
-            filtroAtual = tipo;
-            document.querySelectorAll('.filters-group .filter-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            renderizarCards(dadosOfertasAtuais);
-        }
-
-        function abrirAlertaModal(produto, precoSugerido) {
-            produtoSelecionadoAlerta = produto;
-            document.getElementById('alertaProduto').value = produto;
-            document.getElementById('alertaPrecoAlvo').value = (precoSugerido * 0.9).toFixed(2);
-            document.getElementById('alertModal').style.display = 'flex';
-        }
-
-        function fecharModal(id) {
-            document.getElementById(id).style.display = 'none';
-        }
-
-        function salvarAlerta() {
-            const preco = document.getElementById('alertaPrecoAlvo').value;
-            const wpp = document.getElementById('alertaWhatsapp').value;
-
-            if(!preco || !wpp) {
-                alert('Preencha todos os campos do alerta.');
-                return;
-            }
-
-            let alertas = JSON.parse(localStorage.getItem('lefind_alertas') || '[]');
-            alertas.push({ produto: produtoSelecionadoAlerta, precoAlvo: preco, whatsapp: wpp, data: new Date().toLocaleDateString() });
-            localStorage.setItem('lefind_alertas', JSON.stringify(alertas));
-
-            atualizarContadorAlertas();
-            fecharModal('alertModal');
-            alert('Alerta configurado com sucesso! O robô vigiará 24/7.');
-        }
-
-        function atualizarContadorAlertas() {
-            let alertas = JSON.parse(localStorage.getItem('lefind_alertas') || '[]');
-            document.getElementById('contadorAlertas').innerText = alertas.length;
-        }
-
-        function abrirMeusAlertas() {
-            let alertas = JSON.parse(localStorage.getItem('lefind_alertas') || '[]');
-            if(alertas.length === 0) {
-                alert('Nenhum alerta ativo no momento.');
-                return;
-            }
-            let texto = "Seus Alertas Ativos:\n\n";
-            alertas.forEach((a, i) => {
-                texto += `${i+1}. ${a.produto} - Alvo: R$ ${a.precoAlvo} (Wpp: ${a.whatsapp})\n`;
-            });
-            alert(texto);
-        }
-
-        // Executar busca inicial ao carregar a página
-        window.onload = () => {
-            atualizarContadorAlertas();
-            executarBuscaAPI();
+          } catch (error) {
+            console.error("Erro ao buscar ofertas:", error);
+            alert("Erro ao conectar à API de busca.");
+          } finally {
+            loading.value = false;
+          }
         };
-    </script>
+
+        return {
+          termoBusca,
+          offers,
+          loading,
+          buscarProdutos
+        };
+      }
+    }).mount('#app');
+  </script>
 </body>
 </html>
