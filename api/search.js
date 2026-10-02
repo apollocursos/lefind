@@ -16,16 +16,25 @@ export default async function handler(req, res) {
   const searchTerm = query.trim();
 
   try {
-    const ofertas = [
-      {
-        loja: 'Google Shopping (Espelhado)',
-        titulo: `${searchTerm} - Melhor Oferta Encontrada`,
-        preco: 0.00,
-        imagem: '',
-        link: `https://www.google.com/search?q=${encodeURIComponent(searchTerm)}&tbm=shop`,
+    // Busca pública e gratuita otimizada para refletir os produtos reais do mercado
+    const url = `https://api.mercadolibre.com/sites/MLB/search?q=${encodeURIComponent(searchTerm)}&limit=12`;
+    
+    const response = await fetch(url);
+    const data = await response.json();
+
+    let ofertas = [];
+
+    if (data && data.results && data.results.length > 0) {
+      ofertas = data.results.map(item => ({
+        loja: item.seller?.eshop?.name || 'Mercado Livre / Oficial',
+        titulo: item.title,
+        preco: item.price,
+        // Converte a imagem em miniatura para alta qualidade garantida
+        imagem: item.thumbnail ? item.thumbnail.replace('http://', 'https://').replace('-I.jpg', '-O.jpg') : '',
+        link: item.permalink,
         disponivel: true
-      }
-    ];
+      }));
+    }
 
     return res.status(200).json({
       query: searchTerm,
@@ -34,10 +43,10 @@ export default async function handler(req, res) {
     });
 
   } catch (error) {
-    console.error('Erro no espelhamento:', error);
+    console.error('Erro no processamento:', error);
     return res.status(500).json({ 
       sucesso: false, 
-      error: 'Erro ao processar o espelhamento gratuito.' 
+      error: 'Erro ao buscar dados.' 
     });
   }
 }
