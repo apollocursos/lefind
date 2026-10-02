@@ -3,28 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LE.FIND - Agregador Global Inteligente</title>
+    <title>LE.FIND — Agregador Global Inteligente</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        * {
+            box-sizing: border-box;
+        }
         body {
-            font-family: Arial, sans-serif;
-            background-color: #0b132b;
-            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #070b19 0%, #0b132b 100%);
+            color: #f8fafc;
             margin: 0;
-            padding: 20px;
+            min-height: 100vh;
+            padding: 40px 20px;
         }
         .container {
-            max-width: 1200px;
+            max-width: 1000px;
             margin: 0 auto;
         }
         header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: #1c2541;
-            padding: 15px 25px;
-            border-radius: 8px;
-            margin-bottom: 30px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            background: rgba(28, 37, 65, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 20px 30px;
+            border-radius: 16px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
         }
         .logo-area {
             display: flex;
@@ -32,121 +39,175 @@
             gap: 15px;
         }
         .badge {
-            background: #4361ee;
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
             color: white;
-            padding: 4px 10px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
         h1 {
             margin: 0;
-            font-size: 22px;
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
             color: #ffffff;
+        }
+        .subtitle {
+            font-size: 13px;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+        .search-card {
+            background: rgba(28, 37, 65, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            margin-bottom: 40px;
         }
         .search-box {
             display: flex;
-            gap: 10px;
-            margin-bottom: 30px;
+            gap: 12px;
         }
         input[type="text"] {
             flex: 1;
-            padding: 14px 20px;
+            padding: 16px 20px;
             font-size: 16px;
-            background: #1c2541;
-            border: 1px solid #3a506b;
+            background: rgba(11, 19, 43, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             color: white;
-            border-radius: 8px;
+            border-radius: 12px;
             outline: none;
+            transition: all 0.2s ease;
+        }
+        input[type="text"]:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
         }
         input[type="text"]::placeholder {
-            color: #8d99ae;
+            color: #64748b;
         }
         button {
-            padding: 0 30px;
+            padding: 0 32px;
             font-size: 16px;
-            background-color: #3a86ff;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
             color: white;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             cursor: pointer;
-            font-weight: bold;
-            transition: background 0.2s;
+            font-weight: 600;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
         }
         button:hover {
-            background-color: #2667cc;
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
         }
         #resultados-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 24px;
         }
         .card {
-            background: #1c2541;
-            border: 1px solid #3a506b;
-            border-radius: 10px;
+            background: rgba(28, 37, 65, 0.6);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 16px;
             padding: 20px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            transition: transform 0.2s ease, border-color 0.2s ease;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(59, 130, 246, 0.4);
         }
         .card-header {
-            font-size: 13px;
-            background: #0b132b;
-            color: #4cc9f0;
-            padding: 5px 10px;
-            border-radius: 4px;
+            font-size: 11px;
+            background: rgba(59, 130, 246, 0.15);
+            color: #60a5fa;
+            padding: 4px 10px;
+            border-radius: 6px;
             display: inline-block;
             margin-bottom: 12px;
-            font-weight: bold;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         .card-img-box {
             width: 100%;
-            height: 180px;
+            height: 160px;
             background: #ffffff;
-            border-radius: 6px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            margin-bottom: 15px;
+            margin-bottom: 16px;
+            padding: 10px;
         }
         .card-img-box img {
             max-height: 100%;
             max-width: 100%;
             object-fit: contain;
+            mix-blend-mode: multiply;
         }
         .card-title {
-            font-size: 15px;
-            margin: 0 0 15px 0;
-            color: #e0e1dd;
+            font-size: 14px;
+            font-weight: 500;
+            margin: 0 0 16px 0;
+            color: #e2e8f0;
             line-height: 1.4;
             display: -webkit-box;
             -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
-            height: 42px;
+            height: 40px;
+        }
+        .card-footer-area {
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            padding-top: 14px;
         }
         .card-price {
             font-size: 20px;
-            font-weight: bold;
+            font-weight: 700;
             color: #4ade80;
-            margin-bottom: 15px;
+            margin-bottom: 14px;
+            letter-spacing: -0.5px;
         }
         .btn-oferta {
             display: block;
             text-align: center;
-            background: #2563eb;
+            background: rgba(255, 255, 255, 0.08);
             color: white;
             padding: 12px;
-            border-radius: 6px;
+            border-radius: 10px;
             text-decoration: none;
-            font-weight: bold;
-            transition: background 0.2s;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s ease;
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
         .btn-oferta:hover {
-            background: #1d4ed8;
+            background: #2563eb;
+            border-color: #2563eb;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px;
+            color: #94a3b8;
+            background: rgba(28, 37, 65, 0.4);
+            border-radius: 16px;
+            border: 1px dashed rgba(255, 255, 255, 0.1);
         }
     </style>
 </head>
@@ -158,18 +219,30 @@
                 <h1>LE.FIND</h1>
                 <span class="badge">v3.0 API Real</span>
             </div>
-            <div style="font-size: 13px; color: #8d99ae;">Buscador Global Inteligente</div>
+            <div class="subtitle">Buscador Global Inteligente</div>
         </header>
 
-        <div class="search-box">
-            <input type="text" id="termo-busca" placeholder="O que procuras hoje? (Ex: COPO STANLEY, IPHONE, MOCHILA...)">
-            <button onclick="executarBusca()">Buscar</button>
+        <div class="search-card">
+            <div class="search-box">
+                <input type="text" id="termo-busca" placeholder="O que procuras hoje? (Ex: MOUSE, TECLADO, MONITOR...)" onkeypress="handleKeyPress(event)">
+                <button onclick="executarBusca()">Pesquisar</button>
+            </div>
         </div>
 
-        <div id="resultados-container"></div>
+        <div id="resultados-container">
+            <div class="empty-state">
+                Pesquisa por um produto acima para encontrar as melhores ofertas em tempo real.
+            </div>
+        </div>
     </div>
 
     <script>
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                executarBusca();
+            }
+        }
+
         async function executarBusca() {
             const termo = document.getElementById('termo-busca').value;
             const container = document.getElementById('resultados-container');
@@ -179,15 +252,14 @@
                 return;
             }
 
-            container.innerHTML = '<p style="color: #8d99ae; grid-column: 1/-1; text-align: center; padding: 40px;">A pesquisar produtos reais nas APIs...</p>';
+            container.innerHTML = '<div class="empty-state">A pesquisar ofertas nas APIs em tempo real...</div>';
 
             try {
-                // Apanha o endpoint correto correspondente ao ficheiro api/pesquisa.js
-                const response = await fetch(`/api/pesquisa?q=${encodeURIComponent(termo)}`);
+                const response = await fetch(`/api/search?q=${encodeURIComponent(termo)}`);
                 const data = await response.json();
 
                 if (!data.sucesso || !data.ofertas || data.ofertas.length === 0) {
-                    container.innerHTML = '<p style="color: #8d99ae; grid-column: 1/-1; text-align: center; padding: 40px;">Nenhum produto encontrado.</p>';
+                    container.innerHTML = '<div class="empty-state">Nenhum produto encontrado para esta busca. Tenta outro termo.</div>';
                     return;
                 }
 
@@ -201,11 +273,11 @@
                         <div>
                             <div class="card-header">${oferta.loja}</div>
                             <div class="card-img-box">
-                                ${oferta.imagem ? `<img src="${oferta.imagem}" alt="${oferta.titulo}">` : '<span style="color: #666; font-size: 12px;">Sem imagem</span>'}
+                                ${oferta.imagem ? `<img src="${oferta.imagem}" alt="${oferta.titulo}">` : '<span style="color: #64748b; font-size: 13px;">Sem imagem</span>'}
                             </div>
                             <div class="card-title">${oferta.titulo}</div>
                         </div>
-                        <div>
+                        <div class="card-footer-area">
                             <div class="card-price">
                                 ${oferta.preco > 0 ? `R$ ${oferta.preco.toFixed(2).replace('.', ',')}` : 'Preço sob consulta'}
                             </div>
@@ -218,7 +290,7 @@
 
             } catch (err) {
                 console.error('Erro na requisição:', err);
-                container.innerHTML = '<p style="color: #ef4444; grid-column: 1/-1; text-align: center; padding: 40px;">Erro ao carregar os dados das lojas.</p>';
+                container.innerHTML = '<div class="empty-state" style="color: #f87171;">Erro ao carregar os dados das lojas. Verifica a consola da aplicação.</div>';
             }
         }
     </script>
