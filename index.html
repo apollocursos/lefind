@@ -3,277 +3,469 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LE.FIND - Agregador Global Inteligente</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <title>LE.FIND - Agregador Global de Ofertas & AI Intelligence</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * {
-            box-sizing: border-box;
+        :root{
+            --bg-escuro: #0b0f19;
+            --card-bg: #111827;
+            --borda-do-cartão: #1f2937;
+            --azul-acentuado: #3b82f6;
+            --accent-green: #10b981;
+            --accent-amarelo: #f59e0b;
+            --accent-roxo: #8b5cf6;
+            --rosa-acentuado: #ec4899;
+            --texto-principal: #f9fafb;
+            --texto-silenciado: #9ca3af;
         }
+
+        *{ box-sizing: border-box; margin: 0; padding: 0; }
         body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #070b19 0%, #0b132b 100%);
-            color: #f8fafc;
-            margin: 0;
-            min-height: 100vh;
-            padding: 30px 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-escuro);
+            color: var(--texto-principal);
+            padding: 20px;
         }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
+
         header {
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            background: rgba(28, 37, 65, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            align-items: center;
+            background: var(--card-bg);
             padding: 15px 25px;
-            border-radius: 14px;
+            border-radius: 12px;
+            border: 1px solid var(--borda-do-cartão);
             margin-bottom: 25px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            flex-wrap: wrap;
+            gap: 15px;
         }
+
         .logo-area {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 10px;
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--azul-acentuado);
         }
-        .badge {
-            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
-            color: white;
-            padding: 4px 10px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-        h1 {
-            margin: 0;
-            font-size: 22px;
-            font-weight: 700;
-            color: #ffffff;
-        }
-        .search-card {
-            background: rgba(28, 37, 65, 0.7);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            padding: 20px 25px;
-            border-radius: 14px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
-            margin-bottom: 25px;
-        }
+
         .search-box {
             display: flex;
-            gap: 12px;
-        }
-        input[type="text"] {
+            gap: 10px;
             flex: 1;
-            padding: 14px 20px;
-            font-size: 16px;
-            background: rgba(11, 19, 43, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: white;
-            border-radius: 10px;
+            max-width: 500px;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid var(--borda-do-cartão);
+            background: var(--bg-escuro);
+            color: var(--texto-principal);
             outline: none;
-            transition: all 0.2s ease;
         }
-        input[type="text"]:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-        }
-        input[type="text"]::placeholder {
-            color: #64748b;
-        }
-        button {
-            padding: 0 30px;
-            font-size: 16px;
-            background: linear-gradient(135deg, #3b82f6, #2563eb);
+
+        .search-box button {
+            background: var(--azul-acentuado);
             color: white;
             border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.2s ease;
-        }
-        button:hover {
-            background: linear-gradient(135deg, #2563eb, #1d4ed8);
-        }
-        #resultados-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 20px;
-        }
-        .card {
-            background: rgba(28, 37, 65, 0.6);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            border-radius: 14px;
-            padding: 18px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            transition: transform 0.2s ease, border-color 0.2s ease;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-        }
-        .card:hover {
-            transform: translateY(-3px);
-            border-color: rgba(59, 130, 246, 0.4);
-        }
-        .card-header {
-            font-size: 11px;
-            background: rgba(59, 130, 246, 0.15);
-            color: #60a5fa;
-            padding: 4px 8px;
-            border-radius: 6px;
-            display: inline-block;
-            margin-bottom: 10px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-        .card-img-box {
-            width: 100%;
-            height: 160px;
-            background: #ffffff;
+            padding: 10px 20px;
             border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .features-banner {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid var(--borda-do-cartão);
+            padding: 15px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+        }
+
+        .feature-card h4 {
+            color: var(--azul-acentuado);
+            margin-bottom: 5px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            overflow: hidden;
-            margin-bottom: 14px;
-            padding: 10px;
+            gap: 8px;
         }
-        .card-img-box img {
-            max-height: 100%;
-            max-width: 100%;
-            object-fit: contain;
-            mix-blend-mode: multiply;
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
         }
-        .card-title {
-            font-size: 14px;
-            font-weight: 500;
-            margin: 0 0 14px 0;
-            color: #e2e8f0;
-            line-height: 1.4;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            height: 40px;
+
+        .filters-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
         }
-        .card-price {
-            font-size: 20px;
-            font-weight: 700;
-            color: #4ade80;
-            margin-bottom: 12px;
+
+        .filter-btn {
+            background: var(--card-bg);
+            border: 1px solid var(--borda-do-cartão);
+            color: var(--texto-silenciado);
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
         }
-        .btn-oferta {
-            display: block;
-            text-align: center;
-            background: #2563eb;
+
+        .filter-btn.active {
+            background: var(--azul-acentuado);
             color: white;
+            border-color: var(--azul-acentuado);
+        }
+
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .offer-card {
+            background: var(--card-bg);
+            border: 1px solid var(--borda-do-cartão);
+            border-radius: 12px;
+            padding: 20px;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .offer-card.best-deal {
+            border-color: var(--accent-green);
+        }
+
+        .best-badge {
+            position: absolute;
+            top: -10px;
+            right: 15px;
+            background: var(--accent-green);
+            color: #000;
+            font-size: 0.75rem;
+            font-weight: bold;
+            padding: 3px 10px;
+            border-radius: 20px;
+        }
+
+        .card-title {
+            font-size: 1.05rem;
+            font-weight: bold;
+            color: var(--texto-principal);
+        }
+
+        .price-tag {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--accent-green);
+        }
+
+        .cra-box, .ai-deal-box {
+            background: rgba(59, 130, 246, 0.08);
+            border-left: 3px solid var(--azul-acentuado);
+            padding: 8px 12px;
+            border-radius: 0 6px 6px 0;
+            font-size: 0.85rem;
+        }
+
+        .ai-deal-box {
+            border-left-color: var(--accent-roxo);
+            background: rgba(139, 92, 246, 0.08);
+        }
+
+        .card-tags {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .card-tags span {
+            font-size: 0.75rem;
+            padding: 3px 8px;
+            border-radius: 4px;
+            background: var(--bg-escuro);
+            border: 1px solid var(--borda-do-cartão);
+        }
+
+        .card-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 5px;
+        }
+
+        .btn-offer {
+            flex: 1;
+            background: var(--azul-acentuado);
+            color: white;
+            text-align: center;
             padding: 10px;
             border-radius: 8px;
             text-decoration: none;
-            font-weight: 600;
-            font-size: 14px;
-            transition: background 0.2s;
+            font-weight: bold;
+            font-size: 0.9rem;
         }
-        .btn-oferta:hover {
-            background: #1d4ed8;
+
+        .btn-negotiate {
+            background: var(--accent-roxo);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
         }
-        .empty-state {
-            grid-column: 1 / -1;
-            text-align: center;
-            padding: 50px;
-            color: #94a3b8;
-            background: rgba(28, 37, 65, 0.4);
-            border-radius: 14px;
-            border: 1px dashed rgba(255, 255, 255, 0.1);
+
+        .btn-alert {
+            background: var(--card-bg);
+            border: 1px solid var(--borda-do-cartão);
+            color: var(--accent-amarelo);
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        /* Modal Simples */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: var(--card-bg);
+            border: 1px solid var(--borda-do-cartão);
+            padding: 25px;
+            border-radius: 12px;
+            width: 90%; max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .modal-content input {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid var(--borda-do-cartão);
+            background: var(--bg-escuro);
+            color: white;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <header>
-            <div class="logo-area">
-                <h1>LE.FIND</h1>
-                <span class="badge">v3.0 API Real</span>
-            </div>
-            <div style="font-size: 13px; color: #94a3b8;">Buscador Global Inteligente</div>
-        </header>
-
-        <div class="search-card">
-            <div class="search-box">
-                <input type="text" id="termo-busca" placeholder="O que procuras hoje? (Ex: Celular, Calculadora HP, Tênis...)" onkeypress="handleKeyPress(event)">
-                <button onclick="executarBusca()">Pesquisar</button>
-            </div>
+    <header>
+        <div class="logo-area">
+            <i class="fa-solid fa-globe"></i> LE.FIND <span style="font-size: 0.7rem; background: var(--accent-roxo); padding: 2px 6px; border-radius: 4px;">v3.0 API Real</span>
         </div>
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Pesquisar produto global (ex: Xbox, Air Fryer, iPhone)..." value="XBOX SERIES S">
+            <button onclick="executarBuscaAPI()">Buscar</button>
+        </div>
+        <div>
+            <button class="filter-btn" onclick="abrirMeusAlertas()"><i class="fa-regular fa-bell"></i> Meus Alertas (<span id="contadorAlertas">0</span>)</button>
+        </div>
+    </header>
 
-        <div id="resultados-container">
-            <div class="empty-state">
-                Digite um termo acima para iniciar a varredura inteligente de preços.
+    <div class="features-banner">
+        <div class="feature-card">
+            <h4><i class="fa-solid fa-network-wired"></i> LE.Find Mesh</h4>
+            <p>Consolidação de frete geolocalizado entre pares.</p>
+        </div>
+        <div class="feature-card">
+            <h4><i class="fa-solid fa-calculator"></i> CRA Automático</h4>
+            <p>Custo Real de Aquisição (impostos inclusos).</p>
+        </div>
+        <div class="feature-card">
+            <h4><i class="fa-solid fa-shield-halved"></i> Anti-Arrependimento</h4>
+            <p>Validação histórica vs. ofertas atuais 24/7.</p>
+        </div>
+        <div class="feature-card">
+            <h4><i class="fa-solid fa-gavel"></i> Leilão Inverso</h4>
+            <p>Negociação automatizada direta com lojistas.</p>
+        </div>
+    </div>
+
+    <div class="toolbar">
+        <div class="filters-group">
+            <button class="filter-btn active" onclick="mudarFiltro('todos', this)">Todos</button>
+            <button class="filter-btn" onclick="mudarFiltro('oficiais', this)">Lojas Oficiais</button>
+            <button class="filter-btn" onclick="mudarFiltro('garimpo', this)">Garimpo & Usados</button>
+        </div>
+        <div id="stats-banner" style="font-size: 0.85rem; color: var(--texto-silenciado);">
+            A carregar ofertas via API da Vercel...
+        </div>
+    </div>
+
+    <div class="results-grid" id="results-grid">
+        <!-- Injetado dinamicamente via API -->
+    </div>
+
+    <!-- Modal Alerta WhatsApp -->
+    <div class="modal" id="alertModal">
+        <div class="modal-content">
+            <h3>🔔 Ativar Alerta de Preço WhatsApp</h3>
+            <p style="font-size: 0.85rem; color: var(--texto-silenciado);">Receba alertas ilimitados sem taxa quando o preço atingir o seu alvo.</p>
+            <input type="text" id="alertaProduto" placeholder="Nome do Produto" disabled>
+            <input type="number" id="alertaPrecoAlvo" placeholder="Preço Alvo Desejado (R$)">
+            <input type="text" id="alertaWhatsapp" placeholder="Seu WhatsApp (com DDD)">
+            <div style="display: flex; gap: 10px;">
+                <button onclick="salvarAlerta()" style="flex:1; background: var(--accent-green); color:black; border:none; padding:10px; border-radius:6px; font-weight:bold; cursor:pointer;">Salvar Alerta</button>
+                <button onclick="fecharModal('alertModal')" style="background: var(--borda-do-cartão); color:white; border:none; padding:10px; border-radius:6px; cursor:pointer;">Cancelar</button>
             </div>
         </div>
     </div>
 
     <script>
-        function handleKeyPress(event) {
-            if (event.key === 'Enter') {
-                executarBusca();
-            }
-        }
+        let filtroAtual = 'todos';
+        let dadosOfertasAtuais = [];
+        let produtoSelecionadoAlerta = '';
 
-        async function executarBusca() {
-            const termo = document.getElementById('termo-busca').value;
-            const container = document.getElementById('resultados-container');
-
-            if (!termo.trim()) {
-                alert('Digite um termo para pesquisar.');
-                return;
-            }
-
-            container.innerHTML = '<div class="empty-state">A pesquisar ofertas nas lojas em tempo real...</div>';
+        async function executarBuscaAPI() {
+            const termo = document.getElementById('searchInput').value.trim();
+            const grid = document.getElementById('results-grid');
+            grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--texto-silenciado); padding: 40px;"><i class="fa-solid fa-spinner fa-spin"></i> A consultar APIs globais de afiliados na Vercel...</div>';
 
             try {
                 const response = await fetch(`/api/search?q=${encodeURIComponent(termo)}`);
                 const data = await response.json();
 
-                if (!data.sucesso || !data.ofertas || data.ofertas.length === 0) {
-                    container.innerHTML = '<div class="empty-state">Nenhum produto encontrado. Tenta outro termo.</div>';
+                if (!data.success || !data.offers.length) {
+                    grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--texto-silenciado); padding: 40px;">Nenhuma oferta encontrada.</div>';
                     return;
                 }
 
-                container.innerHTML = '';
-
-                data.ofertas.forEach(oferta => {
-                    const card = document.createElement('div');
-                    card.className = 'card';
-
-                    card.innerHTML = `
-                        <div>
-                            <div class="card-header">${oferta.loja}</div>
-                            <div class="card-img-box">
-                                ${oferta.imagem ? `<img src="${oferta.imagem}" alt="${oferta.titulo}">` : '<span style="color: #64748b; font-size: 13px;">Sem imagem</span>'}
-                            </div>
-                            <div class="card-title">${oferta.titulo}</div>
-                        </div>
-                        <div>
-                            <div class="card-price">
-                                ${oferta.preco > 0 ? `R$ ${oferta.preco.toFixed(2).replace('.', ',')}` : 'Preço sob consulta'}
-                            </div>
-                            <a href="${oferta.link}" target="_blank" class="btn-oferta">Ver Oferta</a>
-                        </div>
-                    `;
-
-                    container.appendChild(card);
-                });
-
+                dadosOfertasAtuais = data.offers;
+                renderizarCards(dadosOfertasAtuais);
+                document.getElementById('stats-bannerinnerText', `Encontradas ${data.offers.length} ofertas reais para "${termo}" via API.`);
             } catch (err) {
-                console.error('Erro na requisição:', err);
-                container.innerHTML = '<div class="empty-state" style="color: #f87171;">Erro ao carregar os dados das lojas.</div>';
+                console.error(err);
+                grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--rosa-acentuado); padding: 40px;">⚠️ Erro de conexão com a Serverless API.</div>';
             }
         }
+
+        function renderizarCards(ofertas) {
+            const grid = document.getElementById('results-grid');
+            grid.innerHTML = '';
+
+            let filtradas = ofertas;
+            if (filtroAtual === 'oficiais') {
+                filtradas = ofertas.filter(o => o.brand === "Lojas Oficiais" || o.brand === "Ofertas Diretas");
+            } else if (filtroAtual === 'garimpo') {
+                filtradas = ofertas.filter(o => o.condition === "used");
+            }
+
+            filtradas.forEach(item => {
+                const card = document.createElement('div');
+                card.className = `offer-card ${item.best ? 'best-deal' : ''}`;
+                
+                let badgeHtml = item.best ? `<div class="best-badge"><i class="fa-solid fa-star"></i> Menor Preço Global</div>` : '';
+                const precoFormatado = `R$ ${item.minPrice.toLocaleString('pt-BR', {minimumFractionDigits: 2})} - R$ ${item.maxPrice.toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+                const craEstimado = `R$ ${(item.minPrice * 1.045).toLocaleString('pt-BR', {minimumFractionDigits: 2})}`;
+
+                card.innerHTML = `
+                    ${badgeHtml}
+                    <div class="card-title">${item.title}</div>
+                    <div class="price-tag">${precoFormatado}</div>
+                    <div class="cra-box">
+                        <span><i class="fa-solid fa-calculator"></i> CRA (Custo Real + Taxas):</span>
+                        <strong>${craEstimado}</strong>
+                    </div>
+                    <div class="ai-deal-box">
+                        <span><i class="fa-solid fa-shield-heart"></i> Anti-Arrependimento IA:</span>
+                        <strong>${item.aiVerdict}</strong>
+                    </div>
+                    <div class="card-tags">
+                        <span>${item.frete}</span>
+                        <span>${item.rating}</span>
+                        <span>${item.cashback}</span>
+                    </div>
+                    <div style="font-size:0.8rem; color: var(--texto-silenciado);">Plataforma: ${item.store}</div>
+                    <div class="card-actions">
+                        <a href="${item.affiliateUrl}" target="_blank" class="btn-offer">Ver Ofertas</a>
+                        <button class="btn-negotiate" onclick="alert('Leilão Inverso iniciado para ${item.title}!')"><i class="fa-solid fa-gavel"></i></button>
+                        <button class="btn-alert" onclick="abrirAlertaModal('${item.title}', ${item.minPrice})"><i class="fa-regular fa-bell"></i></button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function mudarFiltro(tipo, btn) {
+            filtroAtual = tipo;
+            document.querySelectorAll('.filters-group .filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            renderizarCards(dadosOfertasAtuais);
+        }
+
+        function abrirAlertaModal(produto, precoSugerido) {
+            produtoSelecionadoAlerta = produto;
+            document.getElementById('alertaProduto').value = produto;
+            document.getElementById('alertaPrecoAlvo').value = (precoSugerido * 0.9).toFixed(2);
+            document.getElementById('alertModal').style.display = 'flex';
+        }
+
+        function fecharModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        function salvarAlerta() {
+            const preco = document.getElementById('alertaPrecoAlvo').value;
+            const wpp = document.getElementById('alertaWhatsapp').value;
+
+            if(!preco || !wpp) {
+                alert('Preencha todos os campos do alerta.');
+                return;
+            }
+
+            let alertas = JSON.parse(localStorage.getItem('lefind_alertas') || '[]');
+            alertas.push({ produto: produtoSelecionadoAlerta, precoAlvo: preco, whatsapp: wpp, data: new Date().toLocaleDateString() });
+            localStorage.setItem('lefind_alertas', JSON.stringify(alertas));
+
+            atualizarContadorAlertas();
+            fecharModal('alertModal');
+            alert('Alerta configurado com sucesso! O robô vigiará 24/7.');
+        }
+
+        function atualizarContadorAlertas() {
+            let alertas = JSON.parse(localStorage.getItem('lefind_alertas') || '[]');
+            document.getElementById('contadorAlertas').innerText = alertas.length;
+        }
+
+        function abrirMeusAlertas() {
+            let alertas = JSON.parse(localStorage.getItem('lefind_alertas') || '[]');
+            if(alertas.length === 0) {
+                alert('Nenhum alerta ativo no momento.');
+                return;
+            }
+            let texto = "Seus Alertas Ativos:\n\n";
+            alertas.forEach((a, i) => {
+                texto += `${i+1}. ${a.produto} - Alvo: R$ ${a.precoAlvo} (Wpp: ${a.whatsapp})\n`;
+            });
+            alert(texto);
+        }
+
+        // Executar busca inicial ao carregar a página
+        window.onload = () => {
+            atualizarContadorAlertas();
+            executarBuscaAPI();
+        };
     </script>
 </body>
 </html>
