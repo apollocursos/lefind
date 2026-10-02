@@ -13,173 +13,192 @@
     .header {
       background: #111827;
       border-bottom: 1px solid #1f2937;
-      padding: 1rem 2rem;
+      padding: 0.75rem 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
     .logo {
       font-weight: 700;
-      font-size: 1.25rem;
-      color: #3b82f6;
+      font-size: 1.2rem;
+      color: #fff;
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      background: #1e293b;
+      padding: 0.3rem 0.75rem;
+      border-radius: 6px;
+      border: 1px solid #334155;
     }
-    .logo span { background: #2563eb; color: #fff; padding: 0.2rem 0.5rem; border-radius: 4px; font-size: 0.8rem; }
+    .logo span { background: #2563eb; color: #fff; padding: 0.15rem 0.4rem; border-radius: 4px; font-size: 0.75rem; }
     
-    .search-container {
-      max-width: 800px;
-      margin: 2rem auto;
-      padding: 0 1rem;
+    .search-bar-wrapper {
+      background: #111827;
+      border-bottom: 1px solid #1f2937;
+      padding: 1rem 2rem;
       display: flex;
-      gap: 0.5rem;
+      justify-content: center;
+    }
+    .search-container {
+      width: 100%;
+      max-width: 900px;
+      display: flex;
+      gap: 0.75rem;
     }
     .search-input {
       flex: 1;
-      background: #1f2937;
-      border: 1px solid #374151;
-      border-radius: 8px;
-      padding: 0.75rem 1rem;
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 0.65rem 1rem;
       color: #fff;
-      font-size: 1rem;
+      font-size: 0.95rem;
     }
     .search-input:focus { outline: none; border-color: #3b82f6; }
     .search-btn {
-      background: #2563eb;
+      background: #3b82f6;
       color: white;
       border: none;
       padding: 0 1.5rem;
-      border-radius: 8px;
+      border-radius: 6px;
       font-weight: 600;
       cursor: pointer;
       transition: background 0.2s;
     }
-    .search-btn:hover { background: #1d4ed8; }
+    .search-btn:hover { background: #2563eb; }
 
-    .main-content {
-      max-width: 1200px;
+    .main-layout {
+      max-width: 1400px;
       margin: 0 auto;
-      padding: 0 1rem 3rem 1rem;
+      padding: 1.5rem 2rem;
     }
 
-    .loading {
-      text-align: center;
-      padding: 3rem;
+    /* Painéis Superiores */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .feature-card {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 8px;
+      padding: 1rem;
+    }
+    .feature-title {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #60a5fa;
+      margin-bottom: 0.3rem;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .feature-desc {
+      font-size: 0.78rem;
       color: #9ca3af;
-      font-size: 1.1rem;
+      line-height: 1.3;
     }
 
+    /* Abas de Filtro */
+    .tabs-row {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+      align-items: center;
+      border-bottom: 1px solid #1f2937;
+      padding-bottom: 0.75rem;
+    }
+    .tab {
+      background: #1f2937;
+      border: none;
+      color: #d1d5db;
+      padding: 0.4rem 1rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .tab.active { background: #2563eb; color: white; font-weight: 600; }
+    .status-text { margin-left: auto; font-size: 0.8rem; color: #6b7280; }
+
+    .loading { text-align: center; padding: 3rem; color: #9ca3af; font-size: 1rem; }
+
+    /* Grid de Ofertas */
     .offers-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
-      gap: 1.5rem;
-      margin-top: 1.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 1.25rem;
     }
 
     .card {
       background: #111827;
       border: 1px solid #1f2937;
-      border-radius: 12px;
-      padding: 1.25rem;
+      border-radius: 8px;
+      padding: 1rem;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       position: relative;
-      transition: transform 0.2s, border-color 0.2s;
     }
-    .card:hover {
-      transform: translateY(-2px);
-      border-color: #374151;
-    }
-    .card.best-offer {
-      border-color: #10b981;
-    }
+    .card.best-offer { border-color: #059669; }
 
     .badge-best {
       position: absolute;
       top: -10px;
       right: 15px;
-      background: #10b981;
-      color: #064e3b;
-      font-size: 0.7rem;
+      background: #059669;
+      color: #ecfdf5;
+      font-size: 0.68rem;
       font-weight: 700;
-      padding: 0.2rem 0.6rem;
-      border-radius: 20px;
+      padding: 0.15rem 0.5rem;
+      border-radius: 12px;
       text-transform: uppercase;
     }
 
     .product-img {
       width: 100%;
-      height: 180px;
+      height: 160px;
       object-fit: cover;
-      border-radius: 8px;
-      margin-bottom: 1rem;
-      background: #1f2937;
-    }
-
-    .store-name {
-      font-size: 0.85rem;
-      color: #9ca3af;
-      margin-bottom: 0.25rem;
-    }
-
-    .product-title {
-      font-size: 1rem;
-      font-weight: 600;
+      border-radius: 6px;
       margin-bottom: 0.75rem;
-      color: #f9fafb;
-      display: -webkit-box;
-      -webkit-line-clamp: 2;
-      -webkit-box-orient: vertical;
-      overflow: hidden;
+      background: #1e293b;
     }
 
-    .price-box {
-      margin-bottom: 1rem;
-    }
-    .main-price {
-      font-size: 1.35rem;
-      font-weight: 700;
-      color: #34d399;
-    }
-    .price-range {
-      font-size: 0.8rem;
-      color: #9ca3af;
-    }
+    .store-name { font-size: 0.78rem; color: #9ca3af; margin-bottom: 0.2rem; }
+    .product-title { font-size: 0.95rem; font-weight: 600; margin-bottom: 0.6rem; color: #f9fafb; }
+
+    .price-box { margin-bottom: 0.75rem; }
+    .main-price { font-size: 1.25rem; font-weight: 700; color: #34d399; }
+    .price-range { font-size: 0.75rem; color: #9ca3af; }
 
     .cra-box {
-      background: #1f2937;
-      padding: 0.5rem 0.75rem;
-      border-radius: 6px;
-      font-size: 0.8rem;
-      margin-bottom: 0.75rem;
+      background: #0f172a;
+      padding: 0.4rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      margin-bottom: 0.6rem;
       color: #93c5fd;
+      border: 1px solid #1e293b;
     }
 
     .ai-verdict {
       background: #1e1b4b;
       border: 1px solid #312e81;
-      padding: 0.5rem 0.75rem;
-      border-radius: 6px;
-      font-size: 0.8rem;
+      padding: 0.4rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
       color: #c7d2fe;
-      margin-bottom: 1rem;
+      margin-bottom: 0.75rem;
     }
 
-    .tags-row {
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-      margin-bottom: 1rem;
-      font-size: 0.75rem;
-    }
-    .tag {
-      background: #1f2937;
-      padding: 0.2rem 0.5rem;
-      border-radius: 4px;
-      color: #d1d5db;
-    }
+    .tags-row { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-bottom: 0.75rem; font-size: 0.7rem; }
+    .tag { background: #1f2937; padding: 0.15rem 0.4rem; border-radius: 3px; color: #d1d5db; }
 
     .btn-oferta {
       display: block;
@@ -187,48 +206,77 @@
       background: #2563eb;
       color: white;
       text-decoration: none;
-      padding: 0.75rem;
-      border-radius: 8px;
+      padding: 0.6rem;
+      border-radius: 6px;
       font-weight: 600;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       transition: background 0.2s;
     }
     .btn-oferta:hover { background: #1d4ed8; }
 
-    .initial-state {
-      text-align: center;
-      padding: 4rem 1rem;
-      color: #6b7280;
-    }
+    .initial-state { text-align: center; padding: 3rem; color: #4b5563; font-size: 0.9rem; }
   </style>
 </head>
 <body>
   <div id="app">
     <header class="header">
-      <div class="logo">
-        LE.FIND <span>v3.0 API Real</span>
+      <div class="logo-area">
+        <div class="logo">
+          🌐 LE.FIND <span>v3.0 API Real</span>
+        </div>
       </div>
-      <div style="font-size: 0.85rem; color: #9ca3af;">Buscador Global Inteligente</div>
+      <div style="font-size: 0.8rem; color: #9ca3af;">Meus Alertas (0)</div>
     </header>
 
-    <div class="search-container">
-      <input 
-        type="text" 
-        class="search-input" 
-        v-model="termoBusca" 
-        @keyup.enter="buscarProdutos" 
-        placeholder="O que procuras hoje? (Ex: Mouse, Raquete de Pernilongos, Cabo HDMI...)"
-      >
-      <button class="search-btn" @click="buscarProdutos">Buscar</button>
+    <div class="search-bar-wrapper">
+      <div class="search-container">
+        <input 
+          type="text" 
+          class="search-input" 
+          v-model="termoBusca" 
+          @keyup.enter="buscarProdutos" 
+          placeholder="O que procuras hoje? (Ex: Caneta Bic, Mouse, Celular Xiaomi...)"
+        >
+        <button class="search-btn" @click="buscarProdutos">Buscar</button>
+      </div>
     </div>
 
-    <main class="main-content">
+    <div class="main-layout">
+      <!-- Painéis Superiores originais -->
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-title">📦 Le.Find Mesh</div>
+          <div class="feature-desc">Consolidação de frete geolocalizado entre pares.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-title">🧮 CRA Automático</div>
+          <div class="feature-desc">Custo Real de Aquisição (impostos inclusos).</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-title">🛡️ Anti-Arrependimento</div>
+          <div class="feature-desc">Validação histórica vs. ofertas atuais 24/7.</div>
+        </div>
+        <div class="feature-card">
+          <div class="feature-title">🔨 Leilão Inverso</div>
+          <div class="feature-desc">Negociação automatizada direta com lojistas.</div>
+        </div>
+      </div>
+
+      <!-- Abas -->
+      <div class="tabs-row">
+        <button class="tab active">Todos</button>
+        <button class="tab">Lojas Oficiais</button>
+        <button class="tab">Garimpo & Usados</button>
+        <div class="status-text">A carregar ofertas via API da Vercel...</div>
+      </div>
+
+      <!-- Conteúdo Principal -->
       <div v-if="loading" class="loading">
-        A consultar APIs e redes mesh em tempo real...
+        A consultar motores de busca e redes mesh...
       </div>
 
       <div v-if="!loading && offers.length === 0" class="initial-state">
-        <h2>Digite um produto acima para comparar preços em tempo real.</h2>
+        <p>Digite um termo acima para iniciar a varredura inteligente de preços.</p>
       </div>
 
       <div v-if="!loading && offers.length > 0" class="offers-grid">
@@ -268,7 +316,7 @@
           <a :href="offer.link" target="_blank" class="btn-oferta">Ver Oferta</a>
         </div>
       </div>
-    </main>
+    </div>
   </div>
 
   <script>
@@ -287,7 +335,6 @@
           offers.value = [];
 
           try {
-            // Aponta para a tua API serverless na Vercel (/api/search)
             const response = await fetch(`/api/search?q=${encodeURIComponent(termoBusca.value)}`);
             const data = await response.json();
 
