@@ -3,58 +3,150 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LE.FIND - Buscador Global de Ofertas Reais</title>
+    <title>LE.FIND - Agregador Global Inteligente</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f7f6;
+            background-color: #0b132b;
+            color: #ffffff;
             margin: 0;
             padding: 20px;
-            color: #333;
         }
         .container {
             max-width: 1200px;
             margin: 0 auto;
         }
         header {
-            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #1c2541;
+            padding: 15px 25px;
+            border-radius: 8px;
             margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .badge {
+            background: #4361ee;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
         }
         h1 {
-            color: #2c3e50;
-            margin-bottom: 10px;
+            margin: 0;
+            font-size: 22px;
+            color: #ffffff;
         }
         .search-box {
             display: flex;
-            justify-content: center;
             gap: 10px;
             margin-bottom: 30px;
         }
         input[type="text"] {
-            width: 60%;
-            padding: 12px 15px;
+            flex: 1;
+            padding: 14px 20px;
             font-size: 16px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
+            background: #1c2541;
+            border: 1px solid #3a506b;
+            color: white;
+            border-radius: 8px;
             outline: none;
         }
+        input[type="text"]::placeholder {
+            color: #8d99ae;
+        }
         button {
-            padding: 12px 25px;
+            padding: 0 30px;
             font-size: 16px;
-            background-color: #2980b9;
+            background-color: #3a86ff;
             color: white;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
+            transition: background 0.2s;
         }
         button:hover {
-            background-color: #1f618d;
+            background-color: #2667cc;
         }
         #resultados-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 20px;
+        }
+        .card {
+            background: #1c2541;
+            border: 1px solid #3a506b;
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+        .card-header {
+            font-size: 13px;
+            background: #0b132b;
+            color: #4cc9f0;
+            padding: 5px 10px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 12px;
+            font-weight: bold;
+        }
+        .card-img-box {
+            width: 100%;
+            height: 180px;
+            background: #ffffff;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        .card-img-box img {
+            max-height: 100%;
+            max-width: 100%;
+            object-fit: contain;
+        }
+        .card-title {
+            font-size: 15px;
+            margin: 0 0 15px 0;
+            color: #e0e1dd;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            height: 42px;
+        }
+        .card-price {
+            font-size: 20px;
+            font-weight: bold;
+            color: #4ade80;
+            margin-bottom: 15px;
+        }
+        .btn-oferta {
+            display: block;
+            text-align: center;
+            background: #2563eb;
+            color: white;
+            padding: 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        .btn-oferta:hover {
+            background: #1d4ed8;
         }
     </style>
 </head>
@@ -62,36 +154,40 @@
 
     <div class="container">
         <header>
-            <h1>LE.FIND</h1>
-            <p>Buscador Global de Preços e Produtos Reais</p>
+            <div class="logo-area">
+                <h1>LE.FIND</h1>
+                <span class="badge">v3.0 API Real</span>
+            </div>
+            <div style="font-size: 13px; color: #8d99ae;">Buscador Global Inteligente</div>
         </header>
 
         <div class="search-box">
-            <input type="text" id="termo-busca" placeholder="O que procuras hoje? (Ex: iPhone, Tênis, Livro...)">
-            <button onclick="dispararBusca()">Pesquisar</button>
+            <input type="text" id="termo-busca" placeholder="O que procuras hoje? (Ex: COPO STANLEY, IPHONE, MOCHILA...)">
+            <button onclick="executarBusca()">Buscar</button>
         </div>
 
         <div id="resultados-container"></div>
     </div>
 
     <script>
-        async function dispararBusca() {
+        async function executarBusca() {
             const termo = document.getElementById('termo-busca').value;
             const container = document.getElementById('resultados-container');
 
             if (!termo.trim()) {
-                alert('Por favor, digite um termo para pesquisar.');
+                alert('Digite um termo para pesquisar.');
                 return;
             }
 
-            container.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">A pesquisar produtos reais nas plataformas...</p>';
+            container.innerHTML = '<p style="color: #8d99ae; grid-column: 1/-1; text-align: center; padding: 40px;">A pesquisar produtos reais nas APIs...</p>';
 
             try {
+                // Apanha o endpoint correto correspondente ao ficheiro api/pesquisa.js
                 const response = await fetch(`/api/pesquisa?q=${encodeURIComponent(termo)}`);
                 const data = await response.json();
 
                 if (!data.sucesso || !data.ofertas || data.ofertas.length === 0) {
-                    container.innerHTML = '<p style="text-align: center; grid-column: 1/-1;">Nenhum produto encontrado.</p>';
+                    container.innerHTML = '<p style="color: #8d99ae; grid-column: 1/-1; text-align: center; padding: 40px;">Nenhum produto encontrado.</p>';
                     return;
                 }
 
@@ -99,21 +195,21 @@
 
                 data.ofertas.forEach(oferta => {
                     const card = document.createElement('div');
-                    card.style.cssText = 'border: 1px solid #ddd; border-radius: 8px; padding: 15px; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.05); display: flex; flex-direction: column; justify-content: space-between;';
+                    card.className = 'card';
 
                     card.innerHTML = `
                         <div>
-                            <span style="font-size: 12px; background: #eee; padding: 3px 8px; border-radius: 4px; font-weight: bold;">${oferta.loja}</span>
-                            <div style="width: 100%; height: 180px; display: flex; align-items: center; justify-content: center; margin: 10px 0; background: #f9f9f9; overflow: hidden; border-radius: 4px;">
-                                ${oferta.imagem ? `<img src="${oferta.imagem}" alt="${oferta.titulo}" style="max-height: 100%; max-width: 100%; object-fit: contain;">` : '<span style="color: #999; font-size: 12px;">Sem imagem disponível</span>'}
+                            <div class="card-header">${oferta.loja}</div>
+                            <div class="card-img-box">
+                                ${oferta.imagem ? `<img src="${oferta.imagem}" alt="${oferta.titulo}">` : '<span style="color: #666; font-size: 12px;">Sem imagem</span>'}
                             </div>
-                            <h3 style="font-size: 14px; margin: 10px 0; color: #333; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">${oferta.titulo}</h3>
+                            <div class="card-title">${oferta.titulo}</div>
                         </div>
                         <div>
-                            <div style="font-size: 18px; font-weight: bold; color: #27ae60; margin-bottom: 10px;">
+                            <div class="card-price">
                                 ${oferta.preco > 0 ? `R$ ${oferta.preco.toFixed(2).replace('.', ',')}` : 'Preço sob consulta'}
                             </div>
-                            <a href="${oferta.link}" target="_blank" style="display: block; text-align: center; background: #2980b9; color: #fff; padding: 10px; border-radius: 4px; text-decoration: none; font-weight: bold;">Ver na Loja Oficial</a>
+                            <a href="${oferta.link}" target="_blank" class="btn-oferta">Ver Oferta</a>
                         </div>
                     `;
 
@@ -122,7 +218,7 @@
 
             } catch (err) {
                 console.error('Erro na requisição:', err);
-                container.innerHTML = '<p style="text-align: center; color: red; grid-column: 1/-1;">Erro ao carregar os dados reais das lojas.</p>';
+                container.innerHTML = '<p style="color: #ef4444; grid-column: 1/-1; text-align: center; padding: 40px;">Erro ao carregar os dados das lojas.</p>';
             }
         }
     </script>
