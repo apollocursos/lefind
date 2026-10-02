@@ -10,14 +10,13 @@ export default async function handler(req, res) {
   const query = req.query.q || req.query.consulta;
 
   if (!query || query.trim() === '') {
-    return res.status(400).json({ error: 'Termo de busca obrigatório.' });
+    return res.status(400).json({ sucesso: false, error: 'Termo de busca obrigatório.' });
   }
 
   const searchTerm = query.trim();
 
   try {
-    // Chamada real à API pública do Mercado Livre para dados reais (título, preço, imagem e link)
-    const mlUrl = `https://api.mercadolibre.com/sites/MLB/search?q=${encodeURIComponent(searchTerm)}&limit=4`;
+    const mlUrl = `https://api.mercadolibre.com/sites/MLB/search?q=${encodeURIComponent(searchTerm)}&limit=8`;
     const response = await fetch(mlUrl);
     const data = await response.json();
 
@@ -25,23 +24,13 @@ export default async function handler(req, res) {
 
     if (data && data.results && data.results.length > 0) {
       ofertas = data.results.map(item => ({
-        loja: 'Mercado Livre (API Real)',
+        loja: 'Mercado Livre',
         titulo: item.title,
         preco: item.price,
         imagem: item.thumbnail ? item.thumbnail.replace('http://', 'https://').replace('-I.jpg', '-O.jpg') : '',
         link: item.permalink,
         disponivel: true
       }));
-    } else {
-      // Caso não retorne resultados específicos, devolvemos estrutura limpa sem inventar dados matemáticos
-      ofertas = [{
-        loja: 'Mercado Livre',
-        titulo: `${searchTerm} - Nenhum produto encontrado diretamente`,
-        preco: 0.00,
-        imagem: '',
-        link: '#',
-        disponivel: false
-      }];
     }
 
     return res.status(200).json({
@@ -53,6 +42,7 @@ export default async function handler(req, res) {
   } catch (error) {
     console.error('Erro na API:', error);
     return res.status(500).json({ 
+      sucesso: false,
       error: 'Falha ao buscar dados nas APIs.',
       detalhes: error.message 
     });
