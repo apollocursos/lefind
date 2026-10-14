@@ -334,3 +334,13 @@ button { border: 0; }
 .form-note { display: flex; align-items: center; gap: 5px; margin: 12px 0 0; color: var(--muted); font-size: 10px; }
 @media (max-width: 900px) { .hero-grid, .merchant-capture { grid-template-columns: 1fr; } .hero-side-card { min-height: 235px; } .hero-side-number { margin-top: 35px; } .social-embed-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 620px) { .hero-conversion { padding-top: 28px; } .hero-proof { align-items: flex-start; flex-wrap: wrap; } .hero-rating { width: 100%; margin-left: 0; } .guarantee-grid { grid-template-columns: 1fr; } .merchant-capture { margin-top: 42px; padding: 18px; gap: 20px; } .profile-contact-bar { align-items: flex-start; flex-direction: column; } .contact-actions { justify-content: flex-start; } .social-embed-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .social-embed-frame { height: 175px; } }
+
+.search-sponsored-banner { display: flex; align-items: center; gap: 14px; margin-top: 27px; padding: 15px 17px; background: radial-gradient(circle at 0 50%, rgba(200,255,53,.13), transparent 22rem), linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.025)); transition: .2s ease; }
+.search-sponsored-banner:hover { border-color: rgba(200,255,53,.45); transform: translateY(-2px); }
+.sponsored-banner-icon { width: 43px; height: 43px; display: grid; place-items: center; flex: 0 0 auto; color: var(--lime); border-radius: 13px; background: rgba(200,255,53,.12); }
+.sponsored-banner-copy { min-width: 0; flex: 1; }
+.sponsored-banner-copy .eyebrow { display: flex; align-items: center; gap: 5px; }
+.sponsored-banner-copy h2 { margin: 4px 0 3px; font-size: 16px; letter-spacing: -.04em; }
+.sponsored-banner-copy p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.45; }
+.sponsored-banner-cta { display: inline-flex; align-items: center; gap: 6px; flex: 0 0 auto; color: var(--lime); font-size: 11px; font-weight: 800; }
+@media (max-width: 620px) { .search-sponsored-banner { align-items: flex-start; flex-wrap: wrap; } .sponsored-banner-cta { margin-left: 57px; } }
