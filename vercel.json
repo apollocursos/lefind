@@ -10,6 +10,7 @@
     { "source": "/api/:path*", "destination": "/api/index.ts" },
     { "source": "/br/:city/:slug", "destination": "/index.html" },
     { "source": "/profissional/:slug", "destination": "/index.html" },
+    { "source": "/:slug", "destination": "/index.html" },
     { "source": "/buscar", "destination": "/index.html" },
     { "source": "/comunidades", "destination": "/index.html" },
     { "source": "/comunidade/:slug", "destination": "/index.html" },

@@ -20,13 +20,14 @@ pnpm build
 
 - `/` — descoberta local e profissionais disponíveis.
 - `/buscar` — busca por profissão, produto, bairro ou cidade com filtros.
-- `/profissional/carlos-piscineiro` — cartão digital público com WhatsApp, avaliações e mídias.
+- `/carlos-piscineiro` — landing page individual com WhatsApp, Telegram, e-mail, partilha, orçamento e hub social.
+- `/profissional/carlos-piscineiro` — alias compatível do cartão digital público.
 - `/comunidades` — condomínios e grupos públicos/privados.
 - `/lojas` — vitrines e spots patrocinados por região.
 - `/relatorios` — relatório digital Antes e Depois.
 - `/painel` — visão do profissional, métricas e modo SOS.
 
-A URL de divulgação no formato `/br/:cidade/:slug` está preparada em `vercel.json`; o frontend também aceita rotas amigáveis via SPA.
+A URL de divulgação no formato `/br/:cidade/:slug` e o slug limpo `/carlos-piscineiro` estão preparados em `vercel.json`; o frontend também aceita rotas amigáveis via SPA. Os embeds sociais configuráveis ficam em `client/src/pages/Profile.tsx` e usam as URLs dos próprios provedores.
 
 ## Banco de dados
 
