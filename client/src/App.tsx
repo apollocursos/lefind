@@ -9,6 +9,7 @@ import CommunitiesPage from "./pages/Communities";
 import StoresPage from "./pages/Stores";
 import ReportsPage from "./pages/Reports";
 import DashboardPage from "./pages/Dashboard";
+import AdminPage from "./pages/AdminPage";
 import CommunityDetailPage from "./pages/CommunityDetail";
 import ReportDetailPage from "./pages/ReportDetail";
 import { Route, Switch } from "wouter";
@@ -18,5 +19,5 @@ function NotFound() {
 }
 
 export default function App() {
-  return <ErrorBoundary><ThemeProvider defaultTheme="dark"><TooltipProvider><Toaster /><Switch><Route path="/" component={Home} /><Route path="/buscar" component={SearchPage} /><Route path="/profissional/:slug" component={ProfilePage} /><Route path="/br/:city/:slug" component={ProfilePage} /><Route path="/comunidades" component={CommunitiesPage} /><Route path="/comunidade/:slug" component={CommunityDetailPage} /><Route path="/lojas" component={StoresPage} /><Route path="/relatorios" component={ReportsPage} /><Route path="/relatorios/:slug" component={ReportDetailPage} /><Route path="/painel" component={DashboardPage} /><Route path="/:slug" component={ProfilePage} /><Route component={NotFound} /></Switch></TooltipProvider></ThemeProvider></ErrorBoundary>;
+  return <ErrorBoundary><ThemeProvider defaultTheme="dark"><TooltipProvider><Toaster /><Switch><Route path="/" component={Home} /><Route path="/buscar" component={SearchPage} /><Route path="/profissional/:slug" component={ProfilePage} /><Route path="/br/:city/:slug" component={ProfilePage} /><Route path="/comunidades" component={CommunitiesPage} /><Route path="/comunidade/:slug" component={CommunityDetailPage} /><Route path="/lojas" component={StoresPage} /><Route path="/relatorios" component={ReportsPage} /><Route path="/relatorios/:slug" component={ReportDetailPage} /><Route path="/painel" component={DashboardPage} /><Route path="/admin" component={AdminPage} /><Route path="/:slug" component={ProfilePage} /><Route component={NotFound} /></Switch></TooltipProvider></ThemeProvider></ErrorBoundary>;
 }

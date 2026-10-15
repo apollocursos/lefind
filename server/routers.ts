@@ -2,10 +2,11 @@ import { z } from "zod";
 import { eq } from "drizzle-orm";
 import { COOKIE_NAME } from "@shared/const";
 import { getDb } from "./db";
-import { profiles, quotes } from "../drizzle/schema";
+import { entitlements, profiles, quotes } from "../drizzle/schema";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
-import { publicProcedure, router } from "./_core/trpc";
+import { adminProcedure, publicProcedure, router } from "./_core/trpc";
+import { applyManualOverride, fulfillStripeEvent, PRODUCTS } from "./payments";
 
 const demoDirectory = [
   { slug: "carlos-piscineiro", name: "Carlos Mendes", role: "Piscineiro & manutenção", city: "Porto Feliz, SP", rating: 4.9, verified: true, sos: true },
@@ -34,6 +35,24 @@ export const appRouter = router({
       if (db) await db.insert(quotes).values({ ...input, requesterPhone: undefined });
       return { ...input, status: "new" as const, createdAt: new Date().toISOString() };
     }),
+  }),
+  payments: router({
+    products: publicProcedure.query(() => PRODUCTS),
+    processTestEvent: adminProcedure.input(z.object({ eventId: z.string().min(3), type: z.string().min(3), product: z.enum(["gold", "sponsored_spot"]), profileSlug: z.string().optional(), storeId: z.number().optional() })).mutation(async ({ input }) => fulfillStripeEvent({ id: input.eventId, type: input.type, data: { object: { id: input.eventId, payment_status: "paid", amount_total: PRODUCTS[input.product].amountCents, currency: "brl", payment_method_types: ["card"], metadata: { product: input.product, profileSlug: input.profileSlug, storeId: input.storeId ? String(input.storeId) : undefined } } } })),
+    status: publicProcedure.input(z.object({ targetKey: z.string() })).query(async ({ input }) => {
+      const db = await getDb();
+      if (!db) return { targetKey: input.targetKey, status: "demo" as const, source: "payment" as const };
+      const result = await db.select().from(entitlements).where(eq(entitlements.targetKey, input.targetKey)).limit(1);
+      return result[0] ?? { targetKey: input.targetKey, status: "revoked" as const, source: "payment" as const };
+    }),
+  }),
+  admin: router({
+    entitlements: adminProcedure.query(async () => {
+      const db = await getDb();
+      if (!db) return [{ targetKey: "profile:carlos-piscineiro", kind: "gold", status: "active", source: "payment", manualOverride: "none" }];
+      return db.select().from(entitlements);
+    }),
+    override: adminProcedure.input(z.object({ kind: z.enum(["gold", "sponsored_spot"]), profileSlug: z.string().optional(), storeId: z.number().optional(), action: z.enum(["grant", "revoke"]), reason: z.string().max(255).optional() })).mutation(async ({ input, ctx }) => applyManualOverride({ ...input, adminUserId: ctx.user.id })),
   }),
 });
 

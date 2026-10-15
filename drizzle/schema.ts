@@ -36,7 +36,21 @@ export const serviceReports = mysqlTable("serviceReports", {
   id: int("id").autoincrement().primaryKey(), profileId: int("profileId").notNull(), slug: varchar("slug", { length: 140 }).notNull().unique(), title: varchar("title", { length: 180 }).notNull(), summary: text("summary"), beforeUrl: text("beforeUrl"), afterUrl: text("afterUrl"), checklistJson: text("checklistJson"), createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
+export const payments = mysqlTable("payments", {
+  id: int("id").autoincrement().primaryKey(), provider: varchar("provider", { length: 32 }).default("stripe").notNull(), providerPaymentId: varchar("providerPaymentId", { length: 255 }).unique(), providerEventId: varchar("providerEventId", { length: 255 }), userId: int("userId"), profileId: int("profileId"), storeId: int("storeId"), productType: mysqlEnum("productType", ["gold", "sponsored_spot"]).notNull(), amountCents: int("amountCents").notNull(), currency: varchar("currency", { length: 8 }).default("brl").notNull(), method: mysqlEnum("method", ["pix", "card"]).default("card").notNull(), status: mysqlEnum("status", ["pending", "approved", "failed", "refunded", "canceled"]).default("pending").notNull(), metadataJson: text("metadataJson"), paidAt: timestamp("paidAt"), createdAt: timestamp("createdAt").defaultNow().notNull(), updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export const paymentEvents = mysqlTable("paymentEvents", {
+  id: int("id").autoincrement().primaryKey(), provider: varchar("provider", { length: 32 }).default("stripe").notNull(), eventId: varchar("eventId", { length: 255 }).notNull().unique(), eventType: varchar("eventType", { length: 120 }).notNull(), processedAt: timestamp("processedAt").defaultNow().notNull(), createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export const entitlements = mysqlTable("entitlements", {
+  id: int("id").autoincrement().primaryKey(), targetKey: varchar("targetKey", { length: 220 }).notNull().unique(), kind: mysqlEnum("kind", ["gold", "sponsored_spot"]).notNull(), profileId: int("profileId"), storeId: int("storeId"), paymentId: int("paymentId"), status: mysqlEnum("status", ["active", "revoked", "expired"]).default("revoked").notNull(), source: mysqlEnum("source", ["payment", "manual"]).default("payment").notNull(), manualOverride: mysqlEnum("manualOverride", ["none", "grant", "revoke"]).default("none").notNull(), overrideByUserId: int("overrideByUserId"), overrideReason: varchar("overrideReason", { length: 255 }), startsAt: timestamp("startsAt"), endsAt: timestamp("endsAt"), createdAt: timestamp("createdAt").defaultNow().notNull(), updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
 export type User = typeof users.$inferSelect;
 export type InsertUser = typeof users.$inferInsert;
 export type Profile = typeof profiles.$inferSelect;
 export type Store = typeof stores.$inferSelect;
+export type Entitlement = typeof entitlements.$inferSelect;
+export type Payment = typeof payments.$inferSelect;

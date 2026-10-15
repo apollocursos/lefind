@@ -25,7 +25,8 @@ pnpm build
 - `/comunidades` — condomínios e grupos públicos/privados.
 - `/lojas` — vitrines e spots patrocinados por região.
 - `/relatorios` — relatório digital Antes e Depois.
-- `/painel` — visão do profissional, métricas e modo SOS.
+- `/painel` — visão do profissional, métricas, modo SOS e checkout de Ouro/anúncio.
+- `/admin` — painel ADM protegido por role, com concessão de cortesia e cancelamento manual.
 
 A URL de divulgação no formato `/br/:cidade/:slug` e o slug limpo `/carlos-piscineiro` estão preparados em `vercel.json`; o frontend também aceita rotas amigáveis via SPA. Os embeds sociais configuráveis ficam em `client/src/pages/Profile.tsx` e usam as URLs dos próprios provedores.
 
@@ -37,7 +38,17 @@ O starter está conectado ao banco gerenciado do projeto por `DATABASE_URL` e us
 pnpm db:push
 ```
 
-As tabelas cobrem usuários, perfis, lojas, comunidades, membros aprovados, avaliações, cotações, spots patrocinados e relatórios de serviço. O frontend usa fallback demonstrativo quando ainda não existem registros, então o preview permanece navegável.
+As tabelas cobrem usuários, perfis, lojas, comunidades, membros aprovados, avaliações, cotações, spots patrocinados, relatórios de serviço, pagamentos, eventos de webhook e entitlements. O frontend usa fallback demonstrativo quando ainda não existem registros, então o preview permanece navegável.
+
+## Pagamentos e ativação automática
+
+O projeto usa a integração Stripe provisionada pelo Webdev para checkout com **cartão e Pix**. O botão do painel cria a sessão no servidor; o navegador nunca recebe a chave secreta. Os métodos elegíveis são geridos pelo Payment Methods dinâmico do Stripe Dashboard; mantenha Pix e cartão habilitados na conta. O webhook `POST /api/stripe/webhook` recebe os eventos com o corpo bruto, valida `STRIPE_WEBHOOK_SECRET` e usa `paymentEvents.eventId` para impedir dupla ativação.
+
+Quando um pagamento aprovado traz `metadata.product=gold`, o fulfillment grava `payments.status=approved`, cria/atualiza um entitlement e define `profiles.gold=1`. Quando traz `metadata.product=sponsored_spot`, ativa o entitlement e marca os spots da loja como `active`. Falhas, cancelamentos e reembolsos revogam o status, exceto quando existe uma sobreposição ADM de cortesia.
+
+O único controle manual é `/admin`, protegido por `role=admin`: `grant` concede cortesia e `revoke` cancela/revoga. A intervenção manual fica registrada em `entitlements.source`, `manualOverride`, `overrideByUserId` e `overrideReason`; ela não substitui a confirmação do pagamento.
+
+No projeto Manus, habilite a integração Stripe pelo Dashboard/configuração. Em um deploy Vercel próprio, configure `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `VITE_STRIPE_PUBLISHABLE_KEY`, `PUBLIC_APP_URL` e aponte o webhook Stripe para `/api/stripe/webhook`. Nunca persista número de cartão, CVV, validade, payload bruto ou chaves secretas.
 
 ## PWA
 
@@ -63,4 +74,4 @@ git push -u origin main
 
 ## Evolução prevista
 
-O MVP usa ações locais e dados demonstrativos para que o produto seja validado visualmente sem credenciais externas. Para a próxima etapa, conecte os procedimentos tRPC de `server/routers.ts` às tabelas reais, implemente autenticação por perfil, upload em storage, cobrança de spots e integrações oficiais de embeds das redes sociais. Vídeos continuam fora do storage do LE.FIND: somente URLs/embed das plataformas de origem devem ser persistidos.
+O MVP usa fallback local quando o banco não está disponível, mas o caminho de produção para cobrança e fulfillment já está implementado em `server/payments.ts` e `server/paymentRoutes.ts`. Vídeos continuam fora do storage do LE.FIND: somente URLs/embed das plataformas de origem devem ser persistidos.

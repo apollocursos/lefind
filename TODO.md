@@ -47,6 +47,14 @@
 - [x] `vercel.json` com build estático, função Node para `/api/*`, rewrites de deep links e headers PWA.
 - [x] Instruções diretas para GitHub, Vercel, variáveis de ambiente, banco e comandos de validação em `README.md`.
 
+## 9. Pagamentos e controle ADM
+- [x] Checkout server-side Stripe com Payment Methods dinâmicos para cartão e Pix, sem expor chave secreta no navegador.
+- [x] Webhook `POST /api/stripe/webhook` recebe corpo bruto, valida `STRIPE_WEBHOOK_SECRET`, copia metadados para o PaymentIntent e processa eventos de sucesso, falha e reembolso.
+- [x] Eventos são deduplicados por `paymentEvents.eventId`; pagamentos e entitlements ficam persistidos em `payments` e `entitlements`.
+- [x] Pagamento aprovado com `product=gold` ativa `profiles.gold=1`; pagamento aprovado com `product=sponsored_spot` ativa os `sponsoredSpots` da loja.
+- [x] Painel ADM em `/admin` usa `role=admin` e mantém apenas sobreposição manual: conceder cortesia (`grant`) ou revogar/cancelar (`revoke`), com motivo e administrador registrados.
+- [x] Migração Drizzle `drizzle/0001_mighty_captain_britain.sql` aplicada no banco gerenciado; `.env.example` documenta as variáveis de deploy.
+
 ## Validação executada
 
 - `pnpm check` — aprovado.

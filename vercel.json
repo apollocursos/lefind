@@ -17,7 +17,8 @@
     { "source": "/lojas", "destination": "/index.html" },
     { "source": "/relatorios", "destination": "/index.html" },
     { "source": "/relatorios/:slug", "destination": "/index.html" },
-    { "source": "/painel", "destination": "/index.html" }
+    { "source": "/painel", "destination": "/index.html" },
+    { "source": "/admin", "destination": "/index.html" }
   ],
   "headers": [
     { "source": "/sw.js", "headers": [{ "key": "Cache-Control", "value": "no-cache" }] },

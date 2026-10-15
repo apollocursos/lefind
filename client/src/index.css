@@ -344,3 +344,28 @@ button { border: 0; }
 .sponsored-banner-copy p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.45; }
 .sponsored-banner-cta { display: inline-flex; align-items: center; gap: 6px; flex: 0 0 auto; color: var(--lime); font-size: 11px; font-weight: 800; }
 @media (max-width: 620px) { .search-sponsored-banner { align-items: flex-start; flex-wrap: wrap; } .sponsored-banner-cta { margin-left: 57px; } }
+
+.payment-panel { display: grid; gap: 16px; margin-top: 14px; padding: 19px; background: radial-gradient(circle at 88% 20%, rgba(200,255,53,.1), transparent 15rem), linear-gradient(135deg, rgba(255,255,255,.08), rgba(255,255,255,.025)); }
+.payment-panel h2 { margin: 9px 0 5px; font-size: 19px; letter-spacing: -.05em; }
+.payment-panel p { max-width: 620px; margin: 0; color: var(--muted); font-size: 12px; line-height: 1.6; }
+.payment-panel small { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 10px; }
+.payment-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.admin-automation-banner { display: flex; align-items: center; gap: 14px; margin-top: 26px; padding: 18px 20px; background: linear-gradient(135deg, rgba(114,242,228,.11), rgba(255,255,255,.025)); }
+.admin-banner-icon { width: 42px; height: 42px; display: grid; place-items: center; flex: 0 0 auto; color: var(--cyan); border-radius: 13px; background: rgba(114,242,228,.1); }
+.admin-automation-banner h2 { margin: 7px 0 4px; font-size: 17px; letter-spacing: -.04em; }
+.admin-automation-banner p { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.5; }
+.admin-list { margin-top: 14px; padding: 20px; }
+.admin-lock { max-width: 540px; margin: 40px auto; padding: 35px; text-align: center; color: var(--muted); }
+.admin-lock h2 { margin: 14px 0 7px; color: #f4f7f5; }
+.admin-lock p { font-size: 12px; line-height: 1.6; }
+.admin-entitlement { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 15px 0; border-top: 1px solid var(--line); }
+.admin-entitlement-main, .admin-entitlement-status { display: flex; align-items: center; gap: 10px; }
+.admin-entitlement-main strong, .admin-entitlement-main span { display: block; }
+.admin-entitlement-main strong { font-size: 12px; }
+.admin-entitlement-main span { margin-top: 4px; color: var(--muted); font-size: 10px; }
+.admin-entitlement-icon { width: 33px; height: 33px; display: grid; place-items: center; color: var(--lime); border-radius: 10px; background: rgba(200,255,53,.1); }
+.status-pill { padding: 5px 8px; border-radius: 999px; font: 700 9px "DM Mono", monospace; }
+.status-pill.active { color: var(--lime); background: rgba(200,255,53,.1); }
+.status-pill.revoked { color: var(--coral); background: rgba(255,117,95,.1); }
+.danger-button:hover { color: var(--coral); border-color: rgba(255,117,95,.4); }
+@media (max-width: 620px) { .admin-automation-banner { align-items: flex-start; } .admin-entitlement, .admin-entitlement-status { align-items: flex-start; flex-direction: column; } .admin-entitlement-status { width: 100%; } .admin-entitlement-status .secondary-button { width: 100%; } }
