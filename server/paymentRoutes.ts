@@ -2,7 +2,7 @@ import express, { type Express, type Request, type Response } from "express";
 import { PRODUCTS, processStripeWebhook, type ProductType } from "./payments";
 
 function publicOrigin(req: Request) {
-  const origin = req.get("origin");
+  const origin = typeof (req as any).get === "function" ? req.get("origin") : (req as any).headers?.origin;
   if (origin && /^https?:\/\//i.test(origin)) return origin.replace(/\/$/, "");
   const configured = process.env.PUBLIC_APP_URL;
   if (configured && /^https?:\/\//i.test(configured)) return configured.replace(/\/$/, "");
