@@ -9,16 +9,17 @@ function publicOrigin(req: Request) {
   return "http://localhost:3000";
 }
 
-export function registerPaymentWebhook(app: Express) {
-  app.post("/api/stripe/webhook", express.raw({ type: "application/json" }), async (req: Request, res: Response) => {
-    const rawBody = Buffer.isBuffer(req.body) ? req.body : Buffer.from(String(req.body ?? ""));
-    const result = await processStripeWebhook(rawBody, req.get("stripe-signature"));
-    res.status(result.statusCode).json(result.body);
-  });
+export async function handleStripeWebhook(req: Request, res: Response) {
+  const rawBody = Buffer.isBuffer(req.body) ? req.body : Buffer.from(String(req.body ?? ""));
+  const result = await processStripeWebhook(rawBody, req.get("stripe-signature"));
+  res.status(result.statusCode).json(result.body);
 }
 
-export function registerPaymentCheckout(app: Express) {
-  app.post("/api/payments/checkout", async (req: Request, res: Response) => {
+export function registerPaymentWebhook(app: Express) {
+  app.post("/api/stripe/webhook", express.raw({ type: "application/json" }), handleStripeWebhook);
+}
+
+export async function handlePaymentCheckout(req: Request, res: Response) {
     const { product, profileSlug, storeId, storeName, buyerEmail, buyerName } = req.body ?? {};
     if (product !== "gold" && product !== "sponsored_spot") return res.status(400).json({ error: "invalid_product" });
     const secret = process.env.STRIPE_SECRET_KEY;
@@ -55,5 +56,8 @@ export function registerPaymentCheckout(app: Express) {
       console.error("[Payments] checkout creation failed", error);
       return res.status(502).json({ error: "stripe_unreachable" });
     }
-  });
+}
+
+export function registerPaymentCheckout(app: Express) {
+  app.post("/api/payments/checkout", handlePaymentCheckout);
 }
