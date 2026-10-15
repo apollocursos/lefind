@@ -51,3 +51,11 @@ Entregar um MVP navegável e modular do LE.FIND: diretório local inteligente, c
 ## Limites conscientes do MVP
 
 Os fluxos de autenticação, compra de banners, upload real de fotos e embeds autenticados de redes sociais ficam representados por interfaces e contratos de dados seguros; o MVP não inventa credenciais nem armazena vídeos. O backend inclui pontos de extensão para ligar esses fluxos a uma conta/banco real.
+
+## Melhorias finais — responsividade e onboarding real
+
+- Ampliar o container fluido para telas grandes sem perder leitura, aplicar breakpoints mobile/tablet/desktop e mover a navegação inferior para o cabeçalho em tablets e desktops.
+- Reforçar acessibilidade com áreas de toque de pelo menos 48px, contraste, foco visível, labels em português e um onboarding direto para profissionais: nome, idade opcional, WhatsApp, profissão com autocomplete e cidade.
+- Criar `serviceCategories` no banco e procedimentos públicos controlados para sugerir e criar automaticamente profissões novas; publicar o perfil localmente para o diretório sem listas engessadas.
+- Completar metadados de favicon, toque iOS/Android e instalação PWA.
+- Validar com checks TypeScript, build, testes automatizados e um fluxo E2E de usuário fictício de 65 anos: criar profissão inédita, publicar, encontrar na busca local e verificar o link WhatsApp.

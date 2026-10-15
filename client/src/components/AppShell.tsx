@@ -18,9 +18,10 @@ export function Brand() {
 export function Header({ onNotify }: { onNotify?: (message: string) => void }) {
   const [locale, setLocale] = useState<Locale>(getStoredLocale);
   useEffect(() => { document.documentElement.lang = locale; window.localStorage.setItem("lefind:locale", locale); }, [locale]);
-  const [, navigate] = useLocation();
+  const [location, navigate] = useLocation();
+  const isActive = (href: string) => href === "/" ? location === "/" : location.startsWith(href);
   return <header className="site-header"><div className="container header-inner">
-    <Brand />
+    <Brand /><nav className="desktop-nav" aria-label="Navegação principal">{navItems.map(({ href, label, icon: Icon }) => <Link key={href} href={href} className={isActive(href) ? "active" : ""}><Icon size={16} />{label}</Link>)}</nav>
     <div className="header-actions"><select className="locale-select" value={locale} onChange={event => { setLocale(event.target.value as Locale); onNotify?.(`Idioma alterado para ${localeNames[event.target.value as Locale]}`); }} aria-label="Idioma"><option value="pt-BR">PT</option><option value="en">EN</option><option value="es">ES</option></select>
       <button className="icon-button" aria-label="Mudar localização" onClick={() => onNotify?.("Localização atual: Porto Feliz, SP")}><MapPin size={17} /></button>
       <button className="icon-button" aria-label="Notificações" onClick={() => onNotify?.("Você tem 3 novas recomendações na sua região")}><Bell size={17} /></button>

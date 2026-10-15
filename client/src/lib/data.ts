@@ -92,3 +92,22 @@ export function setSosStatus(slug: string, enabled: boolean) {
 }
 
 export const searchSuggestions = ["eletricista", "piscineiro", "chaveiro 24h", "pintura", "pet sitter"];
+
+const CUSTOM_PROFILES_KEY = "lefind:custom-professionals";
+
+export function getCustomProfessionals(): Professional[] {
+  if (typeof window === "undefined") return [];
+  try { return JSON.parse(window.localStorage.getItem(CUSTOM_PROFILES_KEY) ?? "[]") as Professional[]; } catch { return []; }
+}
+
+export function getAllProfessionals(): Professional[] {
+  const custom = getCustomProfessionals();
+  return [...professionals, ...custom.filter(item => !professionals.some(base => base.slug === item.slug))];
+}
+
+export function saveCustomProfessional(profile: Professional) {
+  if (typeof window === "undefined") return;
+  const next = [...getCustomProfessionals().filter(item => item.slug !== profile.slug), profile];
+  window.localStorage.setItem(CUSTOM_PROFILES_KEY, JSON.stringify(next));
+  window.dispatchEvent(new CustomEvent("lefind:professionals-updated"));
+}

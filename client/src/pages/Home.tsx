@@ -2,7 +2,7 @@ import { ArrowRight, Check, ChevronRight, LocateFixed, Mail, MessageCircle, Sear
 import { Link, useLocation } from "wouter";
 import { useMemo, useState, type FormEvent } from "react";
 import { AppShell } from "@/components/AppShell";
-import { getSosStatus, professionals, type Availability } from "@/lib/data";
+import { getAllProfessionals, getSosStatus, type Availability } from "@/lib/data";
 
 function availabilityLabel(value: Availability) {
   if (value === "open") return "Agenda aberta";
@@ -10,7 +10,7 @@ function availabilityLabel(value: Availability) {
   return "Agenda lotada";
 }
 
-export function ProfessionalCard({ person }: { person: typeof professionals[number] }) {
+export function ProfessionalCard({ person }: { person: ReturnType<typeof getAllProfessionals>[number] }) {
   const [, navigate] = useLocation();
   const sosEnabled = getSosStatus(person.slug, person.sos);
   const whatsappUrl = `https://wa.me/${person.whatsapp}?text=${encodeURIComponent(`Olá, ${person.name.split(" ")[0]}! Encontrei seu perfil no LE.FIND.`)}`;
@@ -35,11 +35,12 @@ function SearchBar({ value, onChange, onSubmit }: { value: string; onChange: (va
 
 export default function Home() {
   const [, navigate] = useLocation();
+  const allProfessionals = getAllProfessionals();
   const [query, setQuery] = useState("");
   const [activeFilter, setActiveFilter] = useState("Todos");
   const [toast, setToast] = useState("");
   const [merchantLead, setMerchantLead] = useState({ name: "", city: "Porto Feliz", contact: "" });
-  const filtered = useMemo(() => professionals.filter(person => {
+  const filtered = useMemo(() => allProfessionals.filter(person => {
     const q = query.toLowerCase();
     const matchesQuery = !q || `${person.name} ${person.role} ${person.city} ${person.neighborhood} ${person.tags.join(" ")}`.toLowerCase().includes(q);
     const matchesFilter = activeFilter === "Todos" || (activeFilter === "SOS 24h" && getSosStatus(person.slug, person.sos)) || (activeFilter === "Verificados" && person.verified) || (activeFilter === "Melhores" && person.rating >= 4.9) || (activeFilter === "Perto de mim" && parseFloat(person.distance.replace(",", ".")) <= 5);

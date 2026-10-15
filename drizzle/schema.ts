@@ -5,7 +5,11 @@ export const users = mysqlTable("users", {
 });
 
 export const profiles = mysqlTable("profiles", {
-  id: int("id").autoincrement().primaryKey(), userId: int("userId"), slug: varchar("slug", { length: 140 }).notNull().unique(), name: varchar("name", { length: 160 }).notNull(), role: varchar("role", { length: 160 }).notNull(), bio: text("bio"), city: varchar("city", { length: 120 }).notNull(), neighborhood: varchar("neighborhood", { length: 120 }), avatarUrl: text("avatarUrl"), coverUrl: text("coverUrl"), verified: int("verified").default(0).notNull(), gold: int("gold").default(0).notNull(), sos: int("sos").default(0).notNull(), availability: mysqlEnum("availability", ["open", "next", "full"]).default("open").notNull(), rating: decimal("rating", { precision: 3, scale: 2 }).default("0.00").notNull(), reviewCount: int("reviewCount").default(0).notNull(), socialsJson: text("socialsJson"), createdAt: timestamp("createdAt").defaultNow().notNull(), updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+  id: int("id").autoincrement().primaryKey(), userId: int("userId"), slug: varchar("slug", { length: 140 }).notNull().unique(), name: varchar("name", { length: 160 }).notNull(), role: varchar("role", { length: 160 }).notNull(), bio: text("bio"), city: varchar("city", { length: 120 }).notNull(), neighborhood: varchar("neighborhood", { length: 120 }), whatsapp: varchar("whatsapp", { length: 32 }), avatarUrl: text("avatarUrl"), coverUrl: text("coverUrl"), verified: int("verified").default(0).notNull(), gold: int("gold").default(0).notNull(), sos: int("sos").default(0).notNull(), availability: mysqlEnum("availability", ["open", "next", "full"]).default("open").notNull(), rating: decimal("rating", { precision: 3, scale: 2 }).default("0.00").notNull(), reviewCount: int("reviewCount").default(0).notNull(), socialsJson: text("socialsJson"), createdAt: timestamp("createdAt").defaultNow().notNull(), updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export const serviceCategories = mysqlTable("serviceCategories", {
+  id: int("id").autoincrement().primaryKey(), name: varchar("name", { length: 160 }).notNull(), normalizedName: varchar("normalizedName", { length: 160 }).notNull().unique(), slug: varchar("slug", { length: 180 }).notNull().unique(), createdByUserId: int("createdByUserId"), createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
 export const stores = mysqlTable("stores", {

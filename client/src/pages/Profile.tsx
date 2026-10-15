@@ -2,7 +2,7 @@ import { ArrowLeft, ArrowRight, ArrowUpRight, Check, ExternalLink, Heart, Image 
 import { Link, useRoute } from "wouter";
 import { useState, type FormEvent } from "react";
 import { AppShell, Modal } from "@/components/AppShell";
-import { getSosStatus, professionals, testimonialsBySlug } from "@/lib/data";
+import { getAllProfessionals, getSosStatus, testimonialsBySlug } from "@/lib/data";
 
 const socialEmbeds = [
   { platform: "YouTube", label: "Tour do último trabalho", embedUrl: "https://www.youtube.com/embed/ScMzIvxBSi4?rel=0", href: "https://youtube.com" },
@@ -17,7 +17,7 @@ export default function ProfilePage() {
   const [, publicParams] = useRoute("/br/:city/:slug");
   const [, cleanParams] = useRoute("/:slug");
   const slug = params?.slug ?? publicParams?.slug ?? cleanParams?.slug;
-  const person = professionals.find(item => item.slug === slug);
+  const person = getAllProfessionals().find(item => item.slug === slug);
   const [toast, setToast] = useState("");
   const [quoteOpen, setQuoteOpen] = useState(false);
   const notify = (message: string) => { setToast(message); window.setTimeout(() => setToast(""), 3000); };

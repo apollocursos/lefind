@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { eq } from "drizzle-orm";
+import { eq, like } from "drizzle-orm";
 import { COOKIE_NAME } from "@shared/const";
 import { getDb } from "./db";
-import { entitlements, profiles, quotes } from "../drizzle/schema";
+import { entitlements, profiles, quotes, serviceCategories } from "../drizzle/schema";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { adminProcedure, publicProcedure, router } from "./_core/trpc";
@@ -14,6 +14,10 @@ const demoDirectory = [
   { slug: "joao-chaveiro", name: "João Chaveiro", role: "Chaveiro 24 horas", city: "Porto Feliz, SP", rating: 4.8, verified: true, sos: true },
 ];
 
+const defaultProfessions = ["Eletricista", "Piscineiro", "Chaveiro 24 horas", "Pintura", "Pet sitter", "Montador de móveis", "Encanador"];
+const normalizeProfession = (value: string) => value.trim().toLocaleLowerCase("pt-BR").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, " ");
+const slugify = (value: string) => normalizeProfession(value).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+
 export const appRouter = router({
   system: systemRouter,
   auth: router({
@@ -23,6 +27,40 @@ export const appRouter = router({
   directory: router({
     stats: publicProcedure.query(() => ({ professionals: 24800, cities: 37, reviews: 12840 })),
     search: publicProcedure.input(z.object({ query: z.string().optional(), sos: z.boolean().optional(), verified: z.boolean().optional() }).optional()).query(({ input }) => demoDirectory.filter(item => (!input?.query || `${item.name} ${item.role} ${item.city}`.toLowerCase().includes(input.query.toLowerCase())) && (!input?.sos || item.sos) && (!input?.verified || item.verified))),
+    professionSuggestions: publicProcedure.input(z.object({ query: z.string().optional() }).optional()).query(async ({ input }) => {
+      const query = normalizeProfession(input?.query ?? "");
+      const fallback = defaultProfessions.filter(name => !query || normalizeProfession(name).includes(query));
+      const db = await getDb();
+      if (!db) return fallback;
+      const rows = await db.select({ name: serviceCategories.name }).from(serviceCategories).where(query ? like(serviceCategories.normalizedName, `%${query}%`) : undefined).limit(12);
+      return Array.from(new Set([...rows.map(row => row.name), ...fallback])).slice(0, 12);
+    }),
+    createProfession: publicProcedure.input(z.object({ name: z.string().min(2).max(160) })).mutation(async ({ input, ctx }) => {
+      const name = input.name.trim().replace(/\s+/g, " ");
+      const normalizedName = normalizeProfession(name);
+      const slug = slugify(name);
+      const db = await getDb();
+      if (db) {
+        const existing = await db.select().from(serviceCategories).where(eq(serviceCategories.normalizedName, normalizedName)).limit(1);
+        if (existing[0]) return existing[0];
+        const [created] = await db.insert(serviceCategories).values({ name, normalizedName, slug, createdByUserId: ctx.user?.id ?? null }).$returningId();
+        return { id: created.id, name, normalizedName, slug };
+      }
+      return { id: 0, name, normalizedName, slug };
+    }),
+    createProfile: publicProcedure.input(z.object({ name: z.string().min(2).max(160), whatsapp: z.string().min(8).max(32), profession: z.string().min(2).max(160), city: z.string().min(2).max(120), neighborhood: z.string().max(120).optional(), age: z.number().int().min(18).max(110).optional(), avatarUrl: z.string().url().optional() })).mutation(async ({ input, ctx }) => {
+      const profession = input.profession.trim().replace(/\s+/g, " ");
+      const normalizedName = normalizeProfession(profession);
+      const categorySlug = slugify(profession);
+      const slug = `${slugify(input.name)}-${slugify(input.city)}`.slice(0, 130);
+      const db = await getDb();
+      if (db) {
+        const category = await db.select().from(serviceCategories).where(eq(serviceCategories.normalizedName, normalizedName)).limit(1);
+        if (!category[0]) await db.insert(serviceCategories).values({ name: profession, normalizedName, slug: categorySlug, createdByUserId: ctx.user?.id ?? null });
+        await db.insert(profiles).values({ userId: ctx.user?.id ?? null, slug, name: input.name.trim(), role: profession, city: input.city.trim(), neighborhood: input.neighborhood?.trim() || null, whatsapp: input.whatsapp.replace(/\D/g, ""), avatarUrl: input.avatarUrl, bio: `Atendimento de ${profession.toLocaleLowerCase("pt-BR")} em ${input.city}.`, availability: "open" });
+      }
+      return { slug, name: input.name.trim(), role: profession, city: input.city.trim(), neighborhood: input.neighborhood?.trim() ?? "", whatsapp: input.whatsapp.replace(/\D/g, ""), avatarUrl: input.avatarUrl ?? "", age: input.age ?? null, published: true };
+    }),
     setSos: publicProcedure.input(z.object({ slug: z.string(), enabled: z.boolean() })).mutation(async ({ input }) => {
       const db = await getDb();
       if (db) await db.update(profiles).set({ sos: input.enabled ? 1 : 0 }).where(eq(profiles.slug, input.slug));

@@ -15,6 +15,13 @@
       "when": 1792022642288,
       "tag": "0001_mighty_captain_britain",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1792084962698,
+      "tag": "0002_spooky_micromax",
+      "breakpoints": true
     }
   ]
 }

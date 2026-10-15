@@ -62,3 +62,13 @@
 - `pnpm build` — aprovado; apenas avisos de chunk grande e script de configuração não-module.
 - `GET /api/health`, `manifest.webmanifest`, `manus-routes.json` e as rotas dinâmicas — HTTP 200.
 - Capturas mobile verificadas para Home, Busca, Perfil, Comunidades, Lojas, Relatórios, Painel, comunidade dinâmica e relatório público.
+
+
+## 10. Responsividade ultra-flexível, onboarding e E2E
+- [x] Layout Mobile-First fluido para celular, tablet, desktop e monitor ultrawide; container da Home aproveita telas grandes sem margens excessivas.
+- [x] Bottom Nav permanece fixa em celulares; em tablets e desktops fica oculta e os mesmos links aparecem no Header superior.
+- [x] PWA mantém instalação na tela inicial e recebe favicon, apple-touch-icon, metas de app e status bar para Android/iOS.
+- [x] Cadastro de profissional usa fluxo simples em português: Nome → Foto/WhatsApp → Profissão e Cidade, com botões/áreas de toque de no mínimo 48px e alto contraste.
+- [x] Profissão é um campo com busca/autocomplete; texto inédito, como “Montador de Pisos Vinílicos”, é aceito e criado automaticamente na tabela `serviceCategories` do banco.
+- [x] Usuário consegue publicar o serviço criado, encontrá-lo na busca por profissão e abrir o botão WhatsApp a partir do cartão.
+- [~] Fluxo automatizado simulou usuário fictício de 65 anos e validou criação, publicação, busca por profissão/região, WhatsApp, console sem erro observado, TypeScript, testes e build; o navegador recusou a permissão GPS, então a aplicação confirmou o fallback regional de localização.

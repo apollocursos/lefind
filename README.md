@@ -25,7 +25,7 @@ pnpm build
 - `/comunidades` — condomínios e grupos públicos/privados.
 - `/lojas` — vitrines e spots patrocinados por região.
 - `/relatorios` — relatório digital Antes e Depois.
-- `/painel` — visão do profissional, métricas, modo SOS e checkout de Ouro/anúncio.
+- `/painel` — visão do profissional, métricas, modo SOS, checkout de Ouro/anúncio e onboarding acessível para publicar um novo serviço.
 - `/admin` — painel ADM protegido por role, com concessão de cortesia e cancelamento manual.
 
 A URL de divulgação no formato `/br/:cidade/:slug` e o slug limpo `/carlos-piscineiro` estão preparados em `vercel.json`; o frontend também aceita rotas amigáveis via SPA. Os embeds sociais configuráveis ficam em `client/src/pages/Profile.tsx` e usam as URLs dos próprios provedores.
@@ -38,7 +38,13 @@ O starter está conectado ao banco gerenciado do projeto por `DATABASE_URL` e us
 pnpm db:push
 ```
 
-As tabelas cobrem usuários, perfis, lojas, comunidades, membros aprovados, avaliações, cotações, spots patrocinados, relatórios de serviço, pagamentos, eventos de webhook e entitlements. O frontend usa fallback demonstrativo quando ainda não existem registros, então o preview permanece navegável.
+As tabelas cobrem usuários, perfis, categorias dinâmicas (`serviceCategories`), lojas, comunidades, membros aprovados, avaliações, cotações, spots patrocinados, relatórios de serviço, pagamentos, eventos de webhook e entitlements. O frontend usa fallback demonstrativo quando ainda não existem registros, então o preview permanece navegável.
+
+## Cadastro sem lista engessada
+
+No painel, o botão **Criar meu perfil** abre um fluxo direto em português: nome, idade opcional, foto/WhatsApp, profissão e cidade. O campo de profissão usa autocomplete via `directory.professionSuggestions`; ao publicar, `directory.createProfile` normaliza o texto, cria a categoria inédita em `serviceCategories` e publica o perfil. O diretório também guarda uma cópia local para o primeiro contato e permite testar a jornada sem sessão autenticada.
+
+O diretório usa `navigator.geolocation` quando o visitante escolhe **Usar minha localização**. Se a permissão não estiver disponível, o filtro mantém o fallback regional de Porto Feliz e a distância estimada dos cards.
 
 ## Pagamentos e ativação automática
 
@@ -52,7 +58,7 @@ No projeto Manus, habilite a integração Stripe pelo Dashboard/configuração. 
 
 ## PWA
 
-`client/public/manifest.webmanifest`, `client/public/sw.js` e os ícones SVG deixam o site instalável. O manifesto é de propriedade da aplicação e a página registra o service worker no carregamento. Para produção, mantenha os paths públicos dos assets. O seletor PT/EN/ES já persiste a preferência do visitante e está preparado para receber o dicionário completo de conteúdo.
+`client/public/manifest.webmanifest`, `client/public/sw.js`, favicon, apple-touch-icon e os ícones SVG deixam o site instalável. O manifesto é de propriedade da aplicação e a página registra o service worker no carregamento. O layout é mobile-first: Bottom Nav fixa no celular e navegação no Header para tablet/desktop, com container expandido para monitores largos. Para produção, mantenha os paths públicos dos assets. O seletor PT/EN/ES já persiste a preferência do visitante e está preparado para receber o dicionário completo de conteúdo.
 
 ## Publicar na Vercel
 
@@ -67,7 +73,7 @@ git remote add origin https://github.com/SEU_USUARIO/lefind.git
 git push -u origin main
 ```
 
-2. Na Vercel, importe o repositório. O projeto já contém `vercel.json`, a função em `api/index.ts` e as rewrites de `/api/*` e links dinâmicos.
+2. Na Vercel, importe o repositório. O projeto já contém `vercel.json`, handlers nativos em `api/health.ts`, `api/payments/checkout.ts` e `api/stripe/webhook.ts`, além das rewrites de links dinâmicos.
 3. Configure as variáveis de runtime `DATABASE_URL`, `JWT_SECRET` e as variáveis de autenticação do ambiente escolhido. Nunca coloque esses valores no frontend.
 4. Rode a migração/schema no banco de destino antes de abrir o tráfego. Em produção, prefira a migração versionada do Drizzle a alterações manuais destrutivas.
 5. Defina o domínio `lefindapp.com` na Vercel e aponte os registros DNS indicados pelo painel.
