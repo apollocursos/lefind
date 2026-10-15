@@ -72,3 +72,13 @@
 - [x] Profissão é um campo com busca/autocomplete; texto inédito, como “Montador de Pisos Vinílicos”, é aceito e criado automaticamente na tabela `serviceCategories` do banco.
 - [x] Usuário consegue publicar o serviço criado, encontrá-lo na busca por profissão e abrir o botão WhatsApp a partir do cartão.
 - [~] Fluxo automatizado simulou usuário fictício de 65 anos e validou criação, publicação, busca por profissão/região, WhatsApp, console sem erro observado, TypeScript, testes e build; o navegador recusou a permissão GPS, então a aplicação confirmou o fallback regional de localização.
+
+## 11. Correções para lançamento oficial
+- [x] Seletor PT/EN/ES troca o locale em tempo real, detecta o idioma do navegador, persiste a preferência e fornece formatação de moeda local.
+- [x] Header deslogado não usa avatar genérico e apresenta Entrar e Cadastrar Profissional.
+- [x] `/admin` usa o título Painel de Administração, carrega entitlements públicos com fallback operacional e mantém concessão/revogação manual.
+- [x] Painel ADM inclui aba de Embaixadores/Influenciadores com código e contagem de profissionais indicados.
+- [x] Cadastro de profissional e lojista aceita Código de Indicação / Embaixador; cadastros e pagamentos aprovados contabilizam o código no banco.
+- [x] Profissões continuam sem lista fixa: autocomplete consulta o banco e novos nomes são criados automaticamente.
+- [x] Margens desktop foram ampliadas para containers de até 1.880px; cache PWA foi invalidado para a versão v3.
+- [x] `pnpm check`, `pnpm test`, `pnpm build`, migração Drizzle e validações HTTP executados com sucesso.

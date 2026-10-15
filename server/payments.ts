@@ -1,7 +1,7 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { getDb } from "./db";
-import { entitlements, paymentEvents, payments, profiles, sponsoredSpots } from "../drizzle/schema";
+import { ambassadors, entitlements, paymentEvents, payments, profiles, sponsoredSpots } from "../drizzle/schema";
 
 export const PRODUCTS = {
   gold: { name: "Profissional Ouro", amountCents: 3990, durationDays: 30 },
@@ -106,6 +106,12 @@ export async function fulfillStripeEvent(event: Record<string, any>) {
   const current = await db.select().from(entitlements).where(eq(entitlements.targetKey, targetKey)).limit(1);
   if (outcome === "approved") {
     if (current[0]?.manualOverride !== "revoke") await upsertEntitlement({ targetKey, kind: metadata.product, profileId, storeId, paymentId, status: "active", source: current[0]?.manualOverride === "grant" ? "manual" : "payment", manualOverride: current[0]?.manualOverride ?? "none", durationDays: Number(metadata.durationDays ?? product.durationDays) });
+    if (metadata.referralCode && event.type === "checkout.session.completed") {
+      const code = metadata.referralCode.trim().toUpperCase();
+      const ambassador = await db.select().from(ambassadors).where(eq(ambassadors.code, code)).limit(1);
+      if (ambassador[0]) await db.update(ambassadors).set({ referralCount: sql`${ambassadors.referralCount} + 1` }).where(eq(ambassadors.code, code));
+      else await db.insert(ambassadors).values({ code, name: `Embaixador ${code}`, referralCount: 1 });
+    }
   } else if (outcome === "failed" || outcome === "refunded") {
     if (current[0]?.manualOverride !== "grant") await upsertEntitlement({ targetKey, kind: metadata.product, profileId, storeId, paymentId, status: "revoked", source: "payment", manualOverride: current[0]?.manualOverride ?? "none" });
   }

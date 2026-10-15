@@ -20,7 +20,7 @@ export function registerPaymentWebhook(app: Express) {
 }
 
 export async function handlePaymentCheckout(req: Request, res: Response) {
-    const { product, profileSlug, storeId, storeName, buyerEmail, buyerName } = req.body ?? {};
+    const { product, profileSlug, storeId, storeName, buyerEmail, buyerName, referralCode } = req.body ?? {};
     if (product !== "gold" && product !== "sponsored_spot") return res.status(400).json({ error: "invalid_product" });
     const secret = process.env.STRIPE_SECRET_KEY;
     if (!secret) return res.status(503).json({ error: "payment_not_configured", message: "Stripe ainda não foi configurado neste ambiente." });
@@ -29,6 +29,7 @@ export async function handlePaymentCheckout(req: Request, res: Response) {
     if (profileSlug) metadata.profileSlug = String(profileSlug);
     if (storeId) metadata.storeId = String(storeId);
     if (storeName) metadata.storeName = String(storeName);
+    if (referralCode) metadata.referralCode = String(referralCode).trim().toUpperCase();
     const params = new URLSearchParams();
     params.set("mode", "payment");
     // Stripe now manages eligible methods (including Pix/card) from Dashboard settings.

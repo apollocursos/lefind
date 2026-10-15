@@ -15,7 +15,7 @@ function origin(req: any) {
 
 export default async function handler(req: any, res: any) {
   try {
-    const { product, profileSlug, storeId, storeName, buyerEmail, buyerName } = req.body ?? {};
+    const { product, profileSlug, storeId, storeName, buyerEmail, buyerName, referralCode } = req.body ?? {};
     if (product !== "gold" && product !== "sponsored_spot") return res.status(400).json({ error: "invalid_product" });
     const secret = process.env.STRIPE_SECRET_KEY;
     if (!secret) return res.status(503).json({ error: "payment_not_configured", message: "Configure STRIPE_SECRET_KEY no ambiente Vercel." });
@@ -24,6 +24,7 @@ export default async function handler(req: any, res: any) {
     if (profileSlug) metadata.profileSlug = String(profileSlug);
     if (storeId) metadata.storeId = String(storeId);
     if (storeName) metadata.storeName = String(storeName);
+    if (referralCode) metadata.referralCode = String(referralCode).trim().toUpperCase();
     const params = new URLSearchParams();
     params.set("mode", "payment");
     params.set("line_items[0][quantity]", "1");

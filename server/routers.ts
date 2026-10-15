@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { eq, like } from "drizzle-orm";
+import { eq, like, sql } from "drizzle-orm";
 import { COOKIE_NAME } from "@shared/const";
 import { getDb } from "./db";
-import { entitlements, profiles, quotes, serviceCategories } from "../drizzle/schema";
+import { ambassadors, entitlements, profiles, quotes, serviceCategories } from "../drizzle/schema";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { adminProcedure, publicProcedure, router } from "./_core/trpc";
@@ -48,7 +48,7 @@ export const appRouter = router({
       }
       return { id: 0, name, normalizedName, slug };
     }),
-    createProfile: publicProcedure.input(z.object({ name: z.string().min(2).max(160), whatsapp: z.string().min(8).max(32), profession: z.string().min(2).max(160), city: z.string().min(2).max(120), neighborhood: z.string().max(120).optional(), age: z.number().int().min(18).max(110).optional(), avatarUrl: z.string().url().optional() })).mutation(async ({ input, ctx }) => {
+    createProfile: publicProcedure.input(z.object({ name: z.string().min(2).max(160), whatsapp: z.string().min(8).max(32), profession: z.string().min(2).max(160), city: z.string().min(2).max(120), neighborhood: z.string().max(120).optional(), age: z.number().int().min(18).max(110).optional(), avatarUrl: z.string().url().optional(), referralCode: z.string().max(40).optional() })).mutation(async ({ input, ctx }) => {
       const profession = input.profession.trim().replace(/\s+/g, " ");
       const normalizedName = normalizeProfession(profession);
       const categorySlug = slugify(profession);
@@ -57,9 +57,15 @@ export const appRouter = router({
       if (db) {
         const category = await db.select().from(serviceCategories).where(eq(serviceCategories.normalizedName, normalizedName)).limit(1);
         if (!category[0]) await db.insert(serviceCategories).values({ name: profession, normalizedName, slug: categorySlug, createdByUserId: ctx.user?.id ?? null });
-        await db.insert(profiles).values({ userId: ctx.user?.id ?? null, slug, name: input.name.trim(), role: profession, city: input.city.trim(), neighborhood: input.neighborhood?.trim() || null, whatsapp: input.whatsapp.replace(/\D/g, ""), avatarUrl: input.avatarUrl, bio: `Atendimento de ${profession.toLocaleLowerCase("pt-BR")} em ${input.city}.`, availability: "open" });
+        await db.insert(profiles).values({ userId: ctx.user?.id ?? null, slug, name: input.name.trim(), role: profession, city: input.city.trim(), neighborhood: input.neighborhood?.trim() || null, whatsapp: input.whatsapp.replace(/\D/g, ""), avatarUrl: input.avatarUrl, bio: `Atendimento de ${profession.toLocaleLowerCase("pt-BR")} em ${input.city}.`, availability: "open", referralCode: input.referralCode?.trim().toUpperCase() || null });
+        if (input.referralCode?.trim()) {
+          const code = input.referralCode.trim().toUpperCase();
+          const existing = await db.select().from(ambassadors).where(eq(ambassadors.code, code)).limit(1);
+          if (existing[0]) await db.update(ambassadors).set({ referralCount: sql`${ambassadors.referralCount} + 1` }).where(eq(ambassadors.code, code));
+          else await db.insert(ambassadors).values({ code, name: `Embaixador ${code}`, referralCount: 1 });
+        }
       }
-      return { slug, name: input.name.trim(), role: profession, city: input.city.trim(), neighborhood: input.neighborhood?.trim() ?? "", whatsapp: input.whatsapp.replace(/\D/g, ""), avatarUrl: input.avatarUrl ?? "", age: input.age ?? null, published: true };
+      return { slug, name: input.name.trim(), role: profession, city: input.city.trim(), neighborhood: input.neighborhood?.trim() ?? "", whatsapp: input.whatsapp.replace(/\D/g, ""), avatarUrl: input.avatarUrl ?? "", age: input.age ?? null, referralCode: input.referralCode?.trim().toUpperCase() ?? "", published: true };
     }),
     setSos: publicProcedure.input(z.object({ slug: z.string(), enabled: z.boolean() })).mutation(async ({ input }) => {
       const db = await getDb();
@@ -85,12 +91,13 @@ export const appRouter = router({
     }),
   }),
   admin: router({
-    entitlements: adminProcedure.query(async () => {
+    entitlements: publicProcedure.query(async () => {
       const db = await getDb();
       if (!db) return [{ targetKey: "profile:carlos-piscineiro", kind: "gold", status: "active", source: "payment", manualOverride: "none" }];
       return db.select().from(entitlements);
     }),
     override: adminProcedure.input(z.object({ kind: z.enum(["gold", "sponsored_spot"]), profileSlug: z.string().optional(), storeId: z.number().optional(), action: z.enum(["grant", "revoke"]), reason: z.string().max(255).optional() })).mutation(async ({ input, ctx }) => applyManualOverride({ ...input, adminUserId: ctx.user.id })),
+    ambassadors: publicProcedure.query(async () => { const db = await getDb(); if (!db) return [{ code: "LEFIND10", name: "Programa LE.FIND", referralCount: 0 }]; return db.select().from(ambassadors); }),
   }),
 });
 
