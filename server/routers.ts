@@ -26,7 +26,21 @@ export const appRouter = router({
   }),
   directory: router({
     stats: publicProcedure.query(() => ({ professionals: 24800, cities: 37, reviews: 12840 })),
-    search: publicProcedure.input(z.object({ query: z.string().optional(), sos: z.boolean().optional(), verified: z.boolean().optional() }).optional()).query(({ input }) => demoDirectory.filter(item => (!input?.query || `${item.name} ${item.role} ${item.city}`.toLowerCase().includes(input.query.toLowerCase())) && (!input?.sos || item.sos) && (!input?.verified || item.verified))),
+    search: publicProcedure.input(z.object({ query: z.string().optional(), city: z.string().optional(), sos: z.boolean().optional(), verified: z.boolean().optional() }).optional()).query(async ({ input }) => {
+      const query = input?.query?.trim().toLocaleLowerCase("pt-BR") ?? "";
+      const city = input?.city?.trim().toLocaleLowerCase("pt-BR") ?? "";
+      const local = demoDirectory.filter(item => (!query || `${item.name} ${item.role} ${item.city}`.toLocaleLowerCase("pt-BR").includes(query)) && (!city || item.city.toLocaleLowerCase("pt-BR").includes(city)) && (!input?.sos || item.sos) && (!input?.verified || item.verified));
+      const db = await getDb();
+      if (!db) return local;
+      const conditions = [
+        query ? sql`lower(concat_ws(' ', ${profiles.name}, ${profiles.role}, ${profiles.city}, ${profiles.neighborhood}, ${profiles.bio})) like ${`%${query}%`}` : undefined,
+        city ? sql`lower(${profiles.city}) like ${`%${city}%`}` : undefined,
+        input?.sos ? eq(profiles.sos, 1) : undefined,
+        input?.verified ? eq(profiles.verified, 1) : undefined,
+      ].filter(Boolean) as Array<ReturnType<typeof sql>>;
+      const rows = await db.select({ slug: profiles.slug, name: profiles.name, role: profiles.role, city: profiles.city, neighborhood: profiles.neighborhood, rating: profiles.rating, reviewCount: profiles.reviewCount, verified: profiles.verified, gold: profiles.gold, sos: profiles.sos, availability: profiles.availability, whatsapp: profiles.whatsapp, avatarUrl: profiles.avatarUrl, coverUrl: profiles.coverUrl, bio: profiles.bio }).from(profiles).where(conditions.length ? sql.join(conditions, sql` and `) : undefined).limit(60);
+      return [...local, ...rows.map(row => ({ ...row, rating: Number(row.rating), reviews: row.reviewCount, verified: Boolean(row.verified), gold: Boolean(row.gold), sos: Boolean(row.sos) }))];
+    }),
     professionSuggestions: publicProcedure.input(z.object({ query: z.string().optional() }).optional()).query(async ({ input }) => {
       const query = normalizeProfession(input?.query ?? "");
       const fallback = defaultProfessions.filter(name => !query || normalizeProfession(name).includes(query));

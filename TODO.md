@@ -97,3 +97,9 @@
 - [x] Painel autenticado lista as profissões do usuário através de `directory.myProfiles`; o cadastro existente cria em `profiles` e a edição de profissão, WhatsApp, cidade e bairro usa `directory.updateProfile` com ownership por `userId`.
 - [x] Visitantes continuam livres para buscar qualquer profissão e abrir o WhatsApp sem login.
 - [x] Build final, TypeScript, testes e `git diff --check` executados antes do deploy.
+
+## 14. Busca dinâmica e decisão de autenticação
+- [x] Mantido Manus OAuth + MySQL/Drizzle conforme decisão do proprietário; não foi criada uma integração Supabase incompleta ou um botão Google que não criaria sessão válida no backend.
+- [x] Busca consulta perfis persistidos dinamicamente por profissão, nome, bio, bairro e cidade usando expressão `LIKE` case-insensitive compatível com o MySQL gerenciado, além dos perfis demonstrativos e filtros SOS/verificados.
+- [x] Busca sem resultados exibe dentro do app: “Ainda não temos um [Termo] cadastrado em Porto Feliz”, com ações “Solicitar no WhatsApp” e “Postar na Comunidade Local”.
+- [x] `pnpm check`, `pnpm test`, `pnpm build` e `git diff --check` aprovados para este release.

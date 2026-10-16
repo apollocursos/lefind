@@ -143,6 +143,10 @@ button { border: 0; }
 .results-head strong { font-size: 13px; }
 .results-head span { color: var(--muted); font: 11px "DM Mono", monospace; }
 .results-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.search-empty { padding: 30px; text-align: center; }
+.search-empty h3 { margin: 0 0 8px; font-size: 20px; letter-spacing: -.04em; }
+.search-empty p { max-width: 520px; margin: 0 auto; color: var(--muted); font-size: 13px; line-height: 1.6; }
+.search-empty-actions { display: flex; justify-content: center; gap: 9px; flex-wrap: wrap; margin-top: 18px; }
 
 .detail-hero { position: relative; overflow: hidden; border-radius: 24px; border: 1px solid var(--line); background: var(--surface); }
 .detail-cover { height: 245px; background-size: cover; background-position: center; position: relative; }
