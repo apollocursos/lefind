@@ -71,6 +71,8 @@ const copy: Record<Locale, Copy> = {
 
 let currentLocale: Locale = "pt-BR";
 const listeners = new Set<() => void>();
+const originalText = new WeakMap<Text, string>();
+const originalAttributes = new WeakMap<Element, Partial<Record<"placeholder" | "aria-label" | "title", string>>>();
 
 function browserLocale(): Locale {
   if (typeof navigator === "undefined") return "pt-BR";
@@ -93,16 +95,22 @@ function translateElement(root: ParentNode, locale: Locale) {
   while (walker.nextNode()) nodes.push(walker.currentNode as Text);
   nodes.forEach(node => {
     const raw = node.nodeValue ?? "";
-    const trimmed = raw.trim();
+    const source = originalText.get(node) ?? raw;
+    originalText.set(node, source);
+    const trimmed = source.trim();
     if (!trimmed || trimmed.length > 180 || node.parentElement?.closest("script,style,svg")) return;
     const translated = t(trimmed, locale);
-    if (translated !== trimmed) node.nodeValue = raw.replace(trimmed, translated);
+    node.nodeValue = source.replace(trimmed, translated);
   });
   root.querySelectorAll?.("[placeholder],[aria-label],[title]").forEach(element => {
+    const sourceAttributes = originalAttributes.get(element) ?? {};
     (["placeholder", "aria-label", "title"] as const).forEach(attribute => {
       const value = element.getAttribute(attribute);
-      if (value) element.setAttribute(attribute, t(value, locale));
+      if (value && sourceAttributes[attribute] === undefined) sourceAttributes[attribute] = value;
+      const source = sourceAttributes[attribute];
+      if (source) element.setAttribute(attribute, t(source, locale));
     });
+    originalAttributes.set(element, sourceAttributes);
   });
 }
 

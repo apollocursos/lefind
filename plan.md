@@ -48,9 +48,11 @@ Entregar um MVP navegável e modular do LE.FIND: diretório local inteligente, c
 - `client/public/`: manifest, service worker e rotas declaradas.
 - `vercel.json`: rewrites e headers para Vercel.
 
-## Limites conscientes do MVP
+## Autenticação e publicação
 
-Os fluxos de autenticação, compra de banners, upload real de fotos e embeds autenticados de redes sociais ficam representados por interfaces e contratos de dados seguros; o MVP não inventa credenciais nem armazena vídeos. O backend inclui pontos de extensão para ligar esses fluxos a uma conta/banco real.
+As páginas públicas permanecem abertas para busca e contacto direto. `/painel` exige sessão Manus OAuth para cadastrar/gerenciar o cartão, ativar SOS e consultar métricas; `/admin` exige sessão com `role=admin`. As mutations de perfil e SOS usam procedimentos protegidos no backend, enquanto a administração usa `adminProcedure`. Nenhuma credencial é simulada no cliente.
+
+Compra de banners, upload real de fotos e embeds autenticados de redes sociais ficam representados por interfaces e contratos de dados seguros; o MVP não inventa credenciais nem armazena vídeos. O backend inclui pontos de extensão para ligar esses fluxos a uma conta/banco real.
 
 ## Melhorias finais — responsividade e onboarding real
 

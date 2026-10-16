@@ -82,3 +82,11 @@
 - [x] Profissões continuam sem lista fixa: autocomplete consulta o banco e novos nomes são criados automaticamente.
 - [x] Margens desktop foram ampliadas para containers de até 1.880px; cache PWA foi invalidado para a versão v3.
 - [x] `pnpm check`, `pnpm test`, `pnpm build`, migração Drizzle e validações HTTP executados com sucesso.
+
+## 12. Correções finais de produção e usabilidade 65+
+- [x] Visitante consegue entrar sem login, pesquisar um profissional e abrir o WhatsApp; `/painel` não exibe dados de prestador sem sessão Manus OAuth.
+- [x] Cadastro prioriza Nome, WhatsApp, Profissão e Cidade; campos opcionais ficam recolhidos, com botões e inputs de pelo menos 48px, contraste alto e foco visível.
+- [x] Foto de perfil usa enquadramento quadrado, centralizado e consistente em cards e cartão individual, sem avatar genérico no header deslogado.
+- [x] `/admin` exige usuário autenticado com `role=admin`; entitlements e embaixadores usam procedimentos protegidos e continuam com fallback operacional apenas após a autorização correta.
+- [x] PWA mantém manifest, service worker versionado, instalação móvel e script de configuração pública compatível com o build.
+- [x] A experiência pública foi repetida três vezes em navegador, em viewport móvel, cobrindo busca, abertura de perfil e ação WhatsApp; a filtragem por query string foi corrigida durante o teste.

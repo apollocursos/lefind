@@ -8,7 +8,7 @@ import { getAllProfessionals, getSosStatus } from "@/lib/data";
 export default function SearchPage() {
   const [location] = useLocation();
   const allProfessionals = getAllProfessionals();
-  const initialQuery = new URLSearchParams(location.split("?")[1] ?? "").get("q") ?? "";
+  const initialQuery = new URLSearchParams(typeof window !== "undefined" ? window.location.search : location.split("?")[1] ?? "").get("q") ?? "";
   const [query, setQuery] = useState(initialQuery);
   const [onlySos, setOnlySos] = useState(false);
   const [onlyVerified, setOnlyVerified] = useState(false);

@@ -2,6 +2,7 @@ import { Bell, Compass, LayoutDashboard, MapPin, Search, Users, Store, Plus, X, 
 import { Link, useLocation } from "wouter";
 import { useEffect, useState, type ReactNode } from "react";
 import { getStoredLocale, initLocale, localeNames, navLabels, setLocale, t, translateDocument, useLocale, type Locale } from "@/lib/i18n";
+import { startLogin } from "@/const";
 
 const navItems = [
   { href: "/", label: "Início", icon: Compass }, { href: "/buscar", label: "Buscar", icon: Search },
@@ -19,10 +20,11 @@ export function Header({ onNotify }: { onNotify?: (message: string) => void }) {
   const isActive = (href: string) => href === "/" ? location === "/" : location.startsWith(href);
   const location = useLocation()[0];
   const changeLocale = (next: Locale) => { setCurrentLocale(next); setLocale(next); onNotify?.(`${t("Idioma alterado para", next)} ${localeNames[next]}`); };
+  const login = () => { try { startLogin(); } catch (error) { onNotify?.(error instanceof Error ? error.message : "Não foi possível iniciar o login."); } };
   return <header className="site-header"><div className="container header-inner">
     <Brand /><nav className="desktop-nav" aria-label="Navegação principal">{navItems.map(({ href, label, icon: Icon }) => <Link key={href} href={href} className={isActive(href) ? "active" : ""}><Icon size={16} />{t(label, locale)}</Link>)}</nav>
     <div className="header-actions"><select className="locale-select" value={locale} onChange={event => changeLocale(event.target.value as Locale)} aria-label="Idioma"><option value="pt-BR">PT</option><option value="en">EN</option><option value="es">ES</option></select>
-      <Link className="header-login" href="/painel"><LogIn size={15} />{t("Entrar", locale)}</Link><Link className="header-signup" href="/painel"><UserPlus size={15} />{t("Cadastrar Profissional", locale)}</Link>
+      <button className="header-login" onClick={login}><LogIn size={15} />{t("Entrar", locale)}</button><Link className="header-signup" href="/painel"><UserPlus size={15} />{t("Cadastrar Profissional", locale)}</Link>
       <button className="icon-button" aria-label={t("Mudar localização", locale)} onClick={() => onNotify?.("Localização atual: Porto Feliz, SP")}><MapPin size={17} /></button>
       <button className="icon-button" aria-label={t("Notificações", locale)} onClick={() => onNotify?.("Você tem 3 novas recomendações na sua região")}><Bell size={17} /></button>
     </div>
