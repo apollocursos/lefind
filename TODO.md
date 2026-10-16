@@ -90,3 +90,10 @@
 - [x] `/admin` exige usuário autenticado com `role=admin`; entitlements e embaixadores usam procedimentos protegidos e continuam com fallback operacional apenas após a autorização correta.
 - [x] PWA mantém manifest, service worker versionado, instalação móvel e script de configuração pública compatível com o build.
 - [x] A experiência pública foi repetida três vezes em navegador, em viewport móvel, cobrindo busca, abertura de perfil e ação WhatsApp; a filtragem por query string foi corrigida durante o teste.
+
+## 13. Última execução cirúrgica
+- [~] Login do header usa o OAuth real do projeto com CTA “Entrar com Google”; a conexão específica ao Supabase Auth não foi inventada porque este projeto está provisionado com OAuth Manus + MySQL gerenciado e não possui URL/chaves de um projeto Supabase. O portal OAuth configurado deve oferecer Google para concluir o provedor social.
+- [x] Header deslogado mostra “Entrar com Google” e “Cadastrar-se”; header logado usa nome/iniciais ou `avatarUrl` real quando fornecido, sem avatar mockado, e dropdown com Meu Perfil / Minhas Profissões, Painel do Prestador, Painel Admin para `role=admin` e Sair.
+- [x] Painel autenticado lista as profissões do usuário através de `directory.myProfiles`; o cadastro existente cria em `profiles` e a edição de profissão, WhatsApp, cidade e bairro usa `directory.updateProfile` com ownership por `userId`.
+- [x] Visitantes continuam livres para buscar qualquer profissão e abrir o WhatsApp sem login.
+- [x] Build final, TypeScript, testes e `git diff --check` executados antes do deploy.

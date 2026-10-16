@@ -67,9 +67,19 @@ export const appRouter = router({
       }
       return { slug, name: input.name.trim(), role: profession, city: input.city.trim(), neighborhood: input.neighborhood?.trim() ?? "", whatsapp: input.whatsapp.replace(/\D/g, ""), avatarUrl: input.avatarUrl ?? "", age: input.age ?? null, referralCode: input.referralCode?.trim().toUpperCase() ?? "", published: true };
     }),
-    setSos: protectedProcedure.input(z.object({ slug: z.string(), enabled: z.boolean() })).mutation(async ({ input }) => {
+    myProfiles: protectedProcedure.query(async ({ ctx }) => {
       const db = await getDb();
-      if (db) await db.update(profiles).set({ sos: input.enabled ? 1 : 0 }).where(eq(profiles.slug, input.slug));
+      if (!db) return [];
+      return db.select({ id: profiles.id, slug: profiles.slug, name: profiles.name, role: profiles.role, city: profiles.city, neighborhood: profiles.neighborhood, whatsapp: profiles.whatsapp, avatarUrl: profiles.avatarUrl, sos: profiles.sos, verified: profiles.verified, gold: profiles.gold }).from(profiles).where(eq(profiles.userId, ctx.user.id));
+    }),
+    updateProfile: protectedProcedure.input(z.object({ id: z.number().int().positive(), role: z.string().min(2).max(160), whatsapp: z.string().min(8).max(32), neighborhood: z.string().max(120).optional(), city: z.string().min(2).max(120) })).mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (db) await db.update(profiles).set({ role: input.role.trim(), whatsapp: input.whatsapp.replace(/\D/g, ""), neighborhood: input.neighborhood?.trim() || null, city: input.city.trim() }).where(sql`${profiles.id} = ${input.id} AND ${profiles.userId} = ${ctx.user.id}`);
+      return { id: input.id, updated: true };
+    }),
+    setSos: protectedProcedure.input(z.object({ slug: z.string(), enabled: z.boolean() })).mutation(async ({ input, ctx }) => {
+      const db = await getDb();
+      if (db) await db.update(profiles).set({ sos: input.enabled ? 1 : 0 }).where(sql`${profiles.slug} = ${input.slug} AND ${profiles.userId} = ${ctx.user.id}`);
       return { slug: input.slug, enabled: input.enabled };
     }),
   }),
