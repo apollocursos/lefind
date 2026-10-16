@@ -28,7 +28,7 @@ export default function AccessGate({ children, adminOnly = false }: AccessGatePr
   }
 
   if (!user) {
-    return <AppShell><main className="page container"><section className="access-card glass-card"><div className="access-icon"><LogIn size={24} /></div><div className="eyebrow">Área exclusiva</div><h1>Entre para continuar</h1><p>Visitantes podem buscar e chamar profissionais sem cadastro. Para criar seu cartão, ativar o SOS ou acompanhar contatos, entre com sua conta.</p><button className="primary-button access-button" onClick={login}><LogIn size={17} /> Entrar com Google</button><Link href="/buscar" className="secondary-button access-button">Continuar buscando</Link>{loginError && <p className="access-error" role="alert">{loginError}</p>}</section></main></AppShell>;
+    return <AppShell><main className="page container"><section className="access-card glass-card"><div className="access-icon"><LogIn size={24} /></div><div className="eyebrow">Área exclusiva</div><h1>Entre para continuar</h1><p>Visitantes podem buscar e chamar profissionais sem cadastro. Para criar seu cartão, ativar o SOS ou acompanhar contatos, entre com sua conta.</p><button className="primary-button access-button" onClick={login}><LogIn size={17} /> Entrar / Cadastrar-se</button><Link href="/buscar" className="secondary-button access-button">Continuar buscando</Link>{loginError && <p className="access-error" role="alert">{loginError}</p>}</section></main></AppShell>;
   }
 
   if (adminOnly && user.role !== "admin") {

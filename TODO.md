@@ -92,8 +92,8 @@
 - [x] A experiência pública foi repetida três vezes em navegador, em viewport móvel, cobrindo busca, abertura de perfil e ação WhatsApp; a filtragem por query string foi corrigida durante o teste.
 
 ## 13. Última execução cirúrgica
-- [~] Login do header usa o OAuth real do projeto com CTA “Entrar com Google”; a conexão específica ao Supabase Auth não foi inventada porque este projeto está provisionado com OAuth Manus + MySQL gerenciado e não possui URL/chaves de um projeto Supabase. O portal OAuth configurado deve oferecer Google para concluir o provedor social.
-- [x] Header deslogado mostra “Entrar com Google” e “Cadastrar-se”; header logado usa nome/iniciais ou `avatarUrl` real quando fornecido, sem avatar mockado, e dropdown com Meu Perfil / Minhas Profissões, Painel do Prestador, Painel Admin para `role=admin` e Sair.
+- [x] Login usa Manus OAuth real com CTA “Entrar / Cadastrar-se”; o script público de configuração recebe fallback dos valores públicos necessários no bundle para funcionar também no deploy Vercel sem env Manus injetado.
+- [x] Header deslogado mostra “Entrar / Cadastrar-se” e “Criar perfil”; header logado usa nome/iniciais ou `avatarUrl` real quando fornecido, sem avatar mockado, e dropdown com Meu Perfil / Minhas Profissões, Painel do Prestador, Painel Admin para `role=admin` e Sair.
 - [x] Painel autenticado lista as profissões do usuário através de `directory.myProfiles`; o cadastro existente cria em `profiles` e a edição de profissão, WhatsApp, cidade e bairro usa `directory.updateProfile` com ownership por `userId`.
 - [x] Visitantes continuam livres para buscar qualquer profissão e abrir o WhatsApp sem login.
 - [x] Build final, TypeScript, testes e `git diff --check` executados antes do deploy.
@@ -103,3 +103,8 @@
 - [x] Busca consulta perfis persistidos dinamicamente por profissão, nome, bio, bairro e cidade usando expressão `LIKE` case-insensitive compatível com o MySQL gerenciado, além dos perfis demonstrativos e filtros SOS/verificados.
 - [x] Busca sem resultados exibe dentro do app: “Ainda não temos um [Termo] cadastrado em Porto Feliz”, com ações “Solicitar no WhatsApp” e “Postar na Comunidade Local”.
 - [x] `pnpm check`, `pnpm test`, `pnpm build` e `git diff --check` aprovados para este release.
+
+## 15. Login Manus e release final
+- [x] A decisão de manter Manus OAuth + MySQL foi aplicada; não há chamada Supabase no fluxo de login.
+- [x] `publicPlatformConfig` usa o ambiente Manus quando disponível e os identificadores públicos gerados do projeto como fallback para a Vercel; nenhum segredo privado é enviado ao navegador.
+- [x] Busca livre por termos novos permanece ligada ao procedimento público MySQL/Drizzle e o fallback WhatsApp continua dentro da interface.
