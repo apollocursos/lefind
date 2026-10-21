@@ -29,6 +29,13 @@
       "when": 1792089012857,
       "tag": "0003_marvelous_madame_web",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "5",
+      "when": 1792700000000,
+      "tag": "0004_local_auth",
+      "breakpoints": true
     }
   ]
 }

@@ -40,6 +40,14 @@ pnpm db:push
 
 As tabelas cobrem usuários, perfis, categorias dinâmicas (`serviceCategories`), lojas, comunidades, membros aprovados, avaliações, cotações, spots patrocinados, relatórios de serviço, pagamentos, eventos de webhook e entitlements. O frontend usa fallback demonstrativo quando ainda não existem registros, então o preview permanece navegável.
 
+## Acesso do prestador sem provedor externo
+
+O painel possui cadastro e entrada por e-mail e senha diretamente no backend do LE.FIND. A senha nunca é salva em texto puro: o servidor usa `scrypt` com salt aleatório, compara em tempo constante e emite uma sessão assinada em cookie `HttpOnly`, `Secure` e `SameSite=None`. Depois de cinco tentativas inválidas para o mesmo e-mail, novas tentativas ficam bloqueadas por dez minutos. A coluna `users.passwordHash` é criada pela migração `drizzle/0004_local_auth.sql`.
+
+Na Vercel, mantenha `DATABASE_URL` e defina `JWT_SECRET` como um valor aleatório longo. Em ambientes Manus, `MANUS_JWT_SECRET` continua sendo aceito automaticamente.
+
+O visitante não precisa de conta para pesquisar ou chamar no WhatsApp. O botão **Entrar / Cadastrar-se** leva ao painel, onde o prestador pode criar acesso ou entrar. Não há bypass por `localStorage`, sessão de demonstração em produção, Supabase ou senha exposta no navegador.
+
 ## Cadastro sem lista engessada
 
 No painel, o botão **Criar meu perfil** abre um fluxo direto em português: nome, idade opcional, foto/WhatsApp, profissão e cidade. O campo de profissão usa autocomplete via `directory.professionSuggestions`; ao publicar, `directory.createProfile` normaliza o texto, cria a categoria inédita em `serviceCategories` e publica o perfil. O diretório também guarda uma cópia local para o primeiro contato e permite testar a jornada sem sessão autenticada.

@@ -105,6 +105,13 @@
 - [x] `pnpm check`, `pnpm test`, `pnpm build` e `git diff --check` aprovados para este release.
 
 ## 15. Login Manus e release final
-- [x] A decisão de manter Manus OAuth + MySQL foi aplicada; não há chamada Supabase no fluxo de login.
-- [x] `publicPlatformConfig` usa o ambiente Manus quando disponível e os identificadores públicos gerados do projeto como fallback para a Vercel; nenhum segredo privado é enviado ao navegador.
+- [~] O Manus OAuth anterior permanece disponível no código de callback, mas o botão público foi direcionado ao acesso local para não depender de allowlist externa.
+- [x] Nenhuma chave privada ou sessão demo é enviada ao navegador.
 - [x] Busca livre por termos novos permanece ligada ao procedimento público MySQL/Drizzle e o fallback WhatsApp continua dentro da interface.
+
+## 16. Acesso local seguro sem chaves externas
+- [x] A solicitação de chaves Supabase foi cancelada; nenhuma declaração Supabase foi persistida no projeto.
+- [x] O botão “Entrar / Cadastrar-se” abre o fluxo nativo de e-mail e senha em `/painel`, sem bloquear visitantes da busca.
+- [x] Senhas são armazenadas somente como hash `scrypt` com salt; sessões usam cookie `HttpOnly`, `Secure`, `SameSite=None` e JWT assinado server-side.
+- [x] Tentativas inválidas são limitadas por e-mail; não existe sessão demo, autenticação via `localStorage` ou senha em texto puro.
+- [x] Migração `drizzle/0004_local_auth.sql` aplicada ao banco MySQL gerenciado.

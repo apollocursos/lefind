@@ -2,7 +2,6 @@ import { Bell, Compass, LayoutDashboard, MapPin, Search, Users, Store, Plus, X, 
 import { Link, useLocation } from "wouter";
 import { useEffect, useState, type ReactNode } from "react";
 import { getStoredLocale, initLocale, localeNames, navLabels, setLocale, t, translateDocument, useLocale, type Locale } from "@/lib/i18n";
-import { startLogin } from "@/const";
 import { useAuth } from "@/_core/hooks/useAuth";
 
 const navItems = [
@@ -23,7 +22,7 @@ export function Header({ onNotify }: { onNotify?: (message: string) => void }) {
   const isActive = (href: string) => href === "/" ? location === "/" : location.startsWith(href);
   const location = useLocation()[0];
   const changeLocale = (next: Locale) => { setCurrentLocale(next); setLocale(next); onNotify?.(`${t("Idioma alterado para", next)} ${localeNames[next]}`); };
-  const login = () => { try { startLogin(); } catch (error) { onNotify?.(error instanceof Error ? error.message : "Não foi possível iniciar o login."); } };
+  const login = () => { navigate("/painel"); };
   const initials = user?.name?.trim().split(/\s+/).map(part => part[0]).join("").slice(0, 2).toUpperCase() || "EU";
   const avatarUrl = (user as (typeof user & { avatarUrl?: string }) | null)?.avatarUrl;
   const signOut = async () => { setMenuOpen(false); await logout(); onNotify?.("Sessão encerrada com segurança."); };

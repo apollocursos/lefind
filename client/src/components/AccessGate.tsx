@@ -1,9 +1,9 @@
-import { ShieldCheck, UserRound, LogIn } from "lucide-react";
-import { useState, type ReactNode } from "react";
-import { Link } from "wouter";
+import { ShieldCheck, UserRound, LogIn, UserPlus } from "lucide-react";
+import { useState, type FormEvent, type ReactNode } from "react";
+import { Link, useLocation } from "wouter";
 import { AppShell } from "@/components/AppShell";
-import { startLogin } from "@/const";
 import { useAuth } from "@/_core/hooks/useAuth";
+import { trpc } from "@/lib/trpc";
 
 type AccessGateProps = {
   children: ReactNode;
@@ -12,14 +12,24 @@ type AccessGateProps = {
 
 export default function AccessGate({ children, adminOnly = false }: AccessGateProps) {
   const { loading, user } = useAuth();
+  const [, navigate] = useLocation();
+  const utils = trpc.useUtils();
+  const [mode, setMode] = useState<"login" | "register">("login");
+  const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [loginError, setLoginError] = useState("");
+  const login = trpc.auth.loginLocal.useMutation();
+  const register = trpc.auth.registerLocal.useMutation();
 
-  const login = () => {
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setLoginError("");
     try {
-      setLoginError("");
-      startLogin();
+      if (mode === "register") await register.mutateAsync(form);
+      else await login.mutateAsync({ email: form.email, password: form.password });
+      await utils.auth.me.invalidate();
+      navigate("/painel");
     } catch (error) {
-      setLoginError(error instanceof Error ? error.message : "Não foi possível iniciar o login.");
+      setLoginError(error instanceof Error ? error.message : "Não foi possível concluir o acesso.");
     }
   };
 
@@ -28,7 +38,8 @@ export default function AccessGate({ children, adminOnly = false }: AccessGatePr
   }
 
   if (!user) {
-    return <AppShell><main className="page container"><section className="access-card glass-card"><div className="access-icon"><LogIn size={24} /></div><div className="eyebrow">Área exclusiva</div><h1>Entre para continuar</h1><p>Visitantes podem buscar e chamar profissionais sem cadastro. Para criar seu cartão, ativar o SOS ou acompanhar contatos, entre com sua conta.</p><button className="primary-button access-button" onClick={login}><LogIn size={17} /> Entrar / Cadastrar-se</button><Link href="/buscar" className="secondary-button access-button">Continuar buscando</Link>{loginError && <p className="access-error" role="alert">{loginError}</p>}</section></main></AppShell>;
+    const pending = login.isPending || register.isPending;
+    return <AppShell><main className="page container"><section className="access-card glass-card"><div className="access-icon">{mode === "login" ? <LogIn size={24} /> : <UserPlus size={24} />}</div><div className="eyebrow">Área do prestador</div><h1>{mode === "login" ? "Entrar no painel" : "Criar acesso"}</h1><p>Use seu e-mail e uma senha. O cadastro fica protegido no banco LE.FIND; visitantes continuam livres para buscar e chamar profissionais.</p><form className="access-form" onSubmit={submit}>{mode === "register" && <label className="modal-label">Seu nome<input className="modal-input" required minLength={2} maxLength={160} value={form.name} onChange={event => setForm({ ...form, name: event.target.value })} placeholder="Ex.: Ana Oliveira" /></label>}<label className="modal-label">E-mail<input className="modal-input" required type="email" autoComplete="email" value={form.email} onChange={event => setForm({ ...form, email: event.target.value })} placeholder="voce@email.com" /></label><label className="modal-label">Senha<input className="modal-input" required type="password" minLength={8} maxLength={128} autoComplete={mode === "login" ? "current-password" : "new-password"} value={form.password} onChange={event => setForm({ ...form, password: event.target.value })} placeholder="Mínimo de 8 caracteres" /></label><button className="primary-button access-button" disabled={pending} type="submit">{pending ? "Aguarde…" : mode === "login" ? "Entrar" : "Criar acesso"}</button></form><button className="secondary-button access-button" type="button" onClick={() => { setMode(mode === "login" ? "register" : "login"); setLoginError(""); }}>{mode === "login" ? "Ainda não tenho acesso" : "Já tenho acesso"}</button><Link href="/buscar" className="access-link">Continuar buscando sem cadastro</Link>{loginError && <p className="access-error" role="alert">{loginError}</p>}</section></main></AppShell>;
   }
 
   if (adminOnly && user.role !== "admin") {

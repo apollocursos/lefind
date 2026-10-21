@@ -1,12 +1,16 @@
 import { z } from "zod";
 import { eq, like, sql } from "drizzle-orm";
-import { COOKIE_NAME } from "@shared/const";
-import { getDb } from "./db";
+import { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
+import { createLocalUser, getDb, getUserByEmail, updateLocalUserSignIn } from "./db";
 import { ambassadors, entitlements, profiles, quotes, serviceCategories } from "../drizzle/schema";
 import { getSessionCookieOptions } from "./_core/cookies";
 import { systemRouter } from "./_core/systemRouter";
 import { adminProcedure, protectedProcedure, publicProcedure, router } from "./_core/trpc";
 import { applyManualOverride, fulfillStripeEvent, PRODUCTS } from "./payments";
+import { hashPassword, newLocalOpenId, verifyPassword } from "./_core/localAuth";
+import { sdk } from "./_core/sdk";
+import { ENV } from "./_core/env";
+import { TRPCError } from "@trpc/server";
 
 const demoDirectory = [
   { slug: "carlos-piscineiro", name: "Carlos Mendes", role: "Piscineiro & manutenção", city: "Porto Feliz, SP", rating: 4.9, verified: true, sos: true },
@@ -17,12 +21,40 @@ const demoDirectory = [
 const defaultProfessions = ["Eletricista", "Piscineiro", "Chaveiro 24 horas", "Pintura", "Pet sitter", "Montador de móveis", "Encanador"];
 const normalizeProfession = (value: string) => value.trim().toLocaleLowerCase("pt-BR").normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/\s+/g, " ");
 const slugify = (value: string) => normalizeProfession(value).replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+const failedLogins = new Map<string, { count: number; blockedUntil: number }>();
 
 export const appRouter = router({
   system: systemRouter,
   auth: router({
     me: publicProcedure.query(opts => opts.ctx.user),
     logout: publicProcedure.mutation(({ ctx }) => { const cookieOptions = getSessionCookieOptions(ctx.req); ctx.res.clearCookie(COOKIE_NAME, { ...cookieOptions, maxAge: -1 }); return { success: true } as const; }),
+    registerLocal: publicProcedure.input(z.object({ name: z.string().trim().min(2).max(160), email: z.string().trim().email().max(320), password: z.string().min(8).max(128) })).mutation(async ({ input, ctx }) => {
+      const email = input.email.toLowerCase();
+      if (await getUserByEmail(email)) throw new TRPCError({ code: "CONFLICT", message: "Este e-mail já possui uma conta. Entre com sua senha." });
+      const user = await createLocalUser({ openId: newLocalOpenId(), name: input.name, email, passwordHash: await hashPassword(input.password) });
+      if (!user) throw new TRPCError({ code: "INTERNAL_SERVER_ERROR", message: "Não foi possível criar a conta." });
+      const token = await sdk.signSession({ openId: user.openId, appId: ENV.appId, name: user.name ?? input.name });
+      ctx.res.cookie(COOKIE_NAME, token, { ...getSessionCookieOptions(ctx.req), maxAge: ONE_YEAR_MS });
+      return user;
+    }),
+    loginLocal: publicProcedure.input(z.object({ email: z.string().trim().email().max(320), password: z.string().min(1).max(128) })).mutation(async ({ input, ctx }) => {
+      const email = input.email.toLowerCase();
+      const attempt = failedLogins.get(email);
+      if (attempt?.blockedUntil && attempt.blockedUntil > Date.now()) throw new TRPCError({ code: "TOO_MANY_REQUESTS", message: "Muitas tentativas. Aguarde alguns minutos e tente novamente." });
+      const user = await getUserByEmail(email);
+      const valid = Boolean(user?.passwordHash && await verifyPassword(input.password, user.passwordHash));
+      if (!user || !valid) {
+        const next = { count: (attempt?.count ?? 0) + 1, blockedUntil: 0 };
+        if (next.count >= 5) { next.count = 0; next.blockedUntil = Date.now() + 10 * 60 * 1000; }
+        failedLogins.set(email, next);
+        throw new TRPCError({ code: "UNAUTHORIZED", message: "E-mail ou senha inválidos." });
+      }
+      failedLogins.delete(email);
+      await updateLocalUserSignIn(user.id);
+      const token = await sdk.signSession({ openId: user.openId, appId: ENV.appId, name: user.name ?? email });
+      ctx.res.cookie(COOKIE_NAME, token, { ...getSessionCookieOptions(ctx.req), maxAge: ONE_YEAR_MS });
+      return user;
+    }),
   }),
   directory: router({
     stats: publicProcedure.query(() => ({ professionals: 24800, cities: 37, reviews: 12840 })),
