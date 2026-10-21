@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { eq, like, sql } from "drizzle-orm";
-import { COOKIE_NAME, ONE_YEAR_MS } from "@shared/const";
+import { COOKIE_NAME, ONE_YEAR_MS } from "../shared/const";
 import { createLocalUser, getDb, getUserByEmail, updateLocalUserSignIn } from "./db";
 import { ambassadors, entitlements, profiles, quotes, serviceCategories } from "../drizzle/schema";
 import { getSessionCookieOptions } from "./_core/cookies";
