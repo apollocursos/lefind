@@ -2,7 +2,7 @@ import { jwtVerify, SignJWT } from "jose";
 import { parse } from "cookie";
 import type { Request, Response } from "express";
 import type { User } from "../../drizzle/schema";
-import * as db from "../db";
+import { findLocalUserByOpenId } from "./authStore";
 import { ENV } from "./env";
 import { COOKIE_NAME, ONE_YEAR_MS } from "../../shared/const";
 
@@ -24,7 +24,7 @@ export async function userFromLocalRequest(req: Request) {
   try {
     const { payload } = await jwtVerify(token, secret(), { algorithms: ["HS256"] });
     if (payload.appId !== ENV.appId || typeof payload.openId !== "string") return null;
-    return (await db.getUserByOpenId(payload.openId)) ?? null;
+    return (await findLocalUserByOpenId(payload.openId)) ?? null;
   } catch {
     return null;
   }

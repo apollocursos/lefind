@@ -1,4 +1,4 @@
-import { getUserByEmail, updateLocalUserSignIn } from "../../server/db";
+import { findLocalUserByEmail, touchLocalUser } from "../../server/_core/authStore";
 import { verifyPassword } from "../../server/_core/localAuth";
 import { createLocalSession, publicUser, setLocalSession } from "../../server/_core/localSession";
 
@@ -8,9 +8,9 @@ export default async function handler(req: any, res: any) {
   try {
     const { email, password } = req.body ?? {};
     if (typeof email !== "string" || typeof password !== "string") return res.status(400).json({ error: "invalid_input", message: "Informe e-mail e senha." });
-    const user = await getUserByEmail(email.trim().toLowerCase());
+    const user = await findLocalUserByEmail(email.trim().toLowerCase());
     if (!user?.passwordHash || !(await verifyPassword(password, user.passwordHash))) return res.status(401).json({ error: "invalid_credentials", message: "E-mail ou senha inválidos." });
-    await updateLocalUserSignIn(user.id);
+    await touchLocalUser(user.id);
     setLocalSession(res, await createLocalSession(user));
     return res.status(200).json({ user: publicUser(user) });
   } catch (error) {
