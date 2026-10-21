@@ -1,4 +1,3 @@
-import { createRequire } from "node:module";
 import { ENV } from "./env";
 
 type LocalUser = {
@@ -14,32 +13,31 @@ type LocalUser = {
   lastSignedIn: Date;
 };
 
-let pool: any;
-function getPool() {
-  if (!pool) {
-    if (!ENV.databaseUrl) throw new Error("DATABASE_URL não configurado");
-    const require = createRequire(import.meta.url);
-    const mysql = require("mysql2/promise");
-    pool = mysql.createPool(ENV.databaseUrl);
+let poolPromise: Promise<any> | undefined;
+async function getPool() {
+  if (!poolPromise) {
+    poolPromise = (async () => {
+      if (!ENV.databaseUrl) throw new Error("DATABASE_URL não configurado");
+      const mysql = await import("mysql2/promise");
+      return mysql.createPool(ENV.databaseUrl);
+    })();
   }
-  return pool;
+  return poolPromise;
 }
 
-export async function findLocalUserByEmail(email: string): Promise<LocalUser | undefined> {
-  const [rows] = await getPool().execute("SELECT id, openId, name, email, passwordHash, loginMethod, role, createdAt, updatedAt, lastSignedIn FROM users WHERE email = ? LIMIT 1", [email]);
+async function findBy(field: "email" | "openId", value: string): Promise<LocalUser | undefined> {
+  const [rows] = await (await getPool()).execute(`SELECT id, openId, name, email, passwordHash, loginMethod, role, createdAt, updatedAt, lastSignedIn FROM users WHERE ${field} = ? LIMIT 1`, [value]);
   return rows[0] as LocalUser | undefined;
 }
 
-export async function findLocalUserByOpenId(openId: string): Promise<LocalUser | undefined> {
-  const [rows] = await getPool().execute("SELECT id, openId, name, email, passwordHash, loginMethod, role, createdAt, updatedAt, lastSignedIn FROM users WHERE openId = ? LIMIT 1", [openId]);
-  return rows[0] as LocalUser | undefined;
-}
+export function findLocalUserByEmail(email: string) { return findBy("email", email); }
+export function findLocalUserByOpenId(openId: string) { return findBy("openId", openId); }
 
 export async function insertLocalUser(input: { openId: string; name: string; email: string; passwordHash: string }) {
-  await getPool().execute("INSERT INTO users (openId, name, email, passwordHash, loginMethod, lastSignedIn) VALUES (?, ?, ?, ?, 'local', CURRENT_TIMESTAMP)", [input.openId, input.name, input.email, input.passwordHash]);
+  await (await getPool()).execute("INSERT INTO users (openId, name, email, passwordHash, loginMethod, lastSignedIn) VALUES (?, ?, ?, ?, 'local', CURRENT_TIMESTAMP)", [input.openId, input.name, input.email, input.passwordHash]);
   return findLocalUserByOpenId(input.openId);
 }
 
 export async function touchLocalUser(id: number) {
-  await getPool().execute("UPDATE users SET lastSignedIn = CURRENT_TIMESTAMP WHERE id = ?", [id]);
+  await (await getPool()).execute("UPDATE users SET lastSignedIn = CURRENT_TIMESTAMP WHERE id = ?", [id]);
 }
